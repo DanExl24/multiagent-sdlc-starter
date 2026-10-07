@@ -21,17 +21,17 @@ graph TD
 ### Regla de Oro del Tipado Compartido:
 - El Arquitecto define el validador Zod:
   ```typescript
-  export const registrarNotaSchema = z.object({
-    estudianteId: z.string().uuid(),
-    actividadId: z.string().uuid(),
-    calificacion: z.number().min(1.0).max(5.0),
-    observaciones: z.string().max(300).optional()
+  export const createItemSchema = z.object({
+    entityId: z.string().uuid(),
+    code: z.string().min(2).max(50),
+    amount: z.number().positive(),
+    notes: z.string().max(300).optional()
   });
   // Tipo inferido automáticamente para Backend y Frontend
-  export type RegistrarNotaDTO = z.infer<typeof registrarNotaSchema>;
+  export type CreateItemDTO = z.infer<typeof createItemSchema>;
   ```
-- **Backend** usa `registrarNotaSchema` para validar la petición HTTP entrante antes de que llegue a la base de datos.
-- **Frontend** usa `RegistrarNotaDTO` como tipo estático de TypeScript en sus formularios Vue y en las funciones de Pinia.
+- **Backend** usa `createItemSchema` para validar la petición HTTP entrante antes de que llegue a la base de datos.
+- **Frontend** usa `CreateItemDTO` como tipo estático de TypeScript en sus formularios y stores.
 - **Resultado:** Si el contrato cambia, **ambos lados se enteran en tiempo de compilación**, no cuando el usuario hace clic en producción.
 
 ---
@@ -72,8 +72,8 @@ Para que el Frontend siempre sepa qué esperar de cualquier controlador del Back
 {
   "success": false,
   "error": {
-    "code": "PERIOD_CLOSED_CONFLICT",
-    "message": "Operación rechazada: El periodo académico se encuentra CERRADO según Decreto 1290",
+    "code": "RESOURCE_LOCKED_CONFLICT",
+    "message": "Operación rechazada: La entidad se encuentra en estado CERRADO e inmutable",
     "details": null
   }
 }
@@ -119,15 +119,15 @@ Para que el Frontend siempre sepa qué esperar de cualquier controlador del Back
 
 ## 4. Protocolo de "Solicitud de Extensión" (Feedback Loop Frontend ➔ Backend)
 
-Si durante la construcción de la interfaz el Frontend nota que la vista necesita un dato adicional (ejemplo: mostrar el puesto del alumno junto a la nota):
+Si durante la construcción de la interfaz el Frontend nota que la vista necesita un dato adicional (ejemplo: mostrar el estado de auditoría junto al registro):
 
 1. **El Frontend NO simula datos fijos (hardcodeados) en la UI.**
 2. Agrega una nota en su `WORKLOG.md` y en el del Backend:
    ```markdown
    > ⚠️ **SOLICITUD DE EXTENSIÓN DE ENDPOINT**
-   > **Módulo:** 11_calificaciones
-   > **Endpoint:** `GET /api/v1/calificaciones/estudiante/:id`
-   > **Campo solicitado:** `puestoEnGrupo: number`
-   > **Motivo:** Requisito de visualización en la vista de boletín del acudiente.
+   > **Módulo:** 02_operaciones
+   > **Endpoint:** `GET /api/v1/operaciones/:id`
+   > **Campo solicitado:** `auditStatus: string`
+   > **Motivo:** Requisito de visualización en la vista de detalle.
    ```
-3. El Backend Engineer actualiza la query de Kysely y el contrato Zod, y notifica al Frontend para que consuma el nuevo campo con tipado real.
+3. El Backend Engineer actualiza la persistencia y el contrato Zod, y notifica al Frontend para que consuma el nuevo campo con tipado real.

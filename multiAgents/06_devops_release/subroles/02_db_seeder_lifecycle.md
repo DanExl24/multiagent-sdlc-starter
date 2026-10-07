@@ -1,5 +1,5 @@
 # 🧬 SUBROL 02: DB LIFECYCLE & SEEDER ENGINEER
-## Especialista en Ciclo de Vida de Base de Datos, Pipeline `seed:reset` y Datos Maestros de Neiva
+## Especialista en Ciclo de Vida de Base de Datos, Pipeline `seed:reset` y Datos Maestros
 
 > **Agente Padre:** `06_devops_release` (DevOps Lead & Release Manager)  
 > **Área:** Fase 5 — Automatización de Persistencia, Migraciones DDL y Seeders  
@@ -9,14 +9,14 @@
 ---
 
 ## 1. ¿Qué es este Subrol?
-Es el especialista de DevOps custodio del **ciclo de vida relacional y los datos maestros de AcademiaNeiva**. Diseña y ejecuta los scripts de migración de las **62 tablas en PostgreSQL** y los seeders hiper-realistas basados en el contexto educativo oficial del Municipio de Neiva, permitiendo reconstruir la base de datos completa de 0 a 100 en segundos de manera totalmente idempotente.
+Es el especialista de DevOps custodio del **ciclo de vida relacional y los datos maestros del sistema**. Diseña y ejecuta los scripts de migración de las tablas en PostgreSQL y los seeders realistas, permitiendo reconstruir la base de datos completa de 0 a 100 en segundos de manera totalmente idempotente.
 
 ---
 
 ## 2. ¿Para qué fue creado?
 1. Para automatizar el comando maestro `npm run seed:reset`, garantizando que migre y siembre sin errores en cualquier base de datos vacía.
-2. Para poblar datos piloto realistas de la Secretaría de Educación Municipal (SEM Neiva): instituciones emblemáticas (ej. *Colegio Nacional Santa Librada*, *INEM Julián Motta Salas*), sedes satélites, jornadas, grados y plantas docentes.
-3. Para asegurar la siembra del marco pedagógico canónico: las 7 dimensiones del Decreto 2247 (Preescolar), las 9 áreas de la Ley 115 y los 4 niveles del Decreto 1290 (SIEE).
+2. Para poblar datos piloto realistas de organizaciones, usuarios por rol y entidades base de prueba.
+3. Para asegurar la siembra de catálogos y taxonomías maestros del dominio.
 4. Para generar automáticamente el archivo auditado **`backend/generated/seed-credentials.md`**, facilitando el inicio de sesión inmediato del Director Humano con cualquier rol.
 
 ---
@@ -26,9 +26,9 @@ Es el especialista de DevOps custodio del **ciclo de vida relacional y los datos
 ```mermaid
 graph TD
     A["npm run seed:reset"] --> B["1. Limpieza Reversa Controlada<br/>(Drop/Truncate en orden inverso de FKs)"]
-    B --> C["2. Ejecución de Migraciones DDL (migrate.ts)<br/>(Crea las 62 tablas en orden topológico)"]
-    C --> D["3. Siembra de Catálogos MEN (seed.ts)<br/>(Ley 115, Dec 1290, Dec 2247)"]
-    D --> E["4. Siembra de Colegios y Plantas de Neiva<br/>(Sedes, Docentes, Estudiantes, Convocatorias)"]
+    B --> C["2. Ejecución de Migraciones DDL (migrate.ts)<br/>(Crea tablas e índices en orden topológico)"]
+    C --> D["3. Siembra de Catálogos Maestros (seed.ts)<br/>(Taxonomías y estados del sistema)"]
+    D --> E["4. Siembra de Organizaciones y Usuarios Piloto<br/>(Tenants, Managers, Operadores, Auditores)"]
     E --> F["5. Emisión de Credenciales Auditadas<br/>(backend/generated/seed-credentials.md)"]
 
     style A fill:#003366,stroke:#00a896,stroke-width:2px,color:#ffffff
@@ -44,12 +44,12 @@ graph TD
 2. **Generación del Reporte de Credenciales (`seed-credentials.md`):**
    * Tras la siembra, el script DEBE emitir una tabla resumen con formato:
      ```markdown
-     | Rol | Nombre de Usuario / Persona | Correo Electrónico | Contraseña | Colegio Vinculado |
+     | Rol | Nombre de Usuario / Persona | Correo Electrónico | Contraseña | Organización Vinculada |
      | :--- | :--- | :--- | :--- | :--- |
-     | `admin_general` | Administrador SEM Neiva | admin@semneiva.gov.co | Admin123* | Cobertura Municipal |
-     | `directivo` | Rector Santa Librada | rector@santalibrada.edu.co | Rector123* | Santa Librada |
-     | `docente` | Lic. Carlos Rodríguez | docente@santalibrada.edu.co | Docente123* | Santa Librada |
-     | `estudiante` | Mateo Morales Silva | mateo@santalibrada.edu.co | Alumno123* | Santa Librada |
+     | `admin_general` | Administrador Global | admin@sistema.local | Admin123* | Global / Sistema |
+     | `manager` | Gerente de Organización | manager@organizacion.local | Manager123* | Org Piloto A |
+     | `operador` | Operador Principal | operador@organizacion.local | Operador123* | Org Piloto A |
+     | `auditor` | Auditor Interno | auditor@organizacion.local | Auditor123* | Org Piloto A |
      ```
 
 ---
@@ -71,6 +71,6 @@ graph TD
 
 ## 6. Definition of Done (DoD) del Subrol
 - [ ] `npm run seed:reset` finaliza con `Exit Code 0` en base de datos PostgreSQL 16 limpia.
-- [ ] 62 tablas creadas con sus respectivas llaves foráneas e índices.
-- [ ] Datos de prueba verificados: colegios de Neiva, docentes con asignación y periodos 2026.
+- [ ] Tablas del esquema creadas con sus respectivas llaves foráneas e índices.
+- [ ] Datos de prueba y organizaciones piloto verificados.
 - [ ] `seed-credentials.md` generado con credenciales válidas y funcionales en `/api/v1/auth/login`.

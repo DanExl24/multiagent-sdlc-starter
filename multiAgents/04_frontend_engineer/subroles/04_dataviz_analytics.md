@@ -8,7 +8,7 @@
 ---
 
 ## 1. ¿Qué es este Subrol?
-Es el **maestro de la visualización de datos y los tableros de control**. Es el especialista encargado de transformar millones de bytes de información relacional en gráficas interactivas, claras y elegantes que permiten a los directivos, docentes y administradores entender la realidad escolar en segundos.
+Es el **maestro de la visualización de datos y los tableros de control**. Es el especialista encargado de transformar millones de bytes de información relacional en gráficas interactivas, claras y elegantes que permiten a los directivos, operadores y administradores entender el estado del negocio en segundos.
 
 ---
 
@@ -19,7 +19,7 @@ Fue creado para elevar el nivel visual y analítico de la plataforma más allá 
 
 ## 3. ¿Cómo y Cuándo Utilizarlo? (Gatillos de Activación)
 El Frontend Lead debe activar este subrol cuando:
-* Se implementa o actualiza el dashboard interactivo de cualquiera de los 6 roles del sistema (`admin_general`, `directivo`, `docente`, `estudiante`, `padre_familia`, `secretaria`).
+* Se implementa o actualiza el dashboard interactivo de cualquiera de los roles del sistema (`admin_general`, `manager`, `operador`, `auditor`).
 * Se requiere integrar gráficos de ECharts (barras, donas, líneas, curvas de área, dispersión o semáforos evaluativos).
 * Se diseñan widgets analíticos de KPIs macro o institucionales.
 * Se requiere optimizar el rendimiento de renderizado gráfico o corregir problemas de redimensionamiento en pantallas widescreen o móviles.
@@ -43,10 +43,10 @@ graph LR
 1. **Consolas Analíticas por Rol (`frontend/src/views/dashboards/`):**
    * Paneles especializados con hero banner de gobernanza, fila de 4-5 tarjetas KPI y cuadrícula de visualizaciones.
 2. **Implementación de Apache ECharts con TypeScript:**
-   * **Barras Apiladas / Horizontales:** Aforos vs. matriculados vs. cupos disponibles por colegio.
-   * **Donas con Centro Dinámico:** Distribución del censo escolar y participación por roles.
-   * **Curvas de Área con Gradientes Suaves:** Demanda de matrículas y evolución en convocatorias.
-   * **Donuts Semáforo:** Cumplimiento de auditoría de expedientes documentales MEN y semáforos SIEE.
+   * **Barras Apiladas / Horizontales:** Comparativas de capacidad vs. operaciones activas por organización.
+   * **Donas con Centro Dinámico:** Distribución de usuarios y participación por roles.
+   * **Curvas de Área con Gradientes Suaves:** Demanda de operaciones y evolución temporal en el tiempo.
+   * **Donuts Semáforo:** Cumplimiento de auditoría y semáforos de calidad del sistema.
 3. **Gestión Rigurosa del Ciclo de Vida Gráfico:**
    * Inicialización controlada tras el renderizado del DOM (`nextTick()` y `echarts.init()`).
    * Listener global de redimensionamiento (`window.addEventListener('resize', handleResize)`).
@@ -54,7 +54,7 @@ graph LR
 4. **Tooltips Ricos y Formateadores Personalizados:**
    * Tooltips HTML elegantes con sombras suaves, bordes redondeados y texto legible.
 5. **Switchers de Vista Interactiva:**
-   * Botones integrados que permiten alternar dinámicamente entre vistas (ej. ver aspirantes *Por Grado Escolar* o ver *Evolución Temporal*).
+   * Botones integrados que permiten alternar dinámicamente entre vistas (ej. ver métricas *Por Categoría* o ver *Evolución Temporal*).
 
 ---
 

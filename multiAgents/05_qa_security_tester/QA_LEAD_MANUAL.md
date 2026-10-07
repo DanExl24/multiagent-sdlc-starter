@@ -51,7 +51,7 @@ El QA Lead busca proactivamente prácticas deficientes:
   - ¿Se usó `any` o conversiones forzadas (`as unknown as T`) para eludir el tipado estricto?
   - ¿Se dejaron consultas SQL crudas o concatenadas eludiendo Kysely?
   - ¿Falta el chequeo de periodo cerrado en escrituras?
-  - ¿Falta el filtro `colegio_id` en consultas permitiendo ataques IDOR?
+  - ¿Falta el filtro `tenant_id` en consultas permitiendo ataques IDOR?
 - **En Frontend:**
   - ¿El formulario envía peticiones con datos incompletos confiando en que el backend responderá el error?
   - ¿Se manejan adecuadamente los estados de carga (spinners), errores de red y respuestas 401/403/409?
@@ -62,7 +62,7 @@ El QA Lead busca proactivamente prácticas deficientes:
 ### Paso 4: Despliegue Crítico y Proporcional del Arsenal de Herramientas
 
 > 📖 **CONSULTA OBLIGATORIA:**  
-> El QA Lead debe consultar obligatoriamente [QA_TOOLING_GUIDE.md](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/05_qa_security_tester/QA_TOOLING_GUIDE.md) para determinar qué herramientas activar según el tamaño del cambio (**Small / Medium / Large**). **Queda prohibido disparar todo el arsenal para cambios pequeños.**
+> El QA Lead debe consultar obligatoriamente [QA_TOOLING_GUIDE.md](file:///multiAgents/05_qa_security_tester/QA_TOOLING_GUIDE.md) para determinar qué herramientas activar según el tamaño del cambio (**Small / Medium / Large**). **Queda prohibido disparar todo el arsenal para cambios pequeños.**
 
 1. **SDET ➔ Vitest (Lógica e Integración):**
    - Ejecuta: `npm run test` o `npx vitest run [ruta]` en `backend/`.
@@ -148,7 +148,7 @@ Todo reporte modular generado por el QA Lead en `docs/qa/[XX_modulo]/[vX.Y.Z]/QA
 ## 4. Evaluación de Viabilidad y Trazabilidad
 - **Completitud Funcional:** [Alta / Media / Baja]
 - **Riesgo Residual:** [Bajo / Moderado / Alto]
-- **Cumplimiento Normativo (Ley 115 / SIEE Dec 1290 / OWASP):** [100% Certificado / Observaciones]
+- **Cumplimiento Normativo (Regulatorio de Dominio / OWASP):** [100% Certificado / Observaciones]
 
 ---
 
@@ -162,7 +162,7 @@ Todo reporte modular generado por el QA Lead en `docs/qa/[XX_modulo]/[vX.Y.Z]/QA
 
 | Severidad | Definición | Impacto en el Stage-Gate |
 | :--- | :--- | :--- |
-| **S1 — Blocker** | Caída del servidor, fuga de datos entre colegios (IDOR), corrupción de base de datos, violación de periodo cerrado, o presencia del tipo `any` (`: any`, `as any`, `<any>`) detectada por el verificador AST. | 🔴 **VETO INMEDIATO:** Release bloqueado. |
-| **S2 — Critical** | Regla de negocio del PRD no implementada, validación DANE rota, bypass de roles RBAC, o distorsión severa de identidad visual multi-colegio. | 🔴 **VETO INMEDIATO:** Release bloqueado. |
+| **S1 — Blocker** | Caída del servidor, fuga de datos entre organizaciones (IDOR), corrupción de base de datos, violación de inmutabilidad, o presencia del tipo `any` (`: any`, `as any`, `<any>`) detectada por el verificador AST. | 🔴 **VETO INMEDIATO:** Release bloqueado. |
+| **S2 — Critical** | Regla de negocio del PRD no implementada, bypass de roles RBAC, o distorsión severa de identidad visual multi-tenant. | 🔴 **VETO INMEDIATO:** Release bloqueado. |
 | **S3 — Major** | Manejo de error inadecuado en UI, falta de spinner de carga, o **uso de colores hardcodeados/arbitrarios que violan `docs/04_ui_design_system.md`**. | 🔴 **VETO TEMPORAL:** Requiere subsanación inmediata del Frontend Engineer antes de firmar Gate 4. |
 | **S4 — Minor** | Discrepancia tipográfica menor, typo en etiquetas o espaciado sutil. | 🟢 Aprobado con observación técnica. |

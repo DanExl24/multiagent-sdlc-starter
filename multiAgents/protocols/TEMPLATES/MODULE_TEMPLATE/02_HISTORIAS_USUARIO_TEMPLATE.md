@@ -14,7 +14,7 @@
 
 ## 2. Requisitos No Funcionales (RNF)
 - **RNF-[MOD]-01 (Rendimiento):** El tiempo de procesamiento de la operación no debe superar los [X] ms.
-- **RNF-[MOD]-02 (Seguridad):** Se debe aplicar prevención anti-IDOR mediante validación del `colegio_id` en sesión.
+- **RNF-[MOD]-02 (Seguridad):** Se debe aplicar prevención anti-IDOR mediante validación del `tenant_id` en sesión.
 
 ---
 

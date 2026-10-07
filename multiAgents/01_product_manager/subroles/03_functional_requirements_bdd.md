@@ -5,7 +5,7 @@
 > **Área:** Fase 1 — Especificación Funcional de Requerimientos y Gobernanza del Dominio  
 > **Estándares:** Reglas de Negocio Canónicas (RN), INVEST, BDD Gherkin (`Given-When-Then`), Definition of Ready (DoR)  
 > **Artefactos Clave:**  
-> - Reglas Globales (`RNG-XX`): [`docs/01_prd.md`](file:///c:/Users/alejo/Downloads/tryIt/docs/01_prd.md)  
+> - Reglas Globales (`RNG-XX`): [`docs/01_prd.md`](file:///docs/01_prd.md)  
 > - Reglas Modulares (`RN-[MOD]-XX`): `docs/modules/[XX]/01_SPEC_FUNCIONAL.md` (Sección 4)  
 > - Catálogo de HUs: `docs/modules/[XX]/02_HISTORIAS_USUARIO.md`
 
@@ -20,7 +20,7 @@ Es el especialista del Product Manager que actúa como el **ingeniero de precisi
 ---
 
 ## 2. ¿Para qué fue creado?
-1. **Erradicar descripciones vagas y vacíos de diseño:** Evitar que los desarrolladores o la IA tengan que "adivinar" restricciones (ej. impedir que se asigne el rol estudiante manualmente).
+1. **Erradicar descripciones vagas y vacíos de diseño:** Evitar que los desarrolladores o la IA tengan que "adivinar" restricciones (ej. impedir que se asigne un rol de auditor manualmente sin doble aprobación).
 2. **Estructurar formalmente las Reglas de Negocio (RNs):** Definir invariantes atómicas de negocio antes de tocar código.
 3. **Conectar bidireccionalmente las RNs con las HUs:** Cada regla debe tener al menos un escenario BDD (*Sad Path*) que demuestre su rechazo formal y predecible.
 4. **Garantizar la Definition of Ready (DoR):** Bloquear el paso a Fase 2 (Arquitectura) si existen vacíos lógicos en las reglas del módulo.
@@ -36,11 +36,11 @@ Una **Regla de Negocio (RN)** es una **declaración atómica, no negociable e in
 
 | Criterio | Regla de Negocio General / Global (`RNG-XX`) | Regla de Negocio Específica / Modular (`RN-[MOD]-XX`) |
 | :--- | :--- | :--- |
-| **Alcance** | **Transversal a toda la plataforma:** Aplica a múltiples o a los 21 módulos por igual. | **Local y acotada:** Aplica exclusivamente a las entidades y flujos de un único módulo. |
-| **Propósito** | Gobernanza corporativa, seguridad perimetral, multi-tenancy y leyes nacionales macro (Ley 115, Habeas Data, Cifrado, SIEE). | Validaciones de formularios, cálculos internos, topes de cupos, transiciones de estado del submundo. |
-| **Nomenclatura** | `RNG-[NUMERO]` (ej. `RNG-01`, `RNG-02`). | `RN-[PREFIJO_MODULO]-[NUMERO]` (ej. `RN-USR-06`, `RN-MAT-02`, `RN-CMP-01`). |
-| **Dónde Vive** | 📍 [`docs/01_prd.md`](file:///c:/Users/alejo/Downloads/tryIt/docs/01_prd.md) (Sección 5: Reglas Globales) y citada en [`AGENTS.md`](file:///c:/Users/alejo/Downloads/tryIt/AGENTS.md). | 📍 `docs/modules/[XX]/01_SPEC_FUNCIONAL.md` (Sección 4: Reglas de Negocio Inmutables). |
-| **Ejemplo Real** | **`RNG-02` (Inmutabilidad en Periodos Cerrados):** Prohibido mutar notas, porcentajes o logros si el periodo lectivo está `CERRADO`. | **`RN-USR-06` (Exclusividad por Matrícula):** El rol `estudiante` no puede asignarse manualmente en Usuarios (M03); emana de Matrícula (M06). |
+| **Alcance** | **Transversal a toda la plataforma:** Aplica a múltiples o a todos los módulos por igual. | **Local y acotada:** Aplica exclusivamente a las entidades y flujos de un único módulo. |
+| **Propósito** | Gobernanza corporativa, seguridad perimetral, multi-tenancy y leyes del sector (Compliance, Privacidad, Cifrado, Inmutabilidad). | Validaciones de formularios, cálculos internos, topes de cupos, transiciones de estado del módulo. |
+| **Nomenclatura** | `RNG-[NUMERO]` (ej. `RNG-01`, `RNG-02`). | `RN-[PREFIJO_MODULO]-[NUMERO]` (ej. `RN-USR-01`, `RN-OP-02`, `RN-REP-01`). |
+| **Dónde Vive** | 📍 [`docs/01_prd.md`](file:///docs/01_prd.md) (Sección 5: Reglas Globales) y citada en [`AGENTS.md`](file:///AGENTS.md). | 📍 `docs/modules/[XX]/01_SPEC_FUNCIONAL.md` (Sección 4: Reglas de Negocio Inmutables). |
+| **Ejemplo Real** | **`RNG-02` (Inmutabilidad en Estados Cerrados):** Prohibido mutar registros si el estado de la entidad está `CERRADO` o bloqueado. | **`RN-USR-02` (Exclusividad por Rol):** Ciertos roles no pueden auto-asignarse; emanan de un proceso formal de aprobación. |
 
 ### 3.3. Dónde debe vivir cada archivo según su tipo
 
@@ -70,20 +70,20 @@ Toda Regla de Negocio (tanto Global como Modular) DEBE redactarse utilizando obl
 ```markdown
 - **RN-[MOD]-[NUM] ([Título Descriptivo y Autocontenido]):**
   - **1. Enunciado Invariante:** [Declaración afirmativa o restrictiva en tiempo presente. Debe ser binaria: o se cumple o se viola.]
-  - **2. Justificación de Dominio:** [Fundamento legal MEN (Ley 115, D. 1290, D. 1075) o de consistencia relacional en base de datos.]
+  - **2. Justificación de Dominio:** [Fundamento legal/regulatorio de dominio o de consistencia relacional en base de datos.]
   - **3. Capa de Control:** [Definición de dónde se custodia: Frontend (Select filtrado/disabled) | Backend (Zod & Service validation) | BD (Check Constraint / Foreign Key).]
   - **4. Manejo de Violación:** [Código de estado HTTP (400/409/422/403) + Código de error máquina legible + Mensaje pedagógico claro para el usuario final.]
 ```
 
 ### Ejemplo de Construcción Canónica:
 ```markdown
-- **RN-USR-06 (Origen Exclusivo por Matrícula del Rol Estudiante):**
-  - **1. Enunciado Invariante:** El rol `estudiante` NO puede ser asignado ni revocado manualmente a través de los formularios o endpoints de gestión de usuarios del personal (Módulo 03). El rol emana de forma estricta y automática desde el proceso formal de legalización de Matrícula (Módulo 06) y Caracterización Estudiantil (Módulo 07).
-  - **2. Justificación de Dominio:** Un estudiante no es un empleado institucional; es un sujeto pedagógico con expediente legal formal (6 documentos MEN obligatorios, folio, libro, año lectivo, grado y grupo). Asignarlo a dedo genera usuarios huérfanos sin matrícula ni currículo que colapsan las consultas académicas.
+- **RN-USR-01 (Exclusividad en Asignación de Rol Auditor):**
+  - **1. Enunciado Invariante:** El rol `auditor` NO puede ser auto-asignado ni revocado por operadores directos de la organización. Requiere aprobación explícita de un Administrador Global.
+  - **2. Justificación de Dominio:** Garantizar la segregación de funciones (SoD) y prevenir conflictos de interés en la supervisión de procesos críticos.
   - **3. Capa de Control:**
-    - *Frontend:* Excluido del catálogo seleccionable en `UsuarioModal.vue` y `AsignarRolModal.vue`.
-    - *Backend:* Rechazo preventivo en `usuarios.service.ts` antes del insert en `usuario_roles`.
-  - **4. Manejo de Violación:** HTTP 422 Unprocessable Entity con código `STUDENT_ROLE_CANNOT_BE_MANUALLY_ASSIGNED` y mensaje explicativo al operador.
+    - *Frontend:* Excluido del catálogo seleccionable en modales estándar de asignación de usuarios.
+    - *Backend:* Rechazo preventivo en servicio de identidad antes de persistir la relación de rol.
+  - **4. Manejo de Violación:** HTTP 422 Unprocessable Entity con código `AUDITOR_ROLE_CANNOT_BE_MANUALLY_ASSIGNED` y mensaje explicativo al operador.
 ```
 
 ---
@@ -128,11 +128,11 @@ La relación entre Reglas de Negocio e Historias de Usuario es **N a N (Muchos a
 
 Toda Historia de Usuario producida por este subrol DEBE cumplir las 6 propiedades de INVEST:
 
-| Letra | Principio | Validación en AcademiaNeiva |
+| Letra | Principio | Validación en el Sistema |
 | :--- | :--- | :--- |
 | **I** | **Independent** (Independiente) | La HU puede implementarse y probarse sin depender estrictamente de otra HU del mismo sprint. |
 | **N** | **Negotiable** (Negociable) | Detalla el QUÉ y el PARA QUÉ, permitiendo al Arquitecto y Desarrolladores proponer el CÓMO técnico. |
-| **V** | **Valuable** (Valiosa) | Aporta valor perceptible a un actor del sistema (Docente, Rector, Alumno, Acudiente, SEM). |
+| **V** | **Valuable** (Valiosa) | Aporta valor perceptible a un actor del sistema (Manager, Operador, Auditor, Administrador). |
 | **E** | **Estimable** (Estimable) | Su alcance está tan claro que los desarrolladores pueden dimensionar su complejidad sin incertidumbres. |
 | **S** | **Small** (Pequeña / Acotada) | Cabe holgadamente dentro de un ciclo de desarrollo sin convertirse en un "monolito funcional". |
 | **T** | **Testable** (Verificable) | Cuenta con criterios de aceptación objetivos donde un test da VERDE o ROJO sin subjetividad. |

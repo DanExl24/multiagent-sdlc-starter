@@ -9,15 +9,15 @@
 ---
 
 ## 1. ¿Qué es este Subrol?
-Es el especialista del Arquitecto de Software responsable de la **seguridad estructural, la criptografía y la soberanía de datos multi-institucional**. Diseña las defensas que impiden que un usuario de un colegio acceda a los datos de otro colegio (Anti-IDOR), define la arquitectura de autenticación con tokens JWT y revocación inmediata en base de datos (JTI Blacklist) y modela la matriz de control de acceso basada en roles (RBAC).
+Es el especialista del Arquitecto de Software responsable de la **seguridad estructural, la criptografía y la soberanía de datos multi-inquilino (Multi-Tenant)**. Diseña las defensas que impiden que un usuario de una organización acceda a los datos de otra organización (Anti-IDOR), define la arquitectura de autenticación con tokens JWT y revocación inmediata en base de datos (JTI Blacklist) y modela la matriz de control de acceso basada en roles (RBAC).
 
 ---
 
 ## 2. ¿Para qué fue creado?
-1. Para erradicar brechas de seguridad críticas (especialmente vulnerabilidades IDOR y fugas de datos entre colegios).
+1. Para erradicar brechas de seguridad críticas (especialmente vulnerabilidades IDOR y fugas de datos entre organizaciones).
 2. Para diseñar el modelo de **aislamiento multi-inquilino (Multi-Tenancy)** donde toda consulta a la base de datos esté blindada por el contexto del token.
 3. Para estructurar la autenticación segura: ciclo de vida de tokens JWT, JTI Blacklist para cierre de sesión real y códigos OTP con hashing SHA-256.
-4. Para definir la **Matriz RBAC granular** con privilegios mínimos para los 6 roles del sistema.
+4. Para definir la **Matriz RBAC granular** con privilegios mínimos para los roles del sistema.
 
 ---
 
@@ -25,8 +25,8 @@ Es el especialista del Arquitecto de Software responsable de la **seguridad estr
 
 ```mermaid
 graph TD
-    subgraph "Defensas Arquitectónicas en AcademiaNeiva"
-        S1["1. Multi-Tenant Isolation (Anti-IDOR)<br/>(Filtro inyectado colegio_id en contexto JWT)"]
+    subgraph "Defensas Arquitectónicas del Sistema"
+        S1["1. Multi-Tenant Isolation (Anti-IDOR)<br/>(Filtro inyectado tenant_id en contexto JWT)"]
         S2["2. JWT + JTI Blacklist Revocation<br/>(Invalidez inmediata de tokens al hacer logout)"]
         S3["3. Criptografía y Protección Anti-Bot<br/>(Bcrypt cost 12, SHA-256 OTP hashes)"]
         S4["4. Matriz RBAC de Privilegios Mínimos<br/>(Permisos granulares por módulo y rol)"]
@@ -36,9 +36,9 @@ graph TD
 ### Reglas Técnicas Innegociables de Seguridad:
 
 1. **Aislamiento Multi-Tenant Inviolable (Anti-IDOR):**
-   * Ningún endpoint debe confiar ciegamente en un `colegioId` enviado en el cuerpo (`body`) o parámetros de ruta (`params`).
-   * El `colegioId` SE EXTRAE EXCLUSIVAMENTE del payload del JWT verificado e inyectado por el middleware `requireAuth`.
-   * Toda consulta de lectura, actualización o borrado debe incluir obligatoriamente el predicado `.where('colegio_id', '=', user.colegioId)`.
+   * Ningún endpoint debe confiar ciegamente en un `tenantId` enviado en el cuerpo (`body`) o parámetros de ruta (`params`).
+   * El `tenantId` SE EXTRAE EXCLUSIVAMENTE del payload del JWT verificado e inyectado por el middleware `requireAuth`.
+   * Toda consulta de lectura, actualización o borrado debe incluir obligatoriamente el predicado `.where('tenant_id', '=', user.tenantId)`.
 
 2. **Arquitectura de Sesión JWT con JTI Blacklist:**
    * Cada token emitido incluye un identificador único `jti: UUID`.
@@ -51,17 +51,16 @@ graph TD
 
 ---
 
-## 4. Matriz RBAC Canónica de AcademiaNeiva
+## 4. Matriz RBAC Canónica
 
 El Subrol 04 modela los permisos por rol en la matriz de acceso:
 
 | Rol RBAC | Alcance / Permisos Arquitectónicos | Restricciones de Acceso |
 | :--- | :--- | :--- |
-| **`admin_general`** | Superadministrador SEM. Vista macro de todos los colegios y estadísticas municipales. | No digita notas ni modifica datos académicos internos de un colegio. |
-| **`directivo`** | Rector / Coordinador. Gestión total de su colegio: sedes, personal, periodos, matrícula. | Acceso restringido exclusivamente a su `colegio_id`. |
-| **`docente`** | Registro de calificaciones, logros y asistencia en sus asignaturas asignadas. | Solo puede mutar materias donde tenga asignación activa (M05). |
-| **`estudiante`** | Consulta de notas, horario, boletines y expediente personal. | Acceso de solo lectura limitado a su propio `estudiante_id`. |
-| **`acudiente`** | Consulta y seguimiento académico de sus estudiantes vinculados. | Solo lectura restringida a estudiantes donde figure como acudiente activo. |
+| **`admin_general`** | Superadministrador global. Vista macro de organizaciones, configuración global y auditoría. | No muta datos operativos directos sin orden explícita. |
+| **`manager`** | Administrador de su organización/tenant. Gestión de configuración interna, usuarios y reportes. | Acceso restringido exclusivamente a su `tenant_id`. |
+| **`operador`** | Ejecución de operaciones diarias del negocio, captura de datos y consultas de su área. | Solo puede mutar recursos asignados a su alcance operativo. |
+| **`auditor`** | Consulta y seguimiento histórico, generación de reportes y trazabilidad. | Acceso de solo lectura estricto a registros de auditoría y negocio. |
 
 ---
 

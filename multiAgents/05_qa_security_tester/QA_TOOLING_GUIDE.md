@@ -26,7 +26,7 @@ graph TD
 | :--- | :--- | :--- | :--- |
 | **Small (Pequeño / Parche)** | Corrección tipográfica, cambio de padding/color en CSS, fix de regex en validador Zod, ajuste de un helper unitario. | • **Vitest** dirigido (`vitest run ruta/al/test`).<br>• Auditoría regex (colores). | ❌ Prohibido ejecutar k6.<br>❌ Prohibido ejecutar Playwright si no se alteró flujo interactivo.<br>❌ Prohibido correr Bruno para un cambio cosmético. |
 | **Medium (Mediano / Feature)** | Nuevo endpoint en módulo existente, nuevo modal Vue en vista previa, cambio de restricción en base de datos. | • **Vitest** (suite del módulo).<br>• **Bruno CLI** (para probar nuevo endpoint).<br>• **Playwright + axe-core** (si se agregó o alteró el modal). | ❌ Omitir k6 (a menos que sea módulo crítico de notas). |
-| **Large (Grande / Módulo Nuevo / Release)** | Implementación de uno de los 21 módulos completos (ej. Módulo 05 Asignación Docente, Módulo 11 Calificaciones), o versión mayor/menor. | • **Vitest** (suite unitaria e integración DB).<br>• **Bruno CLI** (colección completa del módulo).<br>• **Playwright** (flujo E2E integral en Chromium).<br>• **@axe-core/playwright** (auditoría WCAG 2.1 AA).<br>• **k6** (obligatorio en M11 Calificaciones, M13 Asistencia, M14 Boletines). | Ninguna; se justifica el despliegue del arsenal completo para certificación de Gate 4. |
+| **Large (Grande / Módulo Nuevo / Release)** | Implementación de un módulo completo del sistema, o versión mayor/menor. | • **Vitest** (suite unitaria e integración DB).<br>• **Bruno CLI** (colección completa del módulo).<br>• **Playwright** (flujo E2E integral en Chromium).<br>• **@axe-core/playwright** (auditoría WCAG 2.1 AA).<br>• **k6** (obligatorio en módulos de alta concurrencia o mutación masiva). | Ninguna; se justifica el despliegue del arsenal completo para certificación de Gate 4. |
 
 ---
 
@@ -55,7 +55,7 @@ npx vitest run --coverage
 1. En **CADA** cambio de lógica de negocio en backend (servicios, controladores, helpers).
 2. Al modificar o crear esquemas y contratos Zod.
 3. Para validar transacciones ACID en PostgreSQL (`db.transaction()`).
-4. Para probar cálculos de promedios, desempeños SIEE y reglas de negocio del MEN.
+4. Para probar cálculos complejos, reglas de negocio e inmutabilidad.
 5. En cambios en stores de Pinia o utilitarios puros de TypeScript en frontend.
 
 #### ❌ CUÁNDO NO USARLA:
@@ -176,13 +176,13 @@ k6 run --vus 5 --duration 10s tests/load/k6_stress_auth_sedes.js
 ```
 
 #### ✅ CUÁNDO SÍ USARLA (Uso Crítico y Quirúrgico):
-1. **Módulo 11 (Calificaciones y SIEE):** Obligatorio antes del release para simular a 50+ docentes subiendo notas simultáneamente en el último día de periodo escolar.
-2. **Módulo 13 (Asistencia Escolar):** Obligatorio para probar la toma masiva de asistencia al iniciar la jornada escolar (8:00 AM).
-3. **Módulo 14 (Cierre de Periodo y Boletines):** Obligatorio para medir el impacto de la generación en lote de PDFs y boletines.
+1. **Módulos Transaccionales Masivos:** Obligatorio antes del release para simular decenas de usuarios concurrentes en operaciones de alto volumen.
+2. **Módulos de Cierre y Bloqueo:** Obligatorio para certificar la inmutabilidad de datos bajo concurrencia.
+3. **Módulos de Reportes y Procesamiento en Lote:** Obligatorio para medir el impacto de operaciones pesadas.
 4. **Hitos Mayores de Release:** Antes del paso a `v1.0.0` para certificar la estabilidad global del servidor.
 
 #### ❌ CUÁNDO NO USARLA (Estricta Prohibición de Overkill):
-1. ❌ **Módulos Administrativos de Baja Frecuencia:** Prohibido correr k6 en Módulo 02 (Colegios), Módulo 03 (Usuarios) o Módulo 04 (Estructura Escolar) durante tareas rutinarias. Un colegio no crea sedes ni instituciones 100 veces por segundo.
+1. ❌ **Módulos Administrativos de Baja Frecuencia:** Prohibido correr k6 en catálogos de baja mutación durante tareas rutinarias.
 2. ❌ **Cambios tipo Small o Medium:** No ejecutes k6 para probar un bugfix en un formulario o un cambio de texto.
 3. ❌ **En entornos de CI/CD rápidos de desarrollo:** k6 toma minutos y puede saturar innecesariamente bases de datos de desarrollo.
 

@@ -13,13 +13,13 @@ Es el **arquitecto de los datos en memoria y la comunicación con el servidor**.
 ---
 
 ## 2. ¿Para qué fue Creado?
-Fue creado para desacoplar completamente la interfaz gráfica de la infraestructura de red. Garantiza que la sesión de usuario, los roles RBAC, las selecciones de colegio y los datos cargados se mantengan sincronizados, reactivos y tipados, interceptando automáticamente tokens JWT expirados y normalizando los sobres de respuesta HTTP.
+Fue creado para desacoplar completamente la interfaz gráfica de la infraestructura de red. Garantiza que la sesión de usuario, los roles RBAC, las selecciones de organización/tenant y los datos cargados se mantengan sincronizados, reactivos y tipados, interceptando automáticamente tokens JWT expirados y normalizando los sobres de respuesta HTTP.
 
 ---
 
 ## 3. ¿Cómo y Cuándo Utilizarlo? (Gatillos de Activación)
 El Frontend Lead debe activar este subrol cuando:
-* Se crea o modifica una store global en Pinia (`authStore`, `colegiosStore`, etc.).
+* Se crea o modifica una store global en Pinia (`authStore`, `tenantsStore`, etc.).
 * Se implementa un nuevo servicio de consumo de API en `modules/[modulo]/services/`.
 * Se actualiza la lógica de autenticación JWT (login, logout, refresh tokens, blacklist).
 * Se sincronizan los tipos DTO desde los contratos Zod de `docs/contracts/`.
@@ -34,7 +34,7 @@ graph LR
     SF -->|Suministra datasets en vivo para gráficas| DV[04_DataViz & Analytics Specialist]
 ```
 * **Con el Arquitecto de Software:** Importa los tipos TypeScript inferidos de los contratos Zod (`z.infer<typeof ...>`) para tipar las peticiones y respuestas.
-* **Con Views, Forms & UX:** Le provee stores limpias con métodos asíncronos (`store.fetchEstudiantes()`), variables reactivas (`store.items`, `store.isLoading`) y control de errores.
+* **Con Views, Forms & UX:** Le provee stores limpias con métodos asíncronos (`store.fetchItems()`), variables reactivas (`store.items`, `store.isLoading`) y control de errores.
 * **Con DataViz & Analytics:** Alimenta a los dashboards con métricas estructuradas directamente desde los endpoints del Backend.
 
 ---
@@ -50,13 +50,13 @@ graph LR
 3. **Servicios de Módulo Especializados (`*.service.ts`):**
    * Encapsula los endpoints de cada módulo en funciones tipadas:
      ```typescript
-     export const matriculaService = {
-       async listar(params: ListarMatriculasQueryDTO): Promise<MatriculaDTO[]> { ... },
-       async crear(payload: CrearMatriculaDTO): Promise<MatriculaDTO> { ... }
+     export const itemService = {
+       async listar(params: ListarItemsQueryDTO): Promise<ItemDTO[]> { ... },
+       async crear(payload: CrearItemDTO): Promise<ItemDTO> { ... }
      };
      ```
-4. **Sincronización de Sesión e Identidad Escolar:**
-   * Almacena y sincroniza el perfil del usuario activo (`id`, `username`, `roles`, `colegioId`, `colegioNombre`).
+4. **Sincronización de Sesión e Identidad Multi-Tenant:**
+   * Almacena y sincroniza el perfil del usuario activo (`id`, `username`, `roles`, `tenantId`, `tenantNombre`).
 
 ---
 

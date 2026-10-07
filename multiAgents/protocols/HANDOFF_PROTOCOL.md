@@ -17,7 +17,7 @@ Cada vez que un agente completa su labor, debe anexar al final de su artefacto o
   - `docs/01_prd.md` (Versión 1.0)
 - **Checklist de Calidad:**
   - [x] Historias de Usuario en formato INVEST y BDD (Given-When-Then).
-  - [x] Reglas normativas colombianas integradas (Ley 115, Dec 1290).
+  - [x] Reglas normativas y de negocio del dominio integradas.
   - [x] Sin mención a código o librerías de implementación.
 - **Aprobación del Director Humano:** [PENDIENTE / APROBADO por Usuario el AAAA-MM-DD]
 ```
@@ -32,13 +32,13 @@ Esta tabla debe actualizar en tiempo real el estado de los 7 roles líderes, los
 
 | Rol Líder | Estado Operativo | Kit de Subroles Activado | Compromiso Técnico / Estado de Entrega |
 | :--- | :---: | :--- | :--- |
-| 🤖 **[00_orchestrator](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/00_orchestrator/)** | 🟢 **ACTIVO** | Gobernanza HITL, Máquina de Estados, Semáforo | Supervisión de compuertas y transición de estados. |
-| 📋 **[01_product_manager](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/01_product_manager/)** | 🟢 **CULMINADO** | `01_discovery`, `02_legal`, `03_bdd`, `04_uat` | PRD, HUs INVEST y reglas normativas completadas. |
-| 🏛️ **[02_software_architect](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/02_software_architect/)** | 🟢 **CULMINADO** | `system_modular`, `relational_ddl`, `api_contracts`, `security` | DDL relacional y contratos Zod API-First entregados. |
-| ⚙️ **[03_backend_engineer](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/03_backend_engineer/)** | 🟢 **CULMINADO** | `api_gateway`, `domain_siee`, `data_kysely`, `developer_tdd` | API REST Kysely, validaciones perimetrales y tests PASS. |
-| 🎨 **[04_frontend_engineer](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/04_frontend_engineer/)** | 🟡 **EN TURNO** | `design_system`, `state_flow`, `views_ux`, `dataviz` | Vistas SPA en Modo Blanco Institucional y walkthrough. |
-| 🧪 **[05_qa_security_tester](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/05_qa_security_tester/)** | ⚪ **LISTO (Espera)** | `sdet_api`, `e2e_a11y`, `perf_security` | Preparado para auditar con el Arsenal de los 4 Pilares. |
-| 🚀 **[06_devops_release](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/06_devops_release/)** | ⚪ **LISTO (Espera)** | `env_container`, `seeder_lifecycle`, `cicd`, `release_ops` | Preparado para seeders, changelog y release SemVer. |
+| 🤖 **[00_orchestrator](file:///multiAgents/00_orchestrator/)** | 🟢 **ACTIVO** | Gobernanza HITL, Máquina de Estados, Semáforo | Supervisión de compuertas y transición de estados. |
+| 📋 **[01_product_manager](file:///multiAgents/01_product_manager/)** | 🟢 **CULMINADO** | `01_discovery`, `02_legal`, `03_bdd`, `04_uat` | PRD, HUs INVEST y reglas normativas completadas. |
+| 🏛️ **[02_software_architect](file:///multiAgents/02_software_architect/)** | 🟢 **CULMINADO** | `system_modular`, `relational_ddl`, `api_contracts`, `security` | DDL relacional y contratos Zod API-First entregados. |
+| ⚙️ **[03_backend_engineer](file:///multiAgents/03_backend_engineer/)** | 🟢 **CULMINADO** | `api_gateway`, `domain_business`, `data_layer`, `developer_tdd` | API REST, validaciones perimetrales y tests PASS. |
+| 🎨 **[04_frontend_engineer](file:///multiAgents/04_frontend_engineer/)** | 🟡 **EN TURNO** | `design_system`, `state_flow`, `views_ux`, `dataviz` | Vistas SPA en Modo Blanco Institucional y walkthrough. |
+| 🧪 **[05_qa_security_tester](file:///multiAgents/05_qa_security_tester/)** | ⚪ **LISTO (Espera)** | `sdet_api`, `e2e_a11y`, `perf_security` | Preparado para auditar con el Arsenal de los 4 Pilares. |
+| 🚀 **[06_devops_release](file:///multiAgents/06_devops_release/)** | ⚪ **LISTO (Espera)** | `env_container`, `seeder_lifecycle`, `cicd`, `release_ops` | Preparado para seeders, changelog y release SemVer. |
 ```
 
 *Estados Operativos Válidos:*
@@ -58,7 +58,7 @@ Si el agente receptor encuentra inconsistencias al procesar los insumos del agen
    > ⚠️ **SOLICITUD DE CORRECCIÓN (FEEDBACK LOOP)**
    > **De:** Software Architect Agent
    > **Para:** Product Manager Agent
-   > **Motivo:** En la Historia de Usuario HU-11-04 (Cierre de Periodo) no se especifica qué ocurre con los estudiantes que tienen actividades pendientes de recuperación.
+   > **Motivo:** En la Historia de Usuario HU-02-04 (Cierre de Ciclo) no se especifica qué ocurre con los registros que tienen operaciones pendientes de liquidación.
    > **Acción requerida:** Aclarar la regla de negocio antes de definir la transacción DDL.
    ```
 3. El Orquestador reactiva temporalmente al agente emisor para resolver la aclaración.
@@ -77,5 +77,5 @@ Si el agente receptor encuentra inconsistencias al procesar los insumos del agen
 
 
 > 📌 **Implementación y Estado Operativo:**  
-> Consulta el protocolo vinculante en [`.workflow/STAGE_GATES.md`](file:///c:/Users/alejo/Downloads/tryIt/.workflow/STAGE_GATES.md) y la máquina de estados en tiempo real en [`.workflow/current_state.json`](file:///c:/Users/alejo/Downloads/tryIt/.workflow/current_state.json).
+> Consulta el protocolo vinculante en [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md) y la máquina de estados en tiempo real en [`.workflow/current_state.json`](file:///.workflow/current_state.json).
 

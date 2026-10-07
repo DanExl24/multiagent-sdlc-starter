@@ -9,13 +9,13 @@
 ---
 
 ## 1. ¿Qué es este Subrol?
-Es el especialista de DevOps responsable de la **infraestructura reproducible, el aislamiento de contenedores y la configuración segura de entornos**. Asegura que cualquier desarrollador, evaluador de QA o el Director Humano pueda levantar el ecosistema completo de AcademiaNeiva en cualquier máquina con un solo comando, con paridad absoluta entre desarrollo, pruebas y producción.
+Es el especialista de DevOps responsable de la **infraestructura reproducible, el aislamiento de contenedores y la configuración segura de entornos**. Asegura que cualquier desarrollador, evaluador de QA o el Director Humano pueda levantar el ecosistema completo en cualquier máquina con un solo comando, con paridad absoluta entre desarrollo, pruebas y producción.
 
 ---
 
 ## 2. ¿Para qué fue creado?
 1. Para erradicar el antipatrón *"en mi máquina sí funciona"*.
-2. Para orquestar los contenedores de desarrollo y pruebas (PostgreSQL 16, pgAdmin o herramientas de soporte) vía `docker-compose.yml`.
+2. Para orquestar los contenedores de desarrollo y pruebas (PostgreSQL 16, Redis o herramientas de soporte) vía `docker-compose.yml`.
 3. Para custodiar la **gobernanza de variables de entorno** (`.env.example`), impidiendo que secretos, credenciales de base de datos o claves JWT se filtren en el repositorio de Git.
 4. Para gestionar redes internas aisladas y volúmenes de datos con persistencia local.
 
@@ -26,11 +26,11 @@ Es el especialista de DevOps responsable de la **infraestructura reproducible, e
 ```mermaid
 graph TD
     subgraph "Host Machine (Desarrollador / Servidor)"
-        subgraph "Red Docker Aislada: academianeiva-net"
-            PG[("PostgreSQL 16 Alpine Container<br/>Puerto: 5432<br/>Volumen: pgdata_academianeiva")]
+        subgraph "Red Docker Aislada: app-network"
+            PG[("PostgreSQL 16 Alpine Container<br/>Puerto: 5432<br/>Volumen: pgdata_app")]
         end
-        BE["Backend Express Node.js<br/>Puerto: 3000"] -->|Conexión Kysely Pool| PG
-        FE["Frontend Vite Vue 3<br/>Puerto: 5173"] -->|Proxy /api/v1| BE
+        BE["Backend Express / Node.js<br/>Puerto: 3000"] -->|Conexión Pool| PG
+        FE["Frontend SPA Vite<br/>Puerto: 5173"] -->|Proxy /api/v1| BE
     end
 ```
 
@@ -45,7 +45,7 @@ El Subrol 01 audita que:
    # Base de Datos
    DB_HOST=localhost
    DB_PORT=5432
-   DB_NAME=academianeiva_db
+   DB_NAME=app_db
    DB_USER=postgres
    DB_PASSWORD=postgres_dev_password
    DB_POOL_MAX=20
@@ -63,7 +63,7 @@ El Subrol 01 audita que:
 
 ### ✅ Lo que SÍ HACE:
 - Diseña y mantiene los manifiestos `docker-compose.yml` y `Dockerfile`.
-- Configura los volúmenes de persistencia para PostgreSQL.
+- Configura los volúmenes de persistencia para la base de datos.
 - Mantiene sincronizado `.env.example` ante cualquier nueva variable requerida por los ingenieros.
 - Diagnostica fallas de conectividad de red, puertos en conflicto y memoria en contenedores.
 

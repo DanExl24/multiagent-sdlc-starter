@@ -15,7 +15,7 @@ El formato de versión es: `MAJOR.MINOR.PATCH` (ejemplo: `v0.1.0`, `v1.0.0`).
    - Migración de frameworks o contratos base de API.
    - **Hito:** La finalización del sistema base marca el paso a `v1.0.0`.
 2. **`MINOR` (v0.1.0 -> v0.2.0):**
-   - Incorporación de un nuevo módulo funcional de los 21 de AcademiaNeiva (ej. Módulo 01 Auth completado, Módulo 11 Calificaciones completado).
+   - Incorporación de un nuevo módulo funcional del sistema (ej. Módulo 01 Auth completado, Módulo 02 Operaciones completado).
    - Nuevos endpoints o vistas que no rompen lo existente.
 3. **`PATCH` (v0.1.0 -> v0.1.1):**
    - Corrección de bugs identificados en las suites de pruebas de QA.
@@ -66,7 +66,7 @@ Cada módulo o hito significativo debe incluir un archivo en `walkthroughs/` con
 
 ## 4. Estándar de Mensajes de Commit (Git Enriquecido con Versión y Módulo)
 
-> **Manual de Referencia Oficial:** Consulta [`multiAgents/protocols/GIT_COMMIT_CONVENTION.md`](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/protocols/GIT_COMMIT_CONVENTION.md) para el catálogo exhaustivo de scopes, reglas y checklist pre-commit.
+> **Manual de Referencia Oficial:** Consulta [`multiAgents/protocols/GIT_COMMIT_CONVENTION.md`](file:///multiAgents/protocols/GIT_COMMIT_CONVENTION.md) para el catálogo exhaustivo de scopes, reglas y checklist pre-commit.
 
 Todo commit en el repositorio debe seguir la estructura canónica obligatoria:
 ```text
@@ -83,8 +83,8 @@ Todo commit en el repositorio debe seguir la estructura canónica obligatoria:
 - **`chore`**: Configuración de dependencias, scripts o migraciones.
 
 ### Ejemplos Canónicos:
-- `[v0.2.1] fix(m01-auth): allow student code and document login without mandatory email`
-- `[v0.3.0] feat(m02-colegios): implement institutional registration and DANE validation`
-- `[v0.5.0] feat(m04-estructura): complete school structure, campuses, shifts and grade management`
-- `[v0.9.2] feat(ui): panel de usuario widescreen con sidebar por dominios y reloj en tiempo real`
+- `[v0.2.1] fix(m01-auth): allow username and document login without mandatory email`
+- `[v0.3.0] feat(m02-tenants): implement organization registration and validation`
+- `[v0.4.0] feat(m03-operations): complete core operations and workflow management`
+- `[v0.5.0] feat(ui): responsive widescreen layout with accessible navigation`
 

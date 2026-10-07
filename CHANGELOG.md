@@ -3,6 +3,16 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.0.1] - 2026-10-07
+
+### Changed
+- **Desacople y Generalización Universal de Subroles y Protocolos:**
+  - Erradicación total de remanentes del caso piloto (AcademiaNeiva, Decretos 1290/1850/2247, Ley 115, SIMAT, términos escolares).
+  - Generalización del C4 Model, DDL relacional 3FN multi-tenant, contratos Zod canónicos y RBAC corporativo en `multiAgents/02_software_architect/`.
+  - Renombramiento y generalización de subroles de Backend (`02_domain_business_rules.md` y `03_data_layer_optimizer.md`).
+  - Adaptación agnóstica de subroles de Frontend, QA, DevOps, Product Management y protocolos técnicos de sincronización.
+  - Corrección de auditorías AST y verificación de cero ocurrencias de dominio específico mediante inspección estática.
+
 ---
 
 ## [1.0.0] - 2026-10-07

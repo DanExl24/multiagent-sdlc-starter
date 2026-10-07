@@ -23,17 +23,17 @@ Mientras que QA valida que el sistema *no se rompa técnicamente* (sin errores 5
 
 ---
 
-## 3. Matriz de KPIs de Éxito por Dominio Escolar
+## 3. Matriz de KPIs de Éxito por Dominio
 
 Para cada módulo o feature, el Subrol 04 define métricas cuantitativas observables:
 
 | Dominio | Métrica / KPI de Negocio | Objetivo / Meta Esperada |
 | :--- | :--- | :--- |
-| **Admisiones (M06)** | Tiempo medio de radicación de pre-matrícula | Menos de 4 minutos por acudiente sin ayuda presencial |
-| **Admisiones (M06)** | Tasa de expedientes completos (6 requisitos) | 100% de aspirantes con documentos válidos antes del inicio de clases |
-| **Curricular (M08)** | Inmutabilidad de cierres SIEE | Cero alteraciones no autorizadas en periodos cerrados (100% integridad) |
-| **Calificaciones (M11)** | Velocidad de registro masivo de notas | Más de 40 notas por minuto digitadas fluidamente por el docente |
-| **Asignación (M05)** | Detección de sobrecarga docente (Dec. 1850) | 100% de alertas preventivas en docentes con >25h antes de publicar horario |
+| **Operaciones Core** | Tiempo medio de radicación o captura de datos | Menos de 3 minutos por operación sin asistencia técnica |
+| **Integridad Transaccional** | Tasa de registros completos y conformes | 100% de operaciones con validación de requisitos al primer intento |
+| **Inmutabilidad** | Integridad en entidades y cierres contables | Cero alteraciones no autorizadas en periodos cerrados (100% integridad) |
+| **Procesamiento Masivo** | Velocidad de registro o captura en lote | Alto rendimiento y respuesta fluida en operaciones masivas |
+| **Control de Capacidad** | Detección preventiva de sobrecupo o límites | 100% de alertas preventivas antes de superar límites operativos |
 
 ---
 
@@ -44,16 +44,16 @@ Cuando el Frontend Engineer finaliza una pantalla, el Subrol 04 ejecuta el recor
 ```mermaid
 graph LR
     FE[Entrega de UI por Frontend Lead] --> UAT[Subrol 04: Evaluación UAT]
-    UAT --> C1{¿Cumple con la experiencia del docente / rector?}
+    UAT --> C1{¿Cumple con la experiencia del usuario final?}
     C1 -->|SÍ| OK[Aprobación Funcional UAT -> Pasa a QA Lead]
     C1 -->|NO: Fricción de Usabilidad| FB[Feedback Loop al Frontend Lead]
     C1 -->|NO: Regla de Negocio Rota| CR[Reporte de Defecto Funcional]
 ```
 
 ### Lista de Chequeo UAT:
-- [ ] ¿El vocabulario en pantalla es escolar colombiano (ej. *"Periodo Académico"*, *"Asignatura"*, *"Acudiente"*, *"Boletín"*) y no técnico (*"Record"*, *"Entity"*, *"Data ID"*)?
-- [ ] ¿Las acciones críticas (ej. cerrar un periodo, anular una matrícula) tienen confirmaciones claras y alertan sus consecuencias irreversibles?
-- [ ] ¿La interfaz muestra mensajes de error pedagógicos y accionables cuando una regla del SIEE se incumple?
+- [ ] ¿El vocabulario en pantalla utiliza la terminología del negocio y no jerga técnica cruda (*"Record"*, *"Entity"*, *"Data ID"*)?
+- [ ] ¿Las acciones críticas (ej. cerrar un ciclo, anular un registro) tienen confirmaciones claras y alertan sus consecuencias irreversibles?
+- [ ] ¿La interfaz muestra mensajes de error claros y accionables cuando una regla de negocio se incumple?
 
 ---
 
@@ -62,7 +62,7 @@ graph LR
 ### ✅ Lo que SÍ HACE:
 - Define los KPIs y métricas de éxito de cada módulo en `docs/01_prd.md`.
 - Realiza revisiones de aceptación funcional (UAT) en la aplicación web.
-- Valida si una propuesta técnica (RFC) de los desarrolladores beneficia o perjudica a los usuarios escolares.
+- Valida si una propuesta técnica (RFC) de los desarrolladores beneficia o perjudica a los usuarios finales.
 - Cierra el ciclo de feedback retroalimentando al **Subrol 01 (Discovery)** con nuevas necesidades.
 
 ### ❌ Lo que NO HACE:

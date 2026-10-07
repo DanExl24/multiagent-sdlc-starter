@@ -44,7 +44,7 @@ graph LR
    * `BaseModal.vue`: Backdrop desenfocado (`backdrop-blur-xs`), bloqueo de scroll en el `body`, soporte para tecla `Escape` y cierre por clic exterior.
    * `BaseButton.vue`: Variantes visuales (`primary`, `secondary`, `outline`, `danger`, `ghost`), soporte de estado de carga con spinner y tamaños responsivos.
    * `BaseInput.vue` y `BaseSelect.vue`: Estados de foco accesible (`ring-2 ring-blue-500/20`), iconos integrados y mensajes de error reactivos.
-   * `BaseBadge.vue`: Pastillas semánticas para estados SIEE y normativos (`success`, `warning`, `danger`, `info`, `neutral`).
+   * `BaseBadge.vue`: Pastillas semánticas para estados de negocio y auditoría (`success`, `warning`, `danger`, `info`, `neutral`).
    * `BaseAlert.vue`: Banners de notificación y feedback con variantes acordes a severidad.
 2. **Cumplimiento Estricto de la Paleta Oficial:**
    * Azul Real Institucional (`#1E40AF` / `bg-blue-600`), Slate Ejecutivo (`#0F172A` a `#F8FAFC`), Esmeralda Aprobatorio (`#10B981`) y Ámbar Alerta (`#F59E0B`).
@@ -57,7 +57,7 @@ graph LR
 ---
 
 ## 6. ¿Qué Cosas NO HACE este Subrol? (Límites Estrictos)
-* ❌ **NO maqueta vistas de negocio completas:** No construye formularios de matrícula ni listados de estudiantes; solo construye los bloques de construcción atómicos.
+* ❌ **NO maqueta vistas de negocio completas:** No construye formularios específicos de módulos ni listados de entidades; solo construye los bloques de construcción atómicos.
 * ❌ **NO hace llamadas HTTP ni almacena datos de negocio en Pinia:** Los componentes base son 100% tontos (*dumb / presentational components*), recibiendo props y emitiendo eventos.
 * ❌ **PROHIBIDO inventar colores fuera de `docs/04_ui_design_system.md`:** Todo color debe estar registrado en los tokens del sistema.
 

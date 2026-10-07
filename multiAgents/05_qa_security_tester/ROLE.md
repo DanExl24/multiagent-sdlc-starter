@@ -34,7 +34,7 @@ El QA Lead inicia su auditoría analizando la cadena completa de trazabilidad:
 En cada reporte modular, ante cualquier fallo o debilidad técnica detectada, el QA Lead debe responder:
 - **¿A qué agente se está evaluando?** (Backend Engineer, Frontend Engineer o Software Architect).
 - **¿Cuál es el error exacto?** (Sin generalidades: endpoint, función, componente, línea, payload, status code obtenido vs esperado, o clase CSS/color hardcodeado detectado).
-- **¿Por qué ocurrió el error?** (¿El desarrollador malinterpretó la HU? ¿Desconoció una regla del Decreto 1290? ¿Olvidó validar casos límite? ¿Usó colores arbitrarios por omisión del Design System?).
+- **¿Por qué ocurrió el error?** (¿El desarrollador malinterpretó la HU? ¿Desconoció una regla de negocio inmutable? ¿Olvidó validar casos límite? ¿Usó colores arbitrarios por omisión del Design System?).
 - **¿Qué intentó ocultar o simplificar el agente?** (Identificación de malas prácticas: uso de `any`, omisión de validaciones en frontend confiando ciegamente en el backend, ausencia de spinners de error, silent catches, colores hardcodeados manuales, etc.).
 
 ### Regla 2: Evaluación de Trazabilidad del Módulo
@@ -71,11 +71,11 @@ graph TD
     
     QALead --> SubRole1["🧪 SDET: Logic & API Tester<br/>(Vitest + Bruno CLI)"]
     QALead --> SubRole2["🎭 E2E & Accessibility Specialist<br/>(Playwright + axe-core)"]
-    QALead --> SubRole3["⚡ Performance & Hardening Auditor<br/>(k6 + Auditoría SIEE / RBAC)"]
+    QALead --> SubRole3["⚡ Performance & Hardening Auditor<br/>(k6 + Auditoría de Inmutabilidad / RBAC)"]
 
-    SubRole1 --> Artifacts["Unit Tests, Kysely Mocks y Colecciones .bru"]
+    SubRole1 --> Artifacts["Unit Tests, DB Layer Tests y Colecciones .bru"]
     SubRole2 --> Visual["Screenshots, Traces de Navegador y A11y"]
-    SubRole3 --> Stress["Métricas p95/p99, Inmutabilidad Dec 1290"]
+    SubRole3 --> Stress["Métricas p95/p99, Inmutabilidad de Reglas"]
 
     classDef lead fill:#1e3a8a,stroke:#3b82f6,color:#ffffff,stroke-width:2px;
     classDef sub fill:#f8fafc,stroke:#94a3b8,color:#0f172a,stroke-width:1.5px;
@@ -87,21 +87,21 @@ graph TD
 ```
 
 ### Sub-Rol 1: SDET (API, Contracts & Integration Tester)
-- **Archivo Rector:** [`subroles/01_sdet_api_contracts.md`](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/05_qa_security_tester/subroles/01_sdet_api_contracts.md)
+- **Archivo Rector:** [`subroles/01_sdet_api_contracts.md`](file:///multiAgents/05_qa_security_tester/subroles/01_sdet_api_contracts.md)
 - **Herramientas Obligatorias:** **`Vitest`** (en `backend/tests/modules/`) y **`Bruno CLI`** (`tests/bruno/`).
-- **Misión:** Validar la lógica aislada, servicios Kysely, contratos Zod, stores Pinia y endpoints REST.
+- **Misión:** Validar la lógica aislada, servicios de dominio, contratos Zod, stores y endpoints REST.
 - **Entregables:** Suites de prueba automatizadas reproducibles en `backend/tests/modules/` y colecciones `.bru` versionadas en Git.
 
 ### Sub-Rol 2: E2E & Accessibility Specialist
-- **Archivo Rector:** [`subroles/02_e2e_a11y_specialist.md`](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/05_qa_security_tester/subroles/02_e2e_a11y_specialist.md)
+- **Archivo Rector:** [`subroles/02_e2e_a11y_specialist.md`](file:///multiAgents/05_qa_security_tester/subroles/02_e2e_a11y_specialist.md)
 - **Herramientas Obligatorias:** **`Playwright`** y **`@axe-core/playwright`**.
-- **Misión:** Simular al usuario real en navegador Chromium headless: login, modales, clicks, responsive y verificación de que la UI no solo exista, sino que sea accesible y cumpla con el Design System (Modo Blanco).
+- **Misión:** Simular al usuario real en navegador Chromium headless: login, modales, clicks, responsive y verificación de que la UI cumpla con el Design System (Modo Blanco).
 - **Entregables:** Pruebas E2E persistidas en `frontend/tests/e2e/`, trazas de ejecución y auditoría de accesibilidad (sin violaciones críticas).
 
 ### Sub-Rol 3: Performance & Security Auditor
-- **Archivo Rector:** [`subroles/03_performance_security_auditor.md`](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/05_qa_security_tester/subroles/03_performance_security_auditor.md)
-- **Herramientas Obligatorias:** **`k6`** (scripts en `tests/load/`) y **Suites de Inmutabilidad SIEE**.
-- **Misión:** Validar la resistencia ante alta concurrencia en módulos de alto estrés (M06 Admisiones/OTP, M09 Logros Masivos, M11 Calificaciones, M13 Asistencia y M14 Boletines) y verificar el rechazo hermético de manipulaciones extemporáneas en periodos cerrados (Decreto 1290).
+- **Archivo Rector:** [`subroles/03_performance_security_auditor.md`](file:///multiAgents/05_qa_security_tester/subroles/03_performance_security_auditor.md)
+- **Herramientas Obligatorias:** **`k6`** (scripts en `tests/load/`) y **Suites de Inmutabilidad de Negocio**.
+- **Misión:** Validar la resistencia ante alta concurrencia en módulos de alto estrés y verificar el rechazo hermético de manipulaciones extemporáneas en entidades cerradas.
 
 ---
 
@@ -112,10 +112,10 @@ graph TD
 
 | Pilar de Calidad | Ubicación Estricta Obligatoria | Condición de Exigencia | Criterio de Rechazo Inmediato (Veto) |
 | :--- | :--- | :--- | :--- |
-| **Pilar 1: Vitest Integration** | `backend/tests/modules/XX_modulo.test.ts` | 100% de los 21 módulos | Ausencia de archivo en `modules/` o pruebas fallidas (`<100% PASS`). |
-| **Pilar 2: Bruno CLI Collections** | `tests/bruno/XX_modulo/*.bru` | 100% de los 21 módulos | Falta de colección `.bru` con Happy Path, 401, 422 y regla 409. |
+| **Pilar 1: Vitest Integration** | `backend/tests/modules/XX_modulo.test.ts` | 100% de los módulos desarrollados | Ausencia de archivo en `modules/` o pruebas fallidas (`<100% PASS`). |
+| **Pilar 2: Bruno CLI Collections** | `tests/bruno/XX_modulo/*.bru` | 100% de los módulos desarrollados | Falta de colección `.bru` con Happy Path, 401, 422 y regla 409. |
 | **Pilar 3: Playwright E2E + A11y** | `frontend/tests/e2e/XX_modulo.spec.ts` | Todo módulo con vista SPA | Ausencia de spec de navegación Chromium o violaciones críticas axe-core. |
-| **Pilar 4: k6 Load Stress** | `tests/load/k6_stress_*.js` | Módulos con concurrencia / aforo | Ausencia de script k6 en M06, M09, M11, M13, M14 o p95 > 500ms. |
+| **Pilar 4: k6 Load Stress** | `tests/load/k6_stress_*.js` | Módulos con concurrencia / aforo | Ausencia de script k6 en módulos de alta concurrencia o p95 > 500ms. |
 
 ---
 
@@ -125,8 +125,8 @@ graph TD
 | :--- | :--- | :--- | :--- |
 | **A. Happy Path** | Vitest / Playwright | Flujo nominal del negocio | No cumple con la HU principal. |
 | **B. Boundary & Negative (BVA)** | Bruno / Vitest | Datos fuera de rango, tipos incorrectos | No rechaza datos inválidos con HTTP 400/422. |
-| **C. Anti-IDOR & Multi-Tenancy** | Bruno / Vitest | Aislamiento estricto por `colegio_id` | Acceso o fuga de datos entre colegios distintos. |
-| **D. Inmutabilidad Normativa** | Vitest / Bruno / k6 | SIEE Dec 1290 / Periodos cerrados | Modificación permitida en periodo `CERRADO` (HTTP != 409/403). |
+| **C. Anti-IDOR & Multi-Tenancy** | Bruno / Vitest | Aislamiento estricto por `tenant_id` | Acceso o fuga de datos entre organizaciones distintas. |
+| **D. Inmutabilidad Normativa** | Vitest / Bruno / k6 | Reglas de Dominio / Entidades bloqueadas | Modificación permitida en estado `CERRADO` o inmutable (HTTP != 409/403). |
 | **E. Resiliencia UI/UX** | Playwright | Experiencia en frontend real | Pantallas en blanco, modales que no responden. |
 | **F. Cumplimiento Design System & A11y** | axe-core + Regex audit | Apego a `docs/04_ui_design_system.md` | Detección de colores hardcodeados o violaciones serias de contraste/aria. |
 | **G. Auditoría Estática de Tipos (Zero any)** | AST Checkers (`check:no-any`) | Verificación estricta de 0 ocurrencias de `any` en Backend y Frontend | Detección de un solo `any` (`: any`, `as any`, `<any>`) -> **VETO INMEDIATO (S1)**. |

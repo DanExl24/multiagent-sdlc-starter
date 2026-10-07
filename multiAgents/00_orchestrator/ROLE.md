@@ -69,16 +69,16 @@ stateDiagram-v2
 
 ### 🛑 Gate 1: Validación de Requerimientos (PM -> Arquitecto)
 - **Checklist del Orquestador:**
-  - [ ] ¿Están cubiertos los 21 módulos o el alcance acordado?
-  - [ ] ¿Se especificaron las reglas normativas (Ley 115, Dec 1290 SIEE, Dec 1075)?
+  - [ ] ¿Está cubierto el alcance acordado con historias INVEST?
+  - [ ] ¿Se especificaron las reglas normativas y de negocio del dominio?
   - [ ] ¿Cada Historia de Usuario tiene criterios de aceptación en formato Given-When-Then?
 - **Acción:** Solicitar firma al Director Humano.
 
 ### 🛑 Gate 2: Validación de Arquitectura (Arquitecto -> Desarrolladores)
 - **Checklist del Orquestador:**
-  - [ ] ¿El modelo relacional DDL (62 tablas) está completamente tipado y normalizado?
+  - [ ] ¿El modelo relacional DDL está completamente tipado y normalizado en 3FN?
   - [ ] ¿Se definieron los contratos de endpoints con validaciones Zod?
-  - [ ] ¿Está definida la matriz de seguridad RBAC por rol?
+  - [ ] ¿Está definida la matriz de seguridad RBAC y aislamiento multi-tenant?
 - **Acción:** Solicitar firma al Director Humano.
 
 ### 🛑 Gate 3: Validación de Calidad y Seguridad (QA -> DevOps)

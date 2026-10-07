@@ -29,29 +29,35 @@ Todo contrato diseñado por este subrol debe ubicarse en `docs/contracts/` y exp
 import { z } from 'zod';
 
 // 1. Esquema de Validación Zod (Para Runtime en Backend)
-export const crearCalificacionSchema = z.object({
-  estudianteId: z.string().uuid({ message: 'El ID del estudiante debe ser un UUID válido' }),
-  asignaturaId: z.string().uuid({ message: 'El ID de la asignatura debe ser un UUID válido' }),
-  periodoId: z.string().uuid({ message: 'El ID del periodo debe ser un UUID válido' }),
-  calificacion: z.number()
-    .min(1.0, { message: 'La calificación mínima según SIEE es 1.0' })
-    .max(5.0, { message: 'La calificación máxima según SIEE es 5.0' }),
-  observaciones: z.string().max(500).optional()
+export const createItemRequestSchema = z.object({
+  code: z.string().min(3, { message: 'El código debe tener al menos 3 caracteres' }).max(50),
+  name: z.string().min(2, { message: 'El nombre es obligatorio' }).max(150),
+  amount: z.number().positive({ message: 'El monto debe ser positivo' }),
+  category: z.enum(['CORE', 'OPERATIONS', 'FINANCE', 'REPORTS']),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 // 2. Tipo TypeScript Inferido (Para Compile-Time en Frontend y Backend)
-export type CrearCalificacionDTO = z.infer<typeof crearCalificacionSchema>;
+export type CreateItemRequestDTO = z.infer<typeof createItemRequestSchema>;
 
 // 3. Esquema de Respuesta con Envelope Canónico
-export const calificacionResponseSchema = z.object({
+export const itemResponseSchema = z.object({
   id: z.string().uuid(),
-  estudianteId: z.string().uuid(),
-  calificacion: z.number(),
-  desempeno: z.enum(['SUPERIOR', 'ALTO', 'BASICO', 'BAJO']),
-  creadoEn: z.string().datetime()
+  code: z.string(),
+  name: z.string(),
+  amount: z.number(),
+  category: z.string(),
+  status: z.enum(['ACTIVE', 'INACTIVE', 'ARCHIVED']),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 
-export type CalificacionResponseDTO = z.infer<typeof calificacionResponseSchema>;
+export const apiItemResponseSchema = z.object({
+  success: z.literal(true),
+  data: itemResponseSchema,
+});
+
+export type ApiItemResponseDTO = z.infer<typeof apiItemResponseSchema>;
 ```
 
 ---
@@ -60,16 +66,16 @@ export type CalificacionResponseDTO = z.infer<typeof calificacionResponseSchema>
 
 El Subrol 03 estandariza el significado de las respuestas del servidor para que Frontend y Backend no tengan discrepancias:
 
-| Código HTTP | Significado en AcademiaNeiva | Cuándo se Utiliza |
+| Código HTTP | Significado Canónico | Cuándo se Utiliza |
 | :--- | :--- | :--- |
 | **`200 OK`** | Éxito en lectura o actualización | Retorno de consultas GET, PUT o PATCH exitosas con envelope `{ success: true, data }`. |
-| **`201 Created`** | Recurso creado exitosamente | Creación atómica de matrículas, calificaciones, usuarios o grupos vía POST. |
+| **`201 Created`** | Recurso creado exitosamente | Creación atómica de recursos nuevos vía POST. |
 | **`400 Bad Request`** | Sintaxis o cuerpo malformado | Payload JSON roto o parámetros no parseables. |
 | **`401 Unauthorized`** | Falta de autenticación | Token Bearer ausente, expirado o con firma inválida. |
-| **`403 Forbidden`** | Falta de autorización o Anti-IDOR | Usuario sin rol suficiente o intento de acceso a otro colegio/sede. |
-| **`404 Not Found`** | Recurso no encontrado | UUID inexistente dentro del colegio del usuario autenticado. |
-| **`409 Conflict`** | Colisión de Regla de Negocio SIEE | **Periodo Académico CERRADO**, aforo de cupos agotado o cruce de horario docente. |
-| **`422 Unprocessable`** | Falla de validación Zod | Datos no cumplen el contrato (ej. nota = 5.8, string en campo numérico). |
+| **`403 Forbidden`** | Falta de autorización o Anti-IDOR | Usuario sin rol suficiente o intento de acceso a datos de otra organización/tenant. |
+| **`404 Not Found`** | Recurso no encontrado | UUID inexistente dentro del tenant del usuario autenticado. |
+| **`409 Conflict`** | Colisión de Regla de Negocio | Operación sobre entidad en estado bloqueado o inmutable, cupo agotado o duplicado lógico. |
+| **`422 Unprocessable`** | Falla de validación Zod | Datos no cumplen el contrato de esquema (tipos incorrectos, límites excedidos). |
 
 ---
 
@@ -78,12 +84,12 @@ El Subrol 03 estandariza el significado de las respuestas del servidor para que 
 ### ✅ Lo que SÍ HACE:
 - Redacta todos los archivos de contrato en `docs/contracts/`.
 - Define los esquemas Zod de entrada y los DTOs de salida.
-- Mapea las rutas HTTP de los 21 módulos en `docs/02_architecture.md`.
-- Estandariza los códigos de error de negocio (`PERIOD_CLOSED_CONFLICT`, `AFORO_EXCEEDED`).
+- Mapea las rutas HTTP de los módulos en `docs/02_architecture.md`.
+- Estandariza los códigos de error de negocio (`RESOURCE_LOCKED_CONFLICT`, `LIMIT_EXCEEDED`).
 
 ### ❌ Lo que NO HACE:
 - **NO implementa los middlewares Express de validación:** Es tarea del **Backend Subrol 01 (API Gateway)**.
-- **NO implementa los clientes Axios ni los stores Pinia:** Es tarea del **Frontend Subrol 02 (State & Data Flow)**.
+- **NO implementa los clientes HTTP ni los stores reactivos:** Es tarea del **Frontend Subrol 02 (State & Data Flow)**.
 - **NO define la estructura física de tablas de base de datos:** Es tarea del **Subrol 02 (Relational Data & DDL Modeler)**.
 
 ---

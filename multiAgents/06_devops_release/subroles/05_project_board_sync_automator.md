@@ -1,8 +1,8 @@
 # 🛠️ Subrol 05: Project Board & Issue Lifecycle Automator (Agile DevOps)
 
-> **Rol Padre:** [`06_devops_release`](file:///c:/Users/alejo/Downloads/tryIt/multiAgents/06_devops_release/ROLE.md)  
+> **Rol Padre:** [`06_devops_release`](file:///multiAgents/06_devops_release/ROLE.md)  
 > **Fase SDLC:** Transversal (Gobernanza Ágil de Compuertas y Trazabilidad de Ciclo de Vida)  
-> **Artefacto Central:** Repositorio GitHub, Tablero GitHub Projects V2, GitHub Actions y [`docs/modules/`](file:///c:/Users/alejo/Downloads/tryIt/docs/modules/)  
+> **Artefacto Central:** Repositorio GitHub, Tablero GitHub Projects V2, GitHub Actions y [`docs/modules/`](file:///docs/modules/)  
 > **Herramientas de Arsenal:** GitHub CLI (`gh`), GitHub Actions GraphQL, TypeScript (`tsx`), Kysely DB, SemVer.
 
 ---
@@ -26,7 +26,7 @@ flowchart TD
     DOC -->|"Invoca extracción"| CLI["⚡ Extractor Automático<br/>npm run sync:issues [XX]"]
     CLI -->|"gh issue create (Idempotente)"| ISSUES["🐙 GitHub Issues<br/>[HU-XX-YY]"]
     ISSUES -->|"Webhook / GitHub Actions"| CI["🤖 02_project_board_sync.yml<br/>(PROJECT_PAT)"]
-    CI -->|"GraphQL Mutation"| BOARD["📊 GitHub Projects V2<br/>AcademiaNeiva Board"]
+    CI -->|"GraphQL Mutation"| BOARD["📊 GitHub Projects V2<br/>Project Board"]
     
     BOARD -.->|"Asigna columnas"| COLS["• Status: Backlog ➔ Done<br/>• Modulo: XX_nombre<br/>• Stage-Gate: Gate 1..5<br/>• SemVer: vX.Y.Z<br/>• Reglas: RN-XX-XX"]
 

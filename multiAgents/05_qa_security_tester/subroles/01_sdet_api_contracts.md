@@ -15,13 +15,13 @@ Es el ingeniero de pruebas de desarrollo (Software Development Engineer in Test 
 
 ## 2. El Mandato de Paridad de Arsenal (Regla Anti-Omisión)
 Queda terminantemente prohibido validar un módulo únicamente en Vitest y omitir la colección Bruno (o viceversa):
-1. **Vitest Integration Suite:** Se ubica obligatoriamente en `backend/tests/modules/[XX]_[modulo].test.ts`. Cubre transacciones, reglas SIEE, inmutabilidad y pruebas unitarias/integración contra la base de datos real.
+1. **Vitest Integration Suite:** Se ubica obligatoriamente en `backend/tests/modules/[XX]_[modulo].test.ts`. Cubre transacciones, reglas de negocio, inmutabilidad y pruebas unitarias/integración contra la base de datos real.
 2. **Colección Bruno Versionada:** Se ubica obligatoriamente en `tests/bruno/[XX]_[modulo]/`. Contiene archivos `.bru` reproducibles para pruebas manuales y desatendidas vía CLI:
    - Request 1: Caso nominal feliz (200 / 201).
    - Request 2: Validación Zod / BVA con campos inválidos (422).
    - Request 3: Rechazo de autenticación / token ausente o expirado (401).
    - Request 4: Rechazo de autorización / Anti-IDOR (403 / 404).
-   - Request 5: Colisión de regla escolar SIEE (ej. periodo cerrado 409).
+   - Request 5: Colisión de regla de negocio inmutable (ej. recurso bloqueado 409).
 
 ---
 

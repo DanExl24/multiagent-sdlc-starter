@@ -53,10 +53,10 @@ El Subrol 04 audita que el endpoint de salud responda con métricas del sistema:
 
 ```bash
 # 1. Copia de Seguridad Rápida (Backup Atómico en Frío)
-pg_dump -U postgres -h localhost -Fc -b -v -f "backups/academianeiva_$(date +%Y%m%d_%H%M%S).dump" academianeiva_db
+pg_dump -U postgres -h localhost -Fc -b -v -f "backups/backup_$(date +%Y%m%d_%H%M%S).dump" app_db
 
 # 2. Restauración de Emergencia (Rollback de Migración Fallida)
-pg_restore -U postgres -h localhost -d academianeiva_db --clean --if-exists -v "backups/academianeiva_archivo.dump"
+pg_restore -U postgres -h localhost -d app_db --clean --if-exists -v "backups/archivo_backup.dump"
 ```
 
 ---
@@ -68,7 +68,7 @@ El Subrol 04 mantiene actualizada la guía de arranque en el `README.md` maestro
 1. **Clonar y Configurar Variables:** `cp .env.example .env` (verificar credenciales).
 2. **Iniciar Contenedores:** `docker compose up -d` (inicia PostgreSQL 16 en puerto 5432).
 3. **Instalar Dependencias:** `npm install` en backend y frontend.
-4. **Inicializar y Sembrar BD:** `npm run seed:reset` en backend (crea 62 tablas y datos de Neiva).
+4. **Inicializar y Sembrar BD:** `npm run seed:reset` en backend (crea tablas y datos maestros).
 5. **Lanzar Sistema:** `npm run dev` en ambas carpetas (acceder a `http://localhost:5173`).
 
 ---
