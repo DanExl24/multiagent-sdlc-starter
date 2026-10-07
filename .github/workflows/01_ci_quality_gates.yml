@@ -1,0 +1,39 @@
+name: 🚦 Stage-Gate 4 — Quality & AST Security Gates
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  ast-quality-audit:
+    name: 🛡️ Audit Zero ANY & Governance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci || npm install
+
+      - name: 🔍 Run AST Zero ANY Audit (Frontend & TypeScript)
+        run: npm run check:no-any
+
+      - name: 📋 Verify Stage-Gate Machine State Integrity
+        run: |
+          node -e '
+            const state = JSON.parse(require("fs").readFileSync(".workflow/current_state.json", "utf8"));
+            if (!state.ciclo_vida || !state.ciclo_vida.fase_actual) {
+              console.error("❌ Invalid current_state.json format!");
+              process.exit(1);
+            }
+            console.log("✅ State Machine Valid. Active Phase:", state.ciclo_vida.fase_actual);
+          '

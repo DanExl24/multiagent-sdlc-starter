@@ -1,0 +1,21 @@
+{
+  "proyecto": "{{PROJECT_NAME}}",
+  "dominio": "{{PROJECT_DOMAIN}}",
+  "version_actual": "v0.1.0",
+  "fecha_actualizacion": "{{INIT_DATE}}",
+  "fase_activa": "FASE_0_GOBERNANZA",
+  "gate_activo": "GATE_0_GOBERNANZA_APPROVAL",
+  "estado": "LISTO_PARA_INICIAR",
+  "rol_en_turno": "00_orchestrator",
+  "modulo_en_curso": null,
+  "bloqueos": [],
+  "historial_transiciones": [
+    {
+      "de": "ORIGEN",
+      "a": "FASE_0_GOBERNANZA",
+      "fecha": "{{INIT_DATE}}",
+      "autor": "DanExl24",
+      "motivo": "Inicialización del repositorio bajo Starter Kit Multiagente"
+    }
+  ]
+}
