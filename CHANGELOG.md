@@ -3,6 +3,22 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.1.0] - 2026-10-19
+
+### Fixed
+- **Validación de la Máquina de Estados en CI/CD (`01_ci_quality_gates.yml`):**
+  - Corrección de la lectura del esquema en `.workflow/current_state.json` (`fase_activa` y `gate_activo`) que ocasionaba fallos prematuros en GitHub Actions.
+
+### Added
+- **Ecosistema de Calidad Integral en `multiAgents/`:**
+  - Rito de especificación previa **ATDD (Three Amigos)** en `01_product_manager` con plantilla `ATDD_SPEC_TEMPLATE.md`.
+  - Construcción bilateral con **TDD en dos capas**: subrol `05_developer_component_tdd.md` en Frontend y ciclo Red-Green-Refactor estricto en Backend.
+  - Marco de auditoría de pruebas estructurado bajo los **4 Cuadrantes de Calidad Ágil** en `05_qa_security_tester`.
+  - Ficha técnica estandarizada de defectos (`INCIDENT_DEFECT_TEMPLATE.md`) con ciclo de vida canónico de bugs.
+  - Protocolo de Mejora Continua (**Fase 6: Kaizen**) con Diagrama de Ishikawa en 5 ramas, análisis de Pareto 80/20 y plantilla `CONTINUOUS_IMPROVEMENT_TEMPLATE.md`.
+
+---
+
 ## [1.0.1] - 2026-10-07
 
 ### Changed

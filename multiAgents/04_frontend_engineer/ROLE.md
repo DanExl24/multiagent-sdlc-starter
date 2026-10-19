@@ -17,7 +17,7 @@ El **Frontend Lead Engineer** es el responsable integral de la arquitectura visu
 
 ## 2. El Kit de Subroles Especializados
 
-El Frontend Lead cuenta con 4 especialistas dedicados en el directorio `multiAgents/04_frontend_engineer/subroles/`:
+El Frontend Lead cuenta con 5 especialistas dedicados en el directorio `multiAgents/04_frontend_engineer/subroles/`:
 
 | Subrol | Archivo Rector | Especialidad Principal | Herramientas / Artefactos |
 | :--- | :--- | :--- | :--- |
@@ -25,6 +25,7 @@ El Frontend Lead cuenta con 4 especialistas dedicados en el directorio `multiAge
 | **02. State & Data Flow** | [`02_state_data_flow.md`](file:///multiAgents/04_frontend_engineer/subroles/02_state_data_flow.md) | Gestión de estado global, cliente HTTP (`apiClient.ts`), JWT Bearer y sincronización con contratos Zod. | `stores/`, `apiClient.ts`, `*.service.ts`, DTOs tipados. |
 | **03. Views, Forms & UX** | [`03_views_forms_ux.md`](file:///multiAgents/04_frontend_engineer/subroles/03_views_forms_ux.md) | Pantallas de negocio de los módulos, modales de entidad, formularios de alta densidad y enrutamiento RBAC. | `*ListView.vue`, `*Modal.vue`, `router/index.ts`. |
 | **04. DataViz & Analytics** | [`04_dataviz_analytics.md`](file:///multiAgents/04_frontend_engineer/subroles/04_dataviz_analytics.md) | Dashboards interactivos por rol, gráficas Apache ECharts, telemetría y widgets de KPIs en vivo. | `views/dashboards/`, `echarts`, adaptabilidad widescreen. |
+| **05. Developer Component TDD** | [`05_developer_component_tdd.md`](file:///multiAgents/04_frontend_engineer/subroles/05_developer_component_tdd.md) | Pruebas unitarias de componentes, reactividad de stores y validaciones perimetrales Zod (*Shift-Left*). | `Vitest`, `@testing-library`, `happy-dom`, `npm run test:unit`. |
 
 ---
 
@@ -40,6 +41,7 @@ graph TD
     C -->|Store Global, Consumo de API o Sesión JWT| S2["🗄️ Subrol 02: State & Data Flow"]
     C -->|Pantalla de Negocio, Formulario o Modal| S3["📋 Subrol 03: Views, Forms & UX"]
     C -->|Dashboard de Rol, Gráficas o Métricas KPI| S4["📊 Subrol 04: DataViz & Analytics"]
+    C -->|Validación de Vistas, Forms o Stores| S5["🧪 Subrol 05: Component TDD Tester"]
     C -->|Detección de Estilos Duplicados / Boilerplate| RFC["💡 Formular RFC según TECHNICAL_PROPOSALS_PROTOCOL"]
 ```
 
@@ -48,6 +50,7 @@ graph TD
    * *Paso 1:* Subrol 02 sincroniza tipos del contrato Zod y define el servicio de API.
    * *Paso 2:* Subrol 01 suministra los inputs y modales base necesarios.
    * *Paso 3:* Subrol 03 maqueta la vista modular, el modal de entidad y la ruta protegida.
+   * *Paso 4:* Subrol 05 escribe y ejecuta las pruebas unitarias de componentes y validaciones de formularios (`npm run test:unit`) antes de emitir el Walkthrough.
 2. **Construcción de un Dashboard de Rol:**
    * Activa directamente al **Subrol 04 (DataViz & Analytics)** para las gráficas y al **Subrol 02 (Data Flow)** para el consumo del endpoint.
 3. **Estandarización de Componentes / Refactorización Visual:**

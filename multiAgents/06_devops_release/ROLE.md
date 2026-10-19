@@ -51,8 +51,11 @@ graph TD
 2. **Preparación de una Versión de Release (Stage-Gate 5):**
    * Convoca al **Subrol 03** para correr la compilación estática (`npm run build`) en backend y frontend.
    * Convoca al **Subrol 04** para verificar el endpoint `/api/health` y actualizar el Runbook de instalación en el `README.md`.
-   * El Lead somete los artefactos al **Stage-Gate 5** para cierre de ciclo y firma humana.
-3. **Sincronización de Historias y Gobernanza de Tableros (Stage-Gate 1):**
+   * El Lead somete los artefactos al **Stage-Gate 5** para cierre de despliegue y firma humana.
+3. **Convocatoria de Retrospectiva Kaizen y Plan de Mejora (Stage-Gate 6):**
+   * Tras la firma del release, el Lead activa el protocolo [`protocols/CONTINUOUS_IMPROVEMENT_PROTOCOL.md`](file:///multiAgents/protocols/CONTINUOUS_IMPROVEMENT_PROTOCOL.md).
+   * Co-convoca con el QA Lead y el Orquestador la sesión de análisis causal (Ishikawa + Pareto 80/20) para consolidar `docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md` y transferir los compromisos al Product Manager para el Sprint N+1.
+4. **Sincronización de Historias y Gobernanza de Tableros (Stage-Gate 1):**
    * El Lead convoca al **Subrol 05** inmediatamente tras la formalización de `02_HISTORIAS_USUARIO.md` por parte del Product Manager.
    * Ejecuta la sincronización para parsear e ingerir las HUs como Issues de forma idempotente.
 
@@ -67,10 +70,11 @@ graph TD
 
 ---
 
-## 5. Criterio de Salida para Stage-Gate 5 (Definition of Done)
+## 5. Criterio de Salida para Stage-Gate 5 y Paso a Gate 6 (Definition of Done)
 - [ ] Pipeline `npm run seed:reset` ejecuta de inicio a fin con `Exit Code 0` en base de datos vacía.
 - [ ] Archivo `backend/generated/seed-credentials.md` generado con credenciales válidas para los roles.
 - [ ] Servidor backend y cliente frontend inician concurrentemente sin fallos.
 - [ ] Endpoint `/api/health` respondiendo en verde con métricas de base de datos.
 - [ ] Runbook maestro de 5 pasos verificado y funcional.
-- [ ] Presentación formal al Director Humano en Stage-Gate 5 para cierre de ciclo.
+- [ ] Presentación formal al Director Humano en Stage-Gate 5 para cierre de despliegue.
+- [ ] Convocatoria formal de la sesión Kaizen de mejora continua y emisión de `docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md` para Gate 6.

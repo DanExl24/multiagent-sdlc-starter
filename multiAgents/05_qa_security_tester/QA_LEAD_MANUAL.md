@@ -64,17 +64,18 @@ El QA Lead busca proactivamente prácticas deficientes:
 > 📖 **CONSULTA OBLIGATORIA:**  
 > El QA Lead debe consultar obligatoriamente [QA_TOOLING_GUIDE.md](file:///multiAgents/05_qa_security_tester/QA_TOOLING_GUIDE.md) para determinar qué herramientas activar según el tamaño del cambio (**Small / Medium / Large**). **Queda prohibido disparar todo el arsenal para cambios pequeños.**
 
-1. **SDET ➔ Vitest (Lógica e Integración):**
-   - Ejecuta: `npm run test` o `npx vitest run [ruta]` en `backend/`.
-   - Valida: Servicios Kysely, transacciones atómicas, hashing Bcrypt y esquemas Zod.
-2. **SDET ➔ Bruno (API Testing Versionado):**
-   - Ejecuta: `bru run tests/bruno/[modulo] --env Local`.
-   - Valida: Códigos HTTP esperados (200, 201, 400, 401, 403, 409) y respuestas DTO sin UI.
-3. **E2E Specialist ➔ Playwright + axe-core (Navegador Real & Accesibilidad):**
+1. **SDET ➔ Vitest & Bruno CLI (Q1/Q2 - Lógica e Integración):**
+   - Ejecuta: `npm run test` en `backend/` y `bru run tests/bruno/[modulo] --env Local`.
+   - Valida: Servicios Kysely, transacciones atómicas, esquemas Zod y códigos HTTP REST.
+2. **E2E Specialist ➔ Playwright + axe-core (Q2/Q3 - Navegador Real & Accesibilidad):**
    - Ejecuta: `npm run test:e2e` en `frontend/`.
    - Valida: Flujos de usuario completos, modales, responsive y auditoría WCAG 2.1 AA (cero violaciones).
-4. **Performance & Security Auditor ➔ k6 (Estrés en Módulos Críticos):**
-   - Ejecuta: `k6 run tests/load/[script].js` **únicamente** en módulos de alta carga transaccional (11 Calificaciones, 13 Asistencia, 14 Boletines) o release mayor v1.0.0.
+3. **Performance & DAST Auditor ➔ k6 + OWASP ZAP (Q4 - Resiliencia y Seguridad):**
+   - Ejecuta: `k6 run tests/load/[script].js` en módulos de concurrencia (SLA p95 < 500ms).
+   - Ejecuta: Escaneo dinámico con OWASP ZAP (CLI / Docker) contra endpoints expuestos (cero vulnerabilidades Altas/Críticas).
+4. **Exploratory & UX Specialist ➔ Test Charters (Q3 - Heurísticas y Usabilidad):**
+   - Ejecuta: Sesiones exploratorias documentadas en `tests/exploratory/CHARTER-[MODULO].md`.
+   - Valida: Dobles clics, interrupciones, estados inconsistentes y facilidad de aprendizaje UX.
 
 ---
 
@@ -108,14 +109,16 @@ Todo reporte modular generado por el QA Lead en `docs/qa/[XX_modulo]/[vX.Y.Z]/QA
 - **Herramientas Activadas:** [Detallar por qué se seleccionaron las herramientas según impacto].
 - **Herramientas Omitidas y Motivo:** [Explicar por qué se omitieron k6, Playwright o Bruno si no aplicaban, evitando sobreingeniería].
 
-### 2.2 Desglose de Pruebas Ejecutadas por Herramienta
-| Herramienta | Sub-Rol Responsable | Suites / Archivos Ejecutados | Casos Probados | Resultado |
-| :--- | :--- | :--- | :---: | :---: |
-| **Vitest** | SDET | `backend/tests/modules/XX_*.test.ts` | X tests | ✅ PASS (X ms) |
-| **Playwright** | E2E Specialist | `frontend/tests/e2e/XX_*.spec.ts` | X suites | ✅ PASS (X s) |
-| **@axe-core/playwright** | A11y Specialist | Integrado en Playwright (`wcag2aa`) | Vistas y Modales | ✅ 0 violaciones |
-| **Bruno CLI** | SDET | `tests/bruno/XX_*/` | X endpoints | ✅ PASS |
-| **k6** | Performance | `tests/load/k6_*.js` | X VUs / p95 | [✅ PASS / Omitido con justificación] |
+### 2.2 Desglose de Pruebas Ejecutadas por Cuadrante
+| Herramienta | Cuadrante Ágil | Sub-Rol Responsable | Suites / Archivos Ejecutados | Casos Probados | Resultado |
+| :--- | :---: | :--- | :--- | :---: | :---: |
+| **Vitest** | **Q1** | SDET | `backend/tests/modules/XX_*.test.ts` | X tests | ✅ PASS (X ms) |
+| **Bruno CLI** | **Q2** | SDET | `tests/bruno/XX_*/` | X endpoints | ✅ PASS |
+| **Playwright** | **Q2 / Q3** | E2E Specialist | `frontend/tests/e2e/XX_*.spec.ts` | X suites | ✅ PASS (X s) |
+| **@axe-core/playwright** | **Q3** | A11y Specialist | Integrado en Playwright (`wcag2aa`) | Vistas y Modales | ✅ 0 violaciones |
+| **Test Charters (Heurísticas)** | **Q3** | Exploratory Specialist | `tests/exploratory/CHARTER-*.md` | X charters | ✅ PASS |
+| **k6 Load Stress** | **Q4** | Performance Auditor | `tests/load/k6_*.js` | X VUs / p95 | [✅ PASS / Omitido] |
+| **OWASP ZAP DAST** | **Q4** | Security Auditor | Reporte dinámico OWASP | Endpoints API | ✅ 0 Altas/Críticas |
 
 ---
 
@@ -127,38 +130,43 @@ Todo reporte modular generado por el QA Lead en `docs/qa/[XX_modulo]/[vX.Y.Z]/QA
 | **TC-XX-03** | Bruno | Códigos HTTP y DTOs REST | Contrato | ✅ PASS / ❌ FAIL | XXms |
 | **TC-XX-04** | Playwright | Flujo interactivo en Chromium | E2E | ✅ PASS / ❌ FAIL | XXs |
 | **TC-XX-05** | axe-core | Accesibilidad WCAG 2.1 AA | A11y | ✅ PASS / ❌ FAIL | XXs |
-| **TC-XX-06** | Vitest | Inmutabilidad de Estados (Periodo Cerrado) | Negocio MEN | ✅ PASS / ❌ FAIL | XXms |
+| **TC-XX-06** | Test Charter | Heurística de doble submit y cancelaciones | UX / Exploratorio | ✅ PASS / ❌ FAIL | XX min |
+| **TC-XX-07** | OWASP ZAP | Inyección SQL, XSS y cabeceras DAST | Seguridad DAST | ✅ PASS / ❌ FAIL | XXs |
+| **TC-XX-08** | Vitest | Inmutabilidad de Estados (Periodo Cerrado) | Negocio / Invariante | ✅ PASS / ❌ FAIL | XXms |
 
 ---
 
 ## 4. Análisis Forense de Errores, Atajos y Causa Raíz (RCA)
-*(Si no hay errores, se documentan las fortalezas y las verificaciones exhaustivas superadas)*
+## 4. Registro de Defectos, Fichas de Incidencias (10 Campos) y RCA
+*(Si se identifican fallos durante la auditoría, cada uno debe contar con su archivo independiente en `docs/qa/incidents/BUG-[MOD]-[NUM].md` siguiendo la plantilla `protocols/TEMPLATES/INCIDENT_DEFECT_TEMPLATE.md`)*
 
-### Hallazgo #1: [Título Conciso del Hallazgo]
-- **Agente Responsable:** [Backend / Frontend / Arquitecto]
+### Hallazgo #1: [BUG-[MOD]-[NUM]: Título Conciso del Hallazgo]
+- **Ficha Técnica Asociada:** `docs/qa/incidents/BUG-[MOD]-[NUM].md`
+- **Agente Responsable Asignado:** [Backend Lead / Frontend Lead / Arquitecto]
 - **Descripción del Error:** [Explicación técnica detallada del fallo]
 - **¿Qué pasó por alto el Agente?:** [Regla del PRD, contrato o caso límite ignorado]
-- **Análisis de Causa Raíz (RCA):** [Por qué ocurrió el problema a nivel de diseño o implementación]
+- **Análisis Forense de Causa Raíz (RCA):** [Por qué ocurrió el problema a nivel de diseño o implementación]
 - **¿Hubo intento de simplificación o atajo oculto?:** [Análisis de prácticas de código detectadas]
 - **Severidad:** [Blocker (S1) / Critical (S2) / Major (S3) / Minor (S4)]
-- **Acción Requerida:** [Instrucción explícita para que el desarrollador subsane la causa raíz]
+- **Estado en la Máquina de Incidencias:** `[NUEVO / ABIERTO / ASIGNADO / EN_REPRUEBA / VERIFICADO / CERRADO]`
+- **Prueba en Rojo Asociada:** `[Ruta del test que reproduce el bug]`
 
 ---
 
-## 4. Evaluación de Viabilidad y Trazabilidad
+## 5. Evaluación de Viabilidad y Trazabilidad
 - **Completitud Funcional:** [Alta / Media / Baja]
 - **Riesgo Residual:** [Bajo / Moderado / Alto]
 - **Cumplimiento Normativo (Regulatorio de Dominio / OWASP):** [100% Certificado / Observaciones]
 
 ---
 
-## 5. Dictamen del QA Lead
+## 6. Dictamen del QA Lead
 [Veredicto formal con firma y sello de compuerta]
 ```
 
 ---
 
-## 4. Escala de Severidad de Defectos y Criterio de Bloqueo
+## 7. Escala de Severidad de Defectos y Criterio de Bloqueo
 
 | Severidad | Definición | Impacto en el Stage-Gate |
 | :--- | :--- | :--- |

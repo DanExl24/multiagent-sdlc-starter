@@ -61,86 +61,90 @@ El QA Lead tiene el mandato explícito e irrenunciable de ejecutar la auditoría
 
 ---
 
-## 4. Sub-Estructura Operativa del Equipo de QA
+## 4. Sub-Estructura Operativa del Equipo de QA (Los 4 Cuadrantes Ágiles)
 
-Para evitar que un solo agente asuma todo el peso operativo de la calidad, el **QA Lead** delega la ejecución en **3 Sub-Roles Especializados** con herramientas tecnológicas específicas:
+Para evitar que un solo agente asuma todo el peso operativo de la calidad, el **QA Lead** delega la ejecución en **4 Sub-Roles Especializados** organizados según los cuadrantes ágiles de testing:
 
 ```mermaid
 graph TD
     QALead["🛡️ QA Lead & Security Compliance (Director / Veto)"]
     
-    QALead --> SubRole1["🧪 SDET: Logic & API Tester<br/>(Vitest + Bruno CLI)"]
-    QALead --> SubRole2["🎭 E2E & Accessibility Specialist<br/>(Playwright + axe-core)"]
-    QALead --> SubRole3["⚡ Performance & Hardening Auditor<br/>(k6 + Auditoría de Inmutabilidad / RBAC)"]
+    QALead --> SubRole1["🧪 SDET: Logic & API Tester<br/>(Q1/Q2: Vitest + Bruno CLI)"]
+    QALead --> SubRole2["🎭 E2E & Accessibility Specialist<br/>(Q2/Q3: Playwright + axe-core)"]
+    QALead --> SubRole3["⚡ Performance & DAST Security Auditor<br/>(Q4: k6 + OWASP ZAP)"]
+    QALead --> SubRole4["🕵️ Exploratory & UX Tester<br/>(Q3: Heurísticas + Usabilidad)"]
 
-    SubRole1 --> Artifacts["Unit Tests, DB Layer Tests y Colecciones .bru"]
-    SubRole2 --> Visual["Screenshots, Traces de Navegador y A11y"]
-    SubRole3 --> Stress["Métricas p95/p99, Inmutabilidad de Reglas"]
+    SubRole1 --> Artifacts["Unit & Integration Tests, Colecciones .bru"]
+    SubRole2 --> Visual["Screenshots, Traces E2E y Reportes A11y"]
+    SubRole3 --> Security["Métricas SLA k6 y Escaneo OWASP ZAP"]
+    SubRole4 --> Charters["Test Charters y Auditoría Heurística UX"]
 
     classDef lead fill:#1e3a8a,stroke:#3b82f6,color:#ffffff,stroke-width:2px;
     classDef sub fill:#f8fafc,stroke:#94a3b8,color:#0f172a,stroke-width:1.5px;
     classDef art fill:#ecfdf5,stroke:#059669,color:#065f46,stroke-width:1px;
 
     class QALead lead;
-    class SubRole1,SubRole2,SubRole3 sub;
-    class Artifacts,Visual,Stress art;
+    class SubRole1,SubRole2,SubRole3,SubRole4 sub;
+    class Artifacts,Visual,Security,Charters art;
 ```
 
-### Sub-Rol 1: SDET (API, Contracts & Integration Tester)
+### Sub-Rol 1: SDET (API, Contracts & Integration Tester — Q1/Q2)
 - **Archivo Rector:** [`subroles/01_sdet_api_contracts.md`](file:///multiAgents/05_qa_security_tester/subroles/01_sdet_api_contracts.md)
 - **Herramientas Obligatorias:** **`Vitest`** (en `backend/tests/modules/`) y **`Bruno CLI`** (`tests/bruno/`).
-- **Misión:** Validar la lógica aislada, servicios de dominio, contratos Zod, stores y endpoints REST.
-- **Entregables:** Suites de prueba automatizadas reproducibles en `backend/tests/modules/` y colecciones `.bru` versionadas en Git.
+- **Misión:** Validar la lógica aislada, servicios de dominio, contratos Zod y endpoints REST.
 
-### Sub-Rol 2: E2E & Accessibility Specialist
+### Sub-Rol 2: E2E & Accessibility Specialist (Q2/Q3)
 - **Archivo Rector:** [`subroles/02_e2e_a11y_specialist.md`](file:///multiAgents/05_qa_security_tester/subroles/02_e2e_a11y_specialist.md)
 - **Herramientas Obligatorias:** **`Playwright`** y **`@axe-core/playwright`**.
-- **Misión:** Simular al usuario real en navegador Chromium headless: login, modales, clicks, responsive y verificación de que la UI cumpla con el Design System (Modo Blanco).
-- **Entregables:** Pruebas E2E persistidas en `frontend/tests/e2e/`, trazas de ejecución y auditoría de accesibilidad (sin violaciones críticas).
+- **Misión:** Simular al usuario real en navegador Chromium headless: navegación, modales, responsive y accesibilidad WCAG 2.1 AA.
 
-### Sub-Rol 3: Performance & Security Auditor
+### Sub-Rol 3: Performance & DAST Security Auditor (Q4)
 - **Archivo Rector:** [`subroles/03_performance_security_auditor.md`](file:///multiAgents/05_qa_security_tester/subroles/03_performance_security_auditor.md)
-- **Herramientas Obligatorias:** **`k6`** (scripts en `tests/load/`) y **Suites de Inmutabilidad de Negocio**.
-- **Misión:** Validar la resistencia ante alta concurrencia en módulos de alto estrés y verificar el rechazo hermético de manipulaciones extemporáneas en entidades cerradas.
+- **Herramientas Obligatorias:** **`k6`** (concurrencia y SLAs) y **`OWASP ZAP`** (análisis dinámico DAST contra SQLi, XSS, headers y Anti-IDOR).
+- **Misión:** Validar estabilidad bajo estrés concurrente y blindar los endpoints contra vulnerabilidades web.
+
+### Sub-Rol 4: Exploratory & Usability (UX) Tester (Q3)
+- **Archivo Rector:** [`subroles/04_exploratory_usability_tester.md`](file:///multiAgents/05_qa_security_tester/subroles/04_exploratory_usability_tester.md)
+- **Herramientas Obligatorias:** Test Charters (`tests/exploratory/`), heurísticas de interrupción y análisis de usabilidad UX.
+- **Misión:** Investigar comportamientos imprevistos, dobles submits, fallos en flujos complejos y satisfacción del usuario final.
 
 ---
 
-## 5. REGLA INVIOLABLE: MANDATO DE LOS 4 PILARES DEL ARSENAL (CERO OMISIONES)
+## 5. Gestión Rigurosa de Incidencias: Ficha de 10 Campos y Máquina de Estados
 
-> 🛑 **PROHIBIDO EL TESTEO SELECTIVO O LA OMISIÓN DE HERRAMIENTAS:**  
-> Queda terminantemente prohibido que el QA Lead apruebe un módulo en Stage-Gate 4 apoyándose únicamente en Vitest y omitiendo Bruno, Playwright o k6. Todo módulo entregado DEBE cumplir la siguiente matriz de simetría física en disco:
-
-| Pilar de Calidad | Ubicación Estricta Obligatoria | Condición de Exigencia | Criterio de Rechazo Inmediato (Veto) |
-| :--- | :--- | :--- | :--- |
-| **Pilar 1: Vitest Integration** | `backend/tests/modules/XX_modulo.test.ts` | 100% de los módulos desarrollados | Ausencia de archivo en `modules/` o pruebas fallidas (`<100% PASS`). |
-| **Pilar 2: Bruno CLI Collections** | `tests/bruno/XX_modulo/*.bru` | 100% de los módulos desarrollados | Falta de colección `.bru` con Happy Path, 401, 422 y regla 409. |
-| **Pilar 3: Playwright E2E + A11y** | `frontend/tests/e2e/XX_modulo.spec.ts` | Todo módulo con vista SPA | Ausencia de spec de navegación Chromium o violaciones críticas axe-core. |
-| **Pilar 4: k6 Load Stress** | `tests/load/k6_stress_*.js` | Módulos con concurrencia / aforo | Ausencia de script k6 en módulos de alta concurrencia o p95 > 500ms. |
+El QA Lead no reporta bugs mediante comentarios informales. Todo defecto detectado activa el protocolo formal:
+1. **Ficha Técnica de 10 Campos Innegociable:** Documentada en `docs/qa/incidents/BUG-[MOD]-[NUM].md` bajo [`protocols/TEMPLATES/INCIDENT_DEFECT_TEMPLATE.md`](file:///multiAgents/protocols/TEMPLATES/INCIDENT_DEFECT_TEMPLATE.md).
+2. **Máquina de Estados de 7 Transiciones:**
+   - `NUEVO`: Detectado y documentado con pasos de reproducción reproducibles.
+   - `ABIERTO`: Evaluado e integrado al tablero por el Orquestador.
+   - `ASIGNADO`: En manos de Backend o Frontend Lead para corrección.
+   - `DIFERIDO / RECHAZADO`: En caso de ser menor o no proceder formalmente.
+   - `EN REPRUEBA`: El desarrollador escribió el **test de reproducción en ROJO** y luego corrigió el código a **VERDE**.
+   - `VERIFICADO`: QA ejecuta la reprueba y confirma resolución.
+   - `CERRADO`: Defecto resuelto y veto Stop-the-Line levantado. (O `REABIERTO` si la reprueba falla).
 
 ---
 
-## 6. Tipos de Pruebas Obligatorias por Módulo
+## 6. REGLA INVIOLABLE: MANDATO DE LOS 4 PILARES DEL ARSENAL (CERO OMISIONES)
 
-| Categoría | Herramienta | Propósito | Criterio de Falla Inmediata (Blocker) |
-| :--- | :--- | :--- | :--- |
-| **A. Happy Path** | Vitest / Playwright | Flujo nominal del negocio | No cumple con la HU principal. |
-| **B. Boundary & Negative (BVA)** | Bruno / Vitest | Datos fuera de rango, tipos incorrectos | No rechaza datos inválidos con HTTP 400/422. |
-| **C. Anti-IDOR & Multi-Tenancy** | Bruno / Vitest | Aislamiento estricto por `tenant_id` | Acceso o fuga de datos entre organizaciones distintas. |
-| **D. Inmutabilidad Normativa** | Vitest / Bruno / k6 | Reglas de Dominio / Entidades bloqueadas | Modificación permitida en estado `CERRADO` o inmutable (HTTP != 409/403). |
-| **E. Resiliencia UI/UX** | Playwright | Experiencia en frontend real | Pantallas en blanco, modales que no responden. |
-| **F. Cumplimiento Design System & A11y** | axe-core + Regex audit | Apego a `docs/04_ui_design_system.md` | Detección de colores hardcodeados o violaciones serias de contraste/aria. |
-| **G. Auditoría Estática de Tipos (Zero any)** | AST Checkers (`check:no-any`) | Verificación estricta de 0 ocurrencias de `any` en Backend y Frontend | Detección de un solo `any` (`: any`, `as any`, `<any>`) -> **VETO INMEDIATO (S1)**. |
+| Pilar de Calidad | Cuadrante Ágil | Ubicación Estricta Obligatoria | Condición de Exigencia | Criterio de Rechazo Inmediato (Veto) |
+| :--- | :---: | :--- | :--- | :--- |
+| **Pilar 1: Vitest & Bruno** | **Q1 / Q2** | `backend/tests/modules/`, `tests/bruno/` | 100% de los módulos desarrollados | Fallo en aserciones o contratos Zod no probados. |
+| **Pilar 2: Playwright & A11y** | **Q2 / Q3** | `frontend/tests/e2e/*.spec.ts` | Todo módulo con vista SPA | Ausencia de spec E2E o violaciones críticas axe-core. |
+| **Pilar 3: k6 & OWASP ZAP** | **Q4** | `tests/load/k6_*.js`, Reporte DAST | Módulos con concurrencia / API | Incumplimiento de SLA p95 o alertas OWASP Altas/Críticas. |
+| **Pilar 4: Test Charters UX** | **Q3** | `tests/exploratory/CHARTER-*.md` | Flujos de usuario complejos | Inconsistencias graves de UX o bloqueos en navegación. |
 
 ---
 
 ## 7. Estructura de Entregables del QA Lead (Checklist de Salida Gate 4)
 
 Para que el Orquestador y el Director Humano firmen el **Stage-Gate 4**, el QA Lead debe entregar obligatoriamente:
-- [ ] 1. Suite Vitest en `backend/tests/modules/XX_modulo.test.ts` pasando al 100%.
-- [ ] 2. Colección Bruno en `tests/bruno/XX_modulo/` con al menos 4 peticiones ejecutables.
-- [ ] 3. Spec Playwright en `frontend/tests/e2e/XX_modulo.spec.ts` con escaneo axe-core limpio (si tiene UI).
-- [ ] 4. Script k6 en `tests/load/` verificado (si es módulo de concurrencia o mutación masiva).
-- [ ] 5. Reporte modular de QA en `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md` con análisis forense RCA.
-- [ ] 6. Matriz `docs/qa/QA_RTM_MATRIX.md` y `docs/VERSION_MATRIX.md` actualizadas.
-- [ ] 7. Verificación forense de Cero `any` ejecutada y certificada: `npm run check:no-any` en `backend/` y `frontend/` con 0 incidencias.
+- [ ] 1. Suite Vitest y colección Bruno en verde (`100% PASS`).
+- [ ] 2. Spec Playwright en Chromium headless ejecutado y sin violaciones de accesibilidad WCAG 2.1 AA.
+- [ ] 3. Script k6 ejecutado cumpliendo SLAs de latencia (si aplica concurrencia).
+- [ ] 4. Escaneo OWASP ZAP verificado con 0 vulnerabilidades Críticas / Altas.
+- [ ] 5. Sesión de Testing Exploratorio documentada con su respectivo Test Charter.
+- [ ] 6. 100% de los defectos S1 (Blocker) y S2 (Critical) en estado **CERRADO** (0 bugs bloqueantes abiertos).
+- [ ] 7. Auditoría AST Cero ANY certificada: `npm run check:no-any` en Backend y Frontend con 0 violaciones.
+- [ ] 8. Reporte modular de QA emitido en `docs/03_qa_report.md` con análisis forense RCA.
 

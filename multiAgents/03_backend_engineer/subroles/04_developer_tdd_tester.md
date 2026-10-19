@@ -13,20 +13,45 @@ Es el **escudo de defensa interna del Backend**. Escribe, ejecuta y mantiene las
 ---
 
 ## 2. ¿Para qué fue Creado?
-Fue creado para erradicar la mala práctica de *"tirar código y esperar a que QA o el usuario encuentren los errores"*. Su misión es asegurar que todo endpoint nuevo o refactorizado cuente con una batería de pruebas de integración que demuestre empíricamente su correcto funcionamiento (tanto en casos de éxito como en rechazos obligatorios por seguridad y reglas de negocio).
+Fue creado para erradicar la mala práctica de *"tirar código y escribir pruebas después (o no escribirlas)"*. Su misión es guiar el diseño del software mediante la técnica estricta de **Test-Driven Development (TDD)**: ningún endpoint, servicio o consulta se codifica sin antes contar con una prueba automatizada que falle demostrando la necesidad de la nueva lógica.
 
 ---
 
-## 3. ¿Cómo y Cuándo Utilizarlo? (Gatillos de Activación)
-El Backend Lead debe activar este subrol cuando:
-* Se termina de codificar un endpoint o módulo para redactar su suite de pruebas correspondiente.
-* Se corrigen errores o bugs detectados para crear pruebas de regresión (*Regression Tests*) que eviten que el fallo reaparezca.
-* Se implementa una regla de negocio crítica (como inmutabilidad de estados terminales).
-* Antes de emitir cualquier acta de entrega (Handoff) al Agente de QA.
+## 3. El Ciclo Rector Red-Green-Refactor (Metodología Innegociable)
+
+```mermaid
+flowchart LR
+    R["🔴 1. RED<br/>Escribir test que falle"] --> G["🟢 2. GREEN<br/>Código mínimo que pase"]
+    G --> REF["🟣 3. REFACTOR<br/>Limpiar y optimizar"]
+    REF --> R
+```
+
+### Paso 1: FASE ROJA (Red)
+* Antes de implementar cualquier servicio, función o controlador, redactar el test unitario o de integración en `backend/tests/modules/`.
+* Ejecutar `npx vitest run [ruta]` y **confirmar que la consola muestre letras rojas** con el fallo esperado (función no definida, aserción fallida o rechazo HTTP).
+* Si el test pasa sin escribir código, el test está mal diseñado o la funcionalidad ya existía.
+
+### Paso 2: FASE VERDE (Green)
+* Escribir la cantidad mínima de código en Kysely, Zod o TypeScript para hacer que la prueba pase.
+* No agregar optimizaciones prematuras, abstracciones complejas ni lógica no cubierta por el test.
+* Ejecutar la prueba y **confirmar letras verdes** en la consola.
+
+### Paso 3: FASE DE REFACTORIZACIÓN (Refactor)
+* Limpiar el código: eliminar duplicación, extraer constantes, verificar adherencia al tipado estricto (cero `any`).
+* Ejecutar de nuevo la suite completa de pruebas: todos los tests deben continuar en verde.
 
 ---
 
-## 4. ¿Cómo se Integra con los Demás Subroles?
+## 4. Gatillos de Activación de este Subrol
+El Backend Lead debe activar este subrol:
+* **Al iniciar una nueva HU o endpoint:** Se convoca *antes* de codificar para diseñar el test en Rojo.
+* **Al recibir un Ticket de Defecto de QA (`BUG-[MOD]-[NUM]`):** El desarrollador debe **escribir obligatoriamente el test en Rojo** que reproduzca la falla reportada antes de tocar el código de producción.
+* **Al refactorizar servicios o consultas Kysely:** Para asegurar que la refactorización preserve el comportamiento existente (red de seguridad contra regresiones).
+* **Antes de emitir el Walkthrough:** Para certificar que el 100% de la suite pase en verde sin excepciones.
+
+---
+
+## 5. ¿Cómo se Integra con los Demás Subroles?
 ```mermaid
 graph LR
     G[01_API Gateway & Security] -->|Contratos HTTP y Códigos esperados| T[04_Developer TDD Tester]

@@ -1,11 +1,12 @@
-# 📝 SUBROL 03: FUNCTIONAL REQUIREMENTS, BUSINESS RULES (RN) & BDD SPECIFICATION
-## Especialista en Reglas de Negocio (RN), Historias de Usuario INVEST, Criterios BDD Gherkin y Definition of Ready (DoR)
+# 📝 SUBROL 03: FUNCTIONAL REQUIREMENTS, ATDD & BDD SPECIFICATION
+## Especialista en Reglas de Negocio (RN), Criterios ATDD (Three Amigos), Historias INVEST, BDD Gherkin y DoR
 
 > **Agente Padre:** `01_product_manager` (Product Manager Lead)  
 > **Área:** Fase 1 — Especificación Funcional de Requerimientos y Gobernanza del Dominio  
-> **Estándares:** Reglas de Negocio Canónicas (RN), INVEST, BDD Gherkin (`Given-When-Then`), Definition of Ready (DoR)  
+> **Estándares:** Reglas de Negocio Canónicas (RN), ATDD (Three Amigos: PM + Arquitecto + QA), INVEST, BDD Gherkin (`Given-When-Then`), Definition of Ready (DoR)  
 > **Artefactos Clave:**  
 > - Reglas Globales (`RNG-XX`): [`docs/01_prd.md`](file:///docs/01_prd.md)  
+> - Especificación ATDD: `docs/modules/[XX]/01_ATDD_SPEC.md` (`protocols/TEMPLATES/ATDD_SPEC_TEMPLATE.md`)  
 > - Reglas Modulares (`RN-[MOD]-XX`): `docs/modules/[XX]/01_SPEC_FUNCIONAL.md` (Sección 4)  
 > - Catálogo de HUs: `docs/modules/[XX]/02_HISTORIAS_USUARIO.md`
 
@@ -15,15 +16,17 @@
 Es el especialista del Product Manager que actúa como el **ingeniero de precisión de los requerimientos y custodio de la lógica de dominio**. Toma los descubrimientos del Subrol 01 y el blindaje normativo del Subrol 02 y los convierte en:
 1. **Reglas de Negocio Inmutables (RN):** Las leyes matemáticas, lógicas y legales que el software nunca puede violar.
 2. **Historias de Usuario (HUs) bajo INVEST:** El detalle del qué y para qué desde la perspectiva de los actores.
-3. **Criterios BDD Gherkin ejecutables:** Escenarios objetivos que sirven de contrato formal para el Arquitecto de Software (Fase 2), los Desarrolladores (Fase 3) y el QA Lead (Fase 4).
+3. **Criterios de Aceptación ATDD (*Acceptance Test Driven Development*):** Definidos colaborativamente con Arquitectura y QA en la mesa de los *Three Amigos*.
+4. **Criterios BDD Gherkin ejecutables:** Escenarios objetivos que sirven de contrato formal para el Arquitecto de Software (Fase 2), los Desarrolladores (Fase 3) y el QA Lead (Fase 4).
 
 ---
 
 ## 2. ¿Para qué fue creado?
 1. **Erradicar descripciones vagas y vacíos de diseño:** Evitar que los desarrolladores o la IA tengan que "adivinar" restricciones (ej. impedir que se asigne un rol de auditor manualmente sin doble aprobación).
-2. **Estructurar formalmente las Reglas de Negocio (RNs):** Definir invariantes atómicas de negocio antes de tocar código.
-3. **Conectar bidireccionalmente las RNs con las HUs:** Cada regla debe tener al menos un escenario BDD (*Sad Path*) que demuestre su rechazo formal y predecible.
-4. **Garantizar la Definition of Ready (DoR):** Bloquear el paso a Fase 2 (Arquitectura) si existen vacíos lógicos en las reglas del módulo.
+2. **Garantizar la Testabilidad (*Shift-Left Testing*):** Asegurar que el QA Lead y el Arquitecto validen la viabilidad técnica y los casos frontera (BVA) antes de iniciar la construcción.
+3. **Estructurar formalmente las Reglas de Negocio (RNs):** Definir invariantes atómicas de negocio antes de tocar código.
+4. **Conectar bidireccionalmente las RNs con las HUs:** Cada regla debe tener al menos un escenario BDD (*Sad Path*) que demuestre su rechazo formal y predecible.
+5. **Garantizar la Definition of Ready (DoR):** Bloquear el paso a Fase 2 (Arquitectura) si existen vacíos lógicos o falta la firma de testabilidad ATDD.
 
 ---
 
@@ -148,7 +151,8 @@ El **Subrol 03** tiene **autoridad de veto** para impedir que un módulo o reque
 - [ ] **Reglas de Negocio Explícitas:** Todas las RNs asociadas están formalizadas con la anatomía de 5 elementos en `01_SPEC_FUNCIONAL.md`.
 - [ ] **Escenarios BDD Gherkin Completos:** Mínimo 3 escenarios (Flujo exitoso, Escenario negativo de validación de RN y Escenario de permisos/Anti-IDOR).
 - [ ] **Manejo de Errores Tipado:** Códigos HTTP esperados y códigos de error máquina documentados.
-- [ ] **Validación de Cumplimiento Legal:** Certificación de blindaje normativo MEN emitida por el Subrol 02.
+- [ ] **Validación de Cumplimiento Legal:** Certificación de blindaje normativo emitida por el Subrol 02.
+- [ ] **Ficha ATDD de Three Amigos Firmada:** Criterios de aceptación objetivos y casos límite (BVA) formalizados en `docs/modules/[XX]/01_ATDD_SPEC.md` con firmas de aprobación del Product Manager, Software Architect y QA Lead.
 
 ---
 

@@ -17,8 +17,9 @@
 | **Arquitectura M01** | Software Architect | DDL de tablas + Contratos Zod API-First | ⚪ SIGUIENTE | Gate 2 | Pendiente Gate 1 |
 | **Backend M01** | Backend Engineer | API REST tipada + Lógica + Tests Vitest | ⚪ EN ESPERA | Gate 3A | Pendiente Gate 2 |
 | **Frontend M01** | Frontend Engineer | SPA reactiva + Design System + Walkthrough | ⚪ EN ESPERA | Gate 3B | Pendiente Gate 3A |
-| **QA Forense M01** | QA Lead & Security | Arsenal 4 Pilares + Zero ANY + Reporte RCA | ⚪ EN ESPERA | Gate 4 | Pendiente Gate 3B |
+| **QA Forense M01** | QA Lead & Security | Cuadrantes Q1-Q4 + Zero ANY + Fichas Bugs | ⚪ EN ESPERA | Gate 4 | Pendiente Gate 3B |
 | **Release M01** | DevOps Engineer | Seeders + Docker + Release SemVer `v0.2.0` | ⚪ EN ESPERA | Gate 5 | Pendiente Gate 4 |
+| **Kaizen M01** | Comité de Calidad | Ishikawa + Pareto 80/20 + Matriz Priorización | ⚪ EN ESPERA | Gate 6 | Pendiente Gate 5 |
 
 *Leyenda:* 🟢 Completado | 🟡 En Proceso / En Cola | 🔴 Bloqueado (Veto) | ⚪ No Iniciado
 
