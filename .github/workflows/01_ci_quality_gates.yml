@@ -27,6 +27,12 @@ jobs:
       - name: 🔍 Run AST Zero ANY Audit (Frontend & TypeScript)
         run: npm run check:no-any
 
+      - name: 📋 Validate Zod API & DTO Contracts
+        run: npm run test:contracts
+
+      - name: ♿ Run Automated A11y Static Audit (WCAG 2.1 AA)
+        run: npm run audit:a11y
+
       - name: 📋 Verify Stage-Gate Machine State Integrity
         run: |
           node -e '

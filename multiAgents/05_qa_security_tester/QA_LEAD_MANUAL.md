@@ -64,15 +64,15 @@ El QA Lead busca proactivamente prácticas deficientes:
 > 📖 **CONSULTA OBLIGATORIA:**  
 > El QA Lead debe consultar obligatoriamente [QA_TOOLING_GUIDE.md](file:///multiAgents/05_qa_security_tester/QA_TOOLING_GUIDE.md) para determinar qué herramientas activar según el tamaño del cambio (**Small / Medium / Large**). **Queda prohibido disparar todo el arsenal para cambios pequeños.**
 
-1. **SDET ➔ Vitest & Bruno CLI (Q1/Q2 - Lógica e Integración):**
-   - Ejecuta: `npm run test` en `backend/` y `bru run tests/bruno/[modulo] --env Local`.
-   - Valida: Servicios Kysely, transacciones atómicas, esquemas Zod y códigos HTTP REST.
-2. **E2E Specialist ➔ Playwright + axe-core (Q2/Q3 - Navegador Real & Accesibilidad):**
-   - Ejecuta: `npm run test:e2e` en `frontend/`.
-   - Valida: Flujos de usuario completos, modales, responsive y auditoría WCAG 2.1 AA (cero violaciones).
-3. **Performance & DAST Auditor ➔ k6 + OWASP ZAP (Q4 - Resiliencia y Seguridad):**
-   - Ejecuta: `k6 run tests/load/[script].js` en módulos de concurrencia (SLA p95 < 500ms).
-   - Ejecuta: Escaneo dinámico con OWASP ZAP (CLI / Docker) contra endpoints expuestos (cero vulnerabilidades Altas/Críticas).
+1. **SDET ➔ Contratos Zod & Vitest (Q1/Q2 - Lógica e Integración):**
+   - Ejecuta: `npm run test:contracts` (validación de esquemas y envelopes DTO) y `npm run test` (pruebas unitarias).
+   - Valida: Servicios, transacciones atómicas, esquemas Zod y códigos HTTP REST.
+2. **E2E & A11y Specialist ➔ Playwright + Auditor A11y (Q2/Q3 - Navegador Real & Accesibilidad):**
+   - Ejecuta: `npm run audit:a11y` (escáner automatizado WCAG 2.1 AA) y `npx playwright test`.
+   - Valida: Flujos de usuario completos, modales, responsive y accesibilidad (cero violaciones).
+3. **Performance & DAST Auditor ➔ k6 + DAST Runner (Q4 - Resiliencia y Seguridad):**
+   - Ejecuta: `npm run test:load -- [URL]` en módulos de concurrencia (SLA p95 < 500ms, genera `docs/qa/load-report.html` y `load-summary.json`).
+   - Ejecuta: `npm run audit:dast -- [URL]` contra endpoints expuestos (headers, cookies, errores 500, genera `docs/qa/dast-audit-summary.json`).
 4. **Exploratory & UX Specialist ➔ Test Charters (Q3 - Heurísticas y Usabilidad):**
    - Ejecuta: Sesiones exploratorias documentadas en `tests/exploratory/CHARTER-[MODULO].md`.
    - Valida: Dobles clics, interrupciones, estados inconsistentes y facilidad de aprendizaje UX.

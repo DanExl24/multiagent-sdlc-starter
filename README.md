@@ -147,7 +147,11 @@ graph TD
 ├── tooling/                             # 🛠️ Herramientas de Auditoría y Automatización
 │   ├── init-project.mjs                 # Asistente interactivo de personalización
 │   ├── check-no-any-backend.ts          # Comprobador AST para Backend TypeScript
-│   └── check-no-any-frontend.mjs        # Comprobador AST para Frontend TypeScript & Vue
+│   ├── check-no-any-frontend.mjs        # Comprobador AST para Frontend TypeScript & Vue
+│   ├── audit-security-runtime.mjs       # Escáner DAST en runtime (Headers, Cookies, CORS, 500s)
+│   ├── run-load-test.mjs                # Orquestador k6 con reportes HTML visuales y JSON
+│   ├── audit-a11y.mjs                   # Auditor automatizado de accesibilidad WCAG 2.1 AA
+│   └── validate-contracts.mjs           # Validador canónico de contratos DTO Zod
 │
 ├── multiAgents/                         # 🧠 Roles Líderes y Protocolos de Trabajo
 │   ├── 00_orchestrator/                 # PROJECT_STATUS.md y semáforo global
@@ -168,7 +172,7 @@ graph TD
 │   ├── contracts/                       # Contratos API-First Zod (.contract.ts)
 │   ├── adrs/                            # Architectural Decision Records
 │   ├── modules/                         # Especificaciones por módulo (01_ a XX_)
-│   └── qa/                              # Reportes forenses modulares
+│   └── qa/                              # Reportes forenses, DAST, k6 HTML/JSON y A11y
 │
 └── walkthroughs/                        # 🚶 Guías de Verificación Reproducibles
     └── 00_starter/v1.0.0/               # WALKTHROUGH.md inicial
@@ -176,18 +180,32 @@ graph TD
 
 ---
 
-## 🛠️ Comprobadores AST (Zero ANY)
+## 🛠️ Suite Automatizada de Calidad y Testing (Comandos npm)
 
-Para auditar el repositorio y garantizar que ningún desarrollador o agente introduzca tipos `any`:
+El starter incluye herramientas ejecutables de calidad que tanto los agentes de IA como los ingenieros humanos deben disparar para certificar entregables:
 
 ```bash
-# Auditar código frontend y backend:
+# 1. Auditoría AST de Tipos (Zero ANY):
 npm run check:no-any
-```
 
-Si el comprobador encuentra algún `any`:
-- Muestra la ruta exacta, el número de línea y la columna.
-- Detiene el proceso con código de salida `1` (bloqueando el pipeline de CI/CD).
+# 2. Validación de Contratos DTO Zod (Request, Response Envelopes):
+npm run test:contracts
+
+# 3. Auditoría de Seguridad Dinámica (DAST en Runtime):
+npm run audit:dast -- http://localhost:3000
+# Genera: docs/qa/dast-audit-summary.json
+
+# 4. Pruebas de Carga y Concurrencia (k6 con Reporte Visual y JSON):
+npm run test:load -- http://localhost:3000
+# Genera: docs/qa/load-report.html y docs/qa/load-summary.json
+
+# 5. Escáner Automatizado de Accesibilidad (WCAG 2.1 AA):
+npm run audit:a11y
+# Genera: docs/qa/a11y-audit-summary.json
+
+# 6. Compuerta Rápida Combinada (Pre-Commit / CI Gate):
+npm test
+```
 
 ---
 

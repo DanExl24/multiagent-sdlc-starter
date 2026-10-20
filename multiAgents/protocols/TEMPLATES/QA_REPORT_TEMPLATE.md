@@ -29,16 +29,17 @@
 - **Herramientas Omitidas y Justificación de Eficiencia:** [Detallar herramientas no requeridas para optimizar ciclos].
 
 ### 2.2 Desglose de Pruebas Ejecutadas por Cuadrante
-| Cuadrante | Herramienta | Sub-Rol Responsable | Suites / Archivos Ejecutados | Casos Probados | Resultado |
+| Cuadrante | Herramienta / Comando | Sub-Rol Responsable | Suites / Archivos Ejecutados | Casos Probados | Artefacto Generado / Resultado |
 | :---: | :--- | :--- | :--- | :---: | :---: |
-| **Q1** | **AST Parser (`check:no-any`)** | SDET / Architecture Guard | `tooling/check-no-any-*.{ts,mjs}` | Backend + Frontend | ✅ 0 ANY detectados |
-| **Q1** | **Vitest** | SDET | `backend/tests/modules/XX_*.test.ts` | X tests | ✅ PASS (X ms) |
-| **Q2** | **Bruno CLI** | SDET | `tests/bruno/XX_*/` | X endpoints | ✅ PASS |
-| **Q2/Q3** | **Playwright** | E2E Specialist | `frontend/tests/e2e/XX_*.spec.ts` | X suites | ✅ PASS (X s) |
-| **Q3** | **axe-core** | A11y Specialist | Integrado en Playwright (`wcag2aa`) | Vistas y Modales | ✅ 0 violaciones |
+| **Q1** | **AST Parser (`npm run check:no-any`)** | SDET / Architecture Guard | `tooling/check-no-any-*.{ts,mjs}` | Backend + Frontend | ✅ 0 ANY detectados |
+| **Q1** | **Validador Contratos (`npm run test:contracts`)** | SDET | `docs/contracts/*.contract.ts` | Contratos DTO Zod | `docs/qa/contracts-audit-summary.json` |
+| **Q1** | **Vitest / TDD Unitario** | SDET | `backend/tests/modules/XX_*.test.ts` | X tests | ✅ PASS (X ms) |
+| **Q2** | **Bruno CLI / API Integration** | SDET | `tests/bruno/XX_*/` | X endpoints | ✅ PASS |
+| **Q2/Q3** | **Playwright E2E** | E2E Specialist | `frontend/tests/e2e/XX_*.spec.ts` | X suites | ✅ PASS (X s) |
+| **Q3** | **Auditor A11y (`npm run audit:a11y`)** | A11y Specialist | `tooling/audit-a11y.mjs` | Vistas y Modales | `docs/qa/a11y-audit-summary.json` |
 | **Q3** | **Test Charters (Heurísticas)** | Exploratory Specialist | `tests/exploratory/CHARTER-*.md` | X charters | ✅ PASS |
-| **Q4** | **k6 Load Stress** | Performance Auditor | `tests/load/k6_*.js` | X VUs / p95 | [✅ PASS / Omitido] |
-| **Q4** | **OWASP ZAP DAST** | Security Auditor | Reporte dinámico OWASP | Endpoints API | ✅ 0 Altas/Críticas |
+| **Q4** | **k6 Load Stress (`npm run test:load`)** | Performance Auditor | `tests/load/scenarios.template.js` | X VUs / p95 | `docs/qa/load-summary.json` + HTML |
+| **Q4** | **DAST Scanner (`npm run audit:dast`)** | Security Auditor | `tooling/audit-security-runtime.mjs` | Endpoints API | `docs/qa/dast-audit-summary.json` |
 
 ---
 
@@ -48,12 +49,13 @@
 | :--- | :---: | :--- | :--- | :--- | :---: | :--- |
 | **TC-XX-01** | Q1 | Vitest | Happy Path nominal según contrato Zod | Funcional | ✅ PASS | XXms |
 | **TC-XX-02** | Q1 | Vitest | Boundary Value Analysis (BVA) & Payload inválido | Límite / Zod | ✅ PASS | XXms |
-| **TC-XX-03** | Q2 | Bruno | Códigos HTTP semánticos y Envelope `{ success, data }` | Contrato | ✅ PASS | XXms |
-| **TC-XX-04** | Q2/Q3 | Playwright | Flujo interactivo de usuario en navegador real | E2E | ✅ PASS | XXs |
-| **TC-XX-05** | Q3 | axe-core | Accesibilidad WCAG 2.1 AA en interfaz de usuario | A11y | ✅ PASS | XXs |
-| **TC-XX-06** | Q3 | Test Charter | Resistencia a cancelaciones y dobles clics | Heurístico UX | ✅ PASS | XX min |
-| **TC-XX-07** | Q4 | OWASP ZAP | Inyección SQL, XSS, headers HSTS y CSP | Seguridad DAST | ✅ PASS | XXs |
-| **TC-XX-08** | Q4 | k6 | Carga concurrente y latencia p95 < 500ms | SLA Performance| ✅ PASS | XXs |
+| **TC-XX-03** | Q1 | npm run test:contracts | Validación canónica de contratos DTO Zod y Envelopes | Contrato | ✅ PASS | XXms |
+| **TC-XX-04** | Q2 | Bruno | Códigos HTTP semánticos y Envelope `{ success, data }` | Contrato | ✅ PASS | XXms |
+| **TC-XX-05** | Q2/Q3 | Playwright | Flujo interactivo de usuario en navegador real | E2E | ✅ PASS | XXs |
+| **TC-XX-06** | Q3 | npm run audit:a11y | Accesibilidad WCAG 2.1 AA en interfaz de usuario | A11y | ✅ PASS | XXs |
+| **TC-XX-07** | Q3 | Test Charter | Resistencia a cancelaciones y dobles clics | Heurístico UX | ✅ PASS | XX min |
+| **TC-XX-08** | Q4 | npm run audit:dast | Inyección SQL, XSS, headers HSTS/CSP, cookies seguras | Seguridad DAST | ✅ PASS | XXs |
+| **TC-XX-09** | Q4 | npm run test:load | Carga concurrente y latencia p95 < 500ms | SLA Performance| ✅ PASS | XXs |
 
 ---
 
@@ -62,7 +64,8 @@
 - [ ] Validación perimetral Zod en 100% de los endpoints (Rechazo 400 ante campos extra o tipos incorrectos): **[CONFORME]**
 - [ ] Sanitización contra inyección SQL / XSS: **[CONFORME]**
 - [ ] Gestión segura de credenciales y expiración de sesión: **[CONFORME]**
-- [ ] Escaneo dinámico OWASP ZAP sin alertas de nivel Alto o Crítico: **[CONFORME]**
+- [ ] Escaneo dinámico DAST (`npm run audit:dast`) limpio: **[CONFORME (`docs/qa/dast-audit-summary.json`)]**
+- [ ] Pruebas de estrés k6 (`npm run test:load`) dentro de SLA: **[CONFORME (`docs/qa/load-summary.json`)]**
 
 ---
 

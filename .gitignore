@@ -40,6 +40,8 @@ test-results/
 playwright-report/
 blob-report/
 .nyc_output/
+docs/qa/*.html
+docs/qa/*-summary.json
 
 # Temp & Cache
 tmp/

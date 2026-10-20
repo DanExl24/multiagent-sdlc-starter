@@ -3,6 +3,21 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.2.0] - 2026-10-20
+
+### Added
+- **Suite Automatizada de Herramientas y Runners de Testing en `tooling/`:**
+  - `audit-security-runtime.mjs` (`npm run audit:dast`): Escáner DAST en runtime de cabeceras de protección HTTP (CSP, HSTS, X-Content-Type, X-Frame), cookies de sesión (`HttpOnly`, `SameSite`), verificación CORS y enmascaramiento de errores 500, con reporte `docs/qa/dast-audit-summary.json`.
+  - `run-load-test.mjs` (`npm run test:load`) + `tests/load/scenarios.template.js`: Orquestador de pruebas de carga k6 / benchmark concurrente con reporte visual interactivo `docs/qa/load-report.html` y resumen JSON `docs/qa/load-summary.json`.
+  - `audit-a11y.mjs` (`npm run audit:a11y`): Auditor automatizado de conformidad WCAG 2.1/2.2 AA (elementos sin nombre accesible, inputs huérfanos, tabindex > 0), con reporte `docs/qa/a11y-audit-summary.json`.
+  - `validate-contracts.mjs` (`npm run test:contracts`): Validador canónico de contratos DTO Zod en `docs/contracts/` con verificación de Envelopes y cero tolerancia a `any`.
+- **Integración con Subroles de QA Lead y CI/CD:**
+  - Actualización de `03_performance_security_auditor.md` y `02_e2e_a11y_specialist.md` con mandatos CLI explícitos.
+  - Integración en `01_ci_quality_gates.yml` de validación de contratos y accesibilidad estática.
+  - Actualización de `QA_REPORT_TEMPLATE.md` para adjuntar reportes JSON y HTML automatizados.
+
+---
+
 ## [1.1.0] - 2026-10-19
 
 ### Fixed
