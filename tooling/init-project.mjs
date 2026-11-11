@@ -92,6 +92,7 @@ async function main() {
     path.join(rootDir, 'docs', 'modules'),
     path.join(rootDir, 'docs', 'qa'),
     path.join(rootDir, 'docs', 'walkthroughs'),
+    path.join(rootDir, '.workflow', 'modules'),
     path.join(rootDir, 'backend'),
     path.join(rootDir, 'frontend'),
   ];
@@ -112,10 +113,11 @@ async function main() {
   console.log('Este repositorio se rige bajo la metodología estricta de:');
   console.log('"SDLC Multiagente Guiado por Artefactos y Compuertas de Calidad (Stage-Gates)".');
   console.log('Tu lectura obligatoria e inmutable de aterrizaje es AGENTS.md.');
-  console.log('Por favor consulta .workflow/current_state.json para conocer la fase activa,');
+  console.log('Ejecuta npm run status y consulta .workflow/current_state.json para conocer la fase activa,');
   console.log('asume el rol correspondiente y preséntate como el Agente en turno.');
   console.log('----------------------------------------------------------------\n');
-  console.log('💡  Próximo paso: Inicia tu primer chat con tu IA favorita pegando el prompt anterior.\n');
+  console.log('💡  Próximo paso: Inicia tu primer chat con tu IA favorita pegando el prompt anterior.');
+  console.log('📦  Cuando la línea base esté aprobada, crea cada módulo con: npm run new:module -- 01_nombre\n');
 
   rl.close();
 }

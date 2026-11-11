@@ -12,7 +12,8 @@ los contratos Zod y las pruebas automatizadas son la única fuente de la verdad.
 
 INSTRUCCIONES DE ATERRIZAJE OBLIGATORIAS:
 1. Lee y asimila de inmediato el manual rector: AGENTS.md.
-2. Consulta el estado actual del proyecto en: .workflow/current_state.json.
+2. Ejecuta `npm run status` para ver el estado consolidado. Si trabajas en un módulo,
+   tu estado está en .workflow/modules/[XX_nombre].json; si no, en .workflow/current_state.json.
 3. Consulta el tablero maestro en: multiAgents/00_orchestrator/PROJECT_STATUS.md.
 4. Identifica qué Agente Líder tiene el turno activo, lee su archivo ROLE.md en
    multiAgents/[agente]/ y asume exclusivamente ese rol.

@@ -1,0 +1,1 @@
+# Un archivo de estado por modulo (XX_nombre.json). Crealos con: npm run new:module -- XX_nombre

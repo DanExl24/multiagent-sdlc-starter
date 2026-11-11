@@ -5,7 +5,7 @@
 ## Cómo navegar (divulgación progresiva)
 
 1. Empieza aquí y elige el área que necesitas.
-2. Si trabajas en un módulo, abre el `README.md` de su carpeta en `modules/` y carga solo los archivos que tu rol necesita.
+2. Si trabajas en un módulo, abre el `README.md` de su carpeta en `modules/` y carga solo los archivos que tu rol necesita. Los módulos se crean con `npm run new:module`.
 3. No cargues toda la documentación a la vez: cada archivo cubre una sola responsabilidad.
 4. Ante un término de negocio dudoso, consulta [`project/glossary.md`](project/glossary.md) antes de nombrar entidades, campos o estados.
 

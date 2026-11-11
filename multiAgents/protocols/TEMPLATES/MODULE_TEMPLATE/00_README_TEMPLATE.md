@@ -29,12 +29,14 @@ Punto de entrada del módulo para personas y agentes. **Este archivo enlaza; no 
 
 ## 3. Artefactos externos (enlazados, no copiados)
 
+`<modulo>` es el ID de este módulo (el mismo nombre que su carpeta y que `.workflow/modules/<modulo>.json`). Estos artefactos se crean en su compuerta: el contrato en G2, los reportes de QA en G4.
+
 | Artefacto | Ruta |
 | :--- | :--- |
-| Contrato Zod | `docs/contracts/[XX_nombre_modulo].contract.ts` |
+| Contrato Zod | `docs/contracts/<modulo>.contract.ts` |
 | ADRs que afectan al módulo | `docs/adrs/[NNN-titulo].md` (los que declaren este módulo en su `alcance`) |
-| Reportes de QA | `docs/qa/[XX_nombre_modulo]/[vX.Y.Z]/` |
-| Walkthroughs | `docs/walkthroughs/[XX_nombre_modulo]/[vX.Y.Z]/WALKTHROUGH.md` |
+| Reportes de QA | `docs/qa/<modulo>/[vX.Y.Z]/` |
+| Walkthroughs | `docs/walkthroughs/<modulo>/[vX.Y.Z]/WALKTHROUGH.md` |
 | Términos del dominio | [`docs/project/glossary.md`](../../project/glossary.md) |
 
 ---

@@ -15,7 +15,7 @@
 | :--- | :--- |
 | Reglas de Oro (texto y numeración), catálogo de roles, protocolo de aterrizaje y precedencia entre documentos | **`AGENTS.md`** (este archivo) |
 | Compuertas: IDs, tipo (Halt / Checkpoint / Bootstrap), entregables, aprobador y valores permitidos de `current_state.json` | [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md), por delegación explícita de este manual |
-| Estado vivo del ciclo de vida | `.workflow/current_state.json` (validado contra `STAGE_GATES.md` con `npm run validate:state`) |
+| Estado vivo del ciclo de vida | `.workflow/current_state.json` (pista de proyecto y release) y `.workflow/modules/*.json` (una pista por módulo), validados contra `STAGE_GATES.md` con `npm run validate:state`. Vista consolidada: `npm run status` |
 | Detalle operativo de cada rol y subrol | `multiAgents/[rol]/ROLE.md` y `multiAgents/[rol]/subroles/` |
 | Protocolos de traspaso, commits, SemVer y RFC | `multiAgents/protocols/` |
 | Accesos de entrada (`README.md`, `LANDING_PROMPT.md` y archivos puente para otras herramientas) | Solo **puentes**: describen y enlazan; **nunca** numeran reglas ni compuertas |
@@ -59,7 +59,7 @@ flowchart LR
 2. **Erradica los desacoples (API-First Zod):** Frontend y Backend **NUNCA suponen tipos de datos**. El Software Architect define contratos Zod en TypeScript; el Backend los usa para validar en runtime y el Frontend para tipar en compile-time. Si algo cambia, el compilador avisa antes de que el código toque producción.
 3. **Inmutabilidad y Blindaje de Reglas de Dominio:** Toda regla crítica de negocio se blinda a nivel de servicio y persistencia.
 4. **Tolerancia Cero al Tipo ANY:** Tanto Backend como Frontend implementan verificadores de Sintaxis Abstracta (AST) integrados en `npm run build` que bloquean la compilación si detectan el tipo `any`.
-5. **Tolerancia a Resets de Contexto:** Cualquier agente puede detenerse, reiniciarse o ser sustituido por otro modelo de IA. La nueva IA solo debe leer este archivo, verificar el estado activo en [`.workflow/current_state.json`](.workflow/current_state.json) y continuar exactamente donde quedó el artefacto anterior.
+5. **Tolerancia a Resets de Contexto:** Cualquier agente puede detenerse, reiniciarse o ser sustituido por otro modelo de IA. La nueva IA solo debe leer este archivo, verificar el estado activo en [`.workflow/current_state.json`](.workflow/current_state.json) (o en el archivo de su módulo dentro de `.workflow/modules/`) y continuar exactamente donde quedó el artefacto anterior.
 
 ---
 
@@ -75,7 +75,8 @@ flowchart LR
 │
 ├── .workflow/                           # 🚦 Máquina de Estados y Gobernanza HITL
 │   ├── STAGE_GATES.md                   # Protocolo canónico de compuertas y altos obligatorios
-│   └── current_state.json               # Estado en tiempo real del ciclo de vida activo
+│   ├── current_state.json               # Estado de la pista de proyecto (línea base) y de release
+│   └── modules/                         # Un archivo de estado por módulo (XX_nombre.json): pistas paralelas
 │
 ├── multiAgents/                         # 🧠 Núcleo de Roles Líderes y Gobernanza Multiagente
 │   ├── 00_orchestrator/                 # Coordinación central, máquina de estados y semáforo global
@@ -196,8 +197,9 @@ Si eres un agente nuevo ingresando al repositorio:
 ```text
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │ PASO 1: LECTURA DE CONTEXTO VIVO                                                       │
-│ 1. Consulta .workflow/current_state.json para conocer la fase activa y el rol en turno.│
-│ 2. Consulta multiAgents/00_orchestrator/PROJECT_STATUS.md para el estado de los módulos│
+│ 1. Ejecuta `npm run status` y abre tu pista: .workflow/current_state.json (proyecto)   │
+│    o .workflow/modules/[XX_nombre].json (módulo): fase activa y rol en turno.          │
+│ 2. Consulta multiAgents/00_orchestrator/PROJECT_STATUS.md (decisiones del proyecto).   │
 │ 3. Lee el ROLE.md de tu agente y el último commit en CHANGELOG.md.                     │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ PASO 2: VERIFICACIÓN DE INSUMOS (DOR / PRECONDICIONES)                                 │

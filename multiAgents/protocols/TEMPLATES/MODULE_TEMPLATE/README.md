@@ -16,6 +16,14 @@ docs/modules/[XX_nombre_modulo]/
 
 ---
 
+## Cómo crear un módulo
+
+```bash
+npm run new:module -- 04_pagos --responsable "Ana" --depende-de 01_auth
+```
+
+Copia estas plantillas a `docs/modules/<modulo>/` (aquí, `04_pagos`) y crea su archivo de estado `.workflow/modules/<modulo>.json`, con el módulo en G1. No crees los archivos a mano: el validador exige que el ID coincida en ambos sitios.
+
 ## Archivos de Plantilla:
 - [`00_README_TEMPLATE.md`](00_README_TEMPLATE.md) → se copia como `README.md`
 - [`01_SPEC_FUNCIONAL_TEMPLATE.md`](01_SPEC_FUNCIONAL_TEMPLATE.md)

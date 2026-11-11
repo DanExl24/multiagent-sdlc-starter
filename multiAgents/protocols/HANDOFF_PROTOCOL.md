@@ -105,9 +105,9 @@ stateDiagram-v2
 | **Gate 6** | Retrospectiva -> Próximo Sprint | **Director Humano** | Plan Kaizen aprobado (`docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md`) con análisis Ishikawa, Pareto 80/20 y matriz priorizada para el siguiente ciclo. |
 
 > 📌 **Implementación y Estado Operativo:**  
-> Consulta el protocolo vinculante en [`.workflow/STAGE_GATES.md`](../../.workflow/STAGE_GATES.md) y la máquina de estados en tiempo real en [`.workflow/current_state.json`](../../.workflow/current_state.json).
+> Consulta el protocolo vinculante en [`.workflow/STAGE_GATES.md`](../../.workflow/STAGE_GATES.md) y la máquina de estados en tiempo real en [`.workflow/current_state.json`](../../.workflow/current_state.json) (proyecto y release) y en `.workflow/modules/` (un archivo por módulo). Cada traspaso de un módulo se registra en el archivo de ese módulo.
 
 
 > 📌 **Implementación y Estado Operativo:**  
-> Consulta el protocolo vinculante en [`.workflow/STAGE_GATES.md`](../../.workflow/STAGE_GATES.md) y la máquina de estados en tiempo real en [`.workflow/current_state.json`](../../.workflow/current_state.json).
+> Consulta el protocolo vinculante en [`.workflow/STAGE_GATES.md`](../../.workflow/STAGE_GATES.md) y la máquina de estados en tiempo real en [`.workflow/current_state.json`](../../.workflow/current_state.json) (proyecto y release) y en `.workflow/modules/` (un archivo por módulo). Cada traspaso de un módulo se registra en el archivo de ese módulo.
 

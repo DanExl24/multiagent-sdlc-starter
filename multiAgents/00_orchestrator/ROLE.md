@@ -118,6 +118,8 @@ stateDiagram-v2
 
 > 📌 La definición canónica de cada compuerta (tipo, entregables, aprobador y valores de `current_state.json`) vive **únicamente** en [`.workflow/STAGE_GATES.md`](../../.workflow/STAGE_GATES.md). Esta sección contiene solo el **checklist que el Orquestador verifica** por ID de compuerta. G0 (Bootstrap) es automático y no requiere checklist.
 
+> 🔀 **Pistas paralelas.** El Orquestador es dueño de `.workflow/current_state.json` (línea base del proyecto y releases) y supervisa los archivos de `.workflow/modules/`, uno por módulo, cada uno con su responsable y su rama. Antes de cada release ejecuta `npm run status` para ver qué módulos superaron G4, y `npm run validate:state` para confirmar que ningún módulo se adelantó a la línea base ni a sus dependencias. Los checklists de G1 y G2 se aplican tanto a la línea base como a cada módulo.
+
 ### 🛑 Gate 1: Validación de Requerimientos y Rito ATDD (PM -> Arquitecto)
 - **Checklist del Orquestador:**
   - [ ] ¿Está cubierto el alcance acordado con historias bajo estándar INVEST?

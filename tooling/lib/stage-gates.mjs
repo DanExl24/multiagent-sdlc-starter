@@ -43,10 +43,22 @@ const backticked = (cell) => {
   return match ? match[1] : null;
 };
 
+/** Convierte la celda "Nivel" en el conjunto de pistas: proyecto, modulo y/o release. */
+function parseNiveles(cell, id) {
+  const text = cell.toLowerCase();
+  const niveles = [];
+  if (text.includes('proyecto')) niveles.push('proyecto');
+  if (/m[oó]dulo/.test(text)) niveles.push('modulo');
+  if (text.includes('release')) niveles.push('release');
+  if (niveles.length === 0) throw new Error(`gates: la compuerta ${id} tiene un Nivel desconocido: "${cell}".`);
+  return niveles;
+}
+
 /**
+ * @typedef {'proyecto'|'modulo'|'release'} Nivel
  * @returns {{
- *   gates: Array<{id: string, tipo: 'halt'|'checkpoint'|'bootstrap', fase: string|null, gate: string|null}>,
- *   stateful: Array<{id: string, tipo: 'halt'|'checkpoint', fase: string, gate: string}>,
+ *   gates: Array<{id: string, tipo: 'halt'|'checkpoint'|'bootstrap', niveles: Nivel[], fase: string|null, gate: string|null}>,
+ *   stateful: Array<{id: string, tipo: 'halt'|'checkpoint', niveles: Nivel[], fase: string, gate: string}>,
  *   estados: string[]
  * }}
  */
@@ -54,7 +66,7 @@ export function loadStageGates(file = STAGE_GATES_PATH) {
   const markdown = fs.readFileSync(file, 'utf-8');
 
   const gates = tableRows(extractBlock(markdown, 'gates'), 'gates').map((cells, i) => {
-    if (cells.length < 6) throw new Error(`gates: la fila ${i + 1} tiene ${cells.length} columnas (se esperaban 6).`);
+    if (cells.length < 7) throw new Error(`gates: la fila ${i + 1} tiene ${cells.length} columnas (se esperaban 7).`);
     const id = cells[0].replace(/\*/g, '').trim();
     const tipoCell = cells[2].toLowerCase();
     const tipo = tipoCell.includes('halt') ? 'halt'
@@ -63,12 +75,13 @@ export function loadStageGates(file = STAGE_GATES_PATH) {
       : null;
     if (!/^G\d[AB]?$/.test(id)) throw new Error(`gates: ID de compuerta inválido "${id}".`);
     if (!tipo) throw new Error(`gates: la compuerta ${id} tiene un Tipo desconocido: "${cells[2]}".`);
-    const fase = backticked(cells[4]);
-    const gate = backticked(cells[5]);
+    const niveles = parseNiveles(cells[3], id);
+    const fase = backticked(cells[5]);
+    const gate = backticked(cells[6]);
     if (tipo !== 'bootstrap' && (!fase || !gate)) {
       throw new Error(`gates: la compuerta ${id} (${tipo}) debe declarar fase_activa y gate_activo entre acentos graves.`);
     }
-    return { id, tipo, fase, gate };
+    return { id, tipo, niveles, fase, gate };
   });
 
   const stateful = gates.filter((g) => g.tipo !== 'bootstrap');

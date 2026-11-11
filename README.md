@@ -48,7 +48,7 @@ El asistente te preguntará:
 Abre el proyecto en tu entorno de IA favorito (**Antigravity IDE**, **Cursor**, **Claude**, **ChatGPT**, **Windsurf**, etc.) y copia el siguiente prompt de aterrizaje:
 
 ```text
-🤖 He abierto este repositorio. Por favor lee AGENTS.md y .workflow/current_state.json para conocer la metodología y tu rol activo. Confírmame qué rol asumes y cuál es la siguiente tarea según el Stage-Gate activo.
+🤖 He abierto este repositorio. Por favor lee AGENTS.md y ejecuta npm run status para conocer la metodología, el estado del proyecto y de cada módulo, y tu rol activo. Confírmame qué rol asumes y cuál es la siguiente tarea según el Stage-Gate activo.
 ```
 *(También disponible en [`LANDING_PROMPT.md`](LANDING_PROMPT.md))*
 
@@ -117,7 +117,8 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 │
 ├── .workflow/                           # 🚦 Máquina de Estados y Gobernanza HITL
 │   ├── STAGE_GATES.md                   # Datos de las compuertas (delegado por AGENTS.md)
-│   └── current_state.json               # Estado activo en tiempo real
+│   ├── current_state.json               # Estado de la pista de proyecto y release
+│   └── modules/                         # Un archivo de estado por módulo (trabajo en paralelo)
 │
 ├── tooling/                             # 🛠️ Herramientas de Auditoría y Automatización
 │   ├── init-project.mjs                 # Asistente interactivo de personalización
@@ -127,9 +128,11 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 │   ├── run-load-test.mjs                # Orquestador k6 con reportes HTML visuales y JSON
 │   ├── audit-a11y.mjs                   # Auditor automatizado de accesibilidad WCAG 2.1 AA
 │   ├── validate-contracts.mjs           # Validador canónico de contratos DTO Zod
-│   ├── validate-state.mjs               # Validador de current_state.json contra STAGE_GATES.md
+│   ├── validate-state.mjs               # Validador de las pistas de estado contra STAGE_GATES.md
+│   ├── status.mjs                       # Semáforo consolidado de proyecto y módulos (npm run status)
+│   ├── new-module.mjs                   # Crea un módulo: docs/modules/XX_nombre/ y su archivo de estado
 │   ├── check-doc-sources.mjs            # Lint de la política de fuentes de verdad (AGENTS.md)
-│   └── lib/stage-gates.mjs              # Lector de las tablas de STAGE_GATES.md
+│   └── lib/                             # Lector de STAGE_GATES.md y lógica de las pistas de estado
 │
 ├── multiAgents/                         # 🧠 Roles Líderes y Protocolos de Trabajo
 │   ├── 00_orchestrator/                 # PROJECT_STATUS.md y semáforo global
@@ -177,7 +180,9 @@ npm run test:load -- http://localhost:3000
 npm run audit:a11y
 # Genera: docs/qa/a11y-audit-summary.json
 
-# 6. Validación de la Máquina de Estados (current_state.json vs STAGE_GATES.md):
+# 6. Estado del flujo: crear un módulo, ver el semáforo y validar las pistas contra STAGE_GATES.md:
+npm run new:module -- 04_pagos --responsable "Ana" --depende-de 01_auth
+npm run status
 npm run validate:state
 
 # 7. Política de Fuentes de Verdad (sin citas numeradas fuera de AGENTS.md):

@@ -7,7 +7,6 @@
   "gate_activo": "GATE_1_PRD_APPROVAL",
   "estado": "EN_PROCESO",
   "rol_en_turno": "01_product_manager",
-  "modulo_en_curso": null,
   "bloqueos": [],
   "historial_transiciones": [
     {

@@ -3,6 +3,24 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.7.0] - 2026-11-10
+
+### Added
+- **Pistas de trabajo paralelas por módulo:** cada módulo tiene su archivo de estado en `.workflow/modules/[XX_nombre].json` (gate, estado, responsable, rama, dependencias, historial). Varias personas o agentes pueden avanzar módulos distintos a la vez sin editar un archivo común.
+- Columna **Nivel** en la Tabla Maestra de `STAGE_GATES.md` (Proyecto, Módulo, Release) y nueva §2.1 que define las pistas: línea base del proyecto (G0, G1, G2 una vez), módulo (G1 a G4) y release (G5, G6, repetible).
+- `npm run new:module -- XX_nombre [--nombre] [--responsable] [--depende-de]`: crea `docs/modules/XX_nombre/` desde `MODULE_TEMPLATE` y su archivo de estado en G1. Rechaza IDs mal formados, números repetidos y dependencias inexistentes.
+- `npm run status`: semáforo consolidado de proyecto y módulos (gate, estado, responsable, rama, dependencias, bloqueos y módulos listos para release). Es una vista generada: no escribe archivos.
+- `tooling/lib/workflow-state.mjs`: lógica de validación compartida por `validate:state` y `status`.
+
+### Changed
+- `validate:state` valida todas las pistas y las reglas entre ellas: un módulo no se adelanta a la línea base del proyecto, no entra en construcción sin el contrato de sus dependencias aprobado en G2, no se fusiona a `main` antes que ellas, sin ciclos ni números repetidos, y con su carpeta en `docs/modules/`.
+- `current_state.json` pasa a ser solo la pista de proyecto y release; se elimina `modulo_en_curso` (el validador explica la migración si lo encuentra). `COMPLETADO` se interpreta por pista: G4 en módulos, G6 en el proyecto.
+- G1 y G2 distinguen entregables de línea base y por módulo; G4 fusiona la rama del módulo y lo marca `COMPLETADO`; G5 lista los módulos incluidos y G6 devuelve el proyecto a G5 para el siguiente release.
+- `PROJECT_STATUS.md` ya no copia el semáforo (punto de conflicto entre ramas): remite a `npm run status` y conserva solo el plan de releases y las decisiones de versión.
+- `AGENTS.md` (fuentes, árbol y protocolo de aterrizaje), `README.md`, `LANDING_PROMPT.md`, el ROLE del orquestador, `HANDOFF_PROTOCOL.md`, `MODULE_TEMPLATE` e `init-project` alineados con las pistas.
+
+---
+
 ## [1.6.0] - 2026-11-10
 
 ### Added
