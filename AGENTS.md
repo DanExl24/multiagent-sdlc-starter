@@ -14,7 +14,7 @@
 | Tema | Archivo dueño |
 | :--- | :--- |
 | Reglas de Oro (texto y numeración), catálogo de roles, protocolo de aterrizaje y precedencia entre documentos | **`AGENTS.md`** (este archivo) |
-| Compuertas: IDs, tipo (Halt / Checkpoint / Bootstrap), entregables, aprobador y valores permitidos de `current_state.json` | [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md), por delegación explícita de este manual |
+| Compuertas: IDs, tipo (Halt / Checkpoint / Bootstrap), entregables, aprobador y valores permitidos de `current_state.json` | [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md), por delegación explícita de este manual |
 | Estado vivo del ciclo de vida | `.workflow/current_state.json` (validado contra `STAGE_GATES.md` con `npm run validate:state`) |
 | Detalle operativo de cada rol y subrol | `multiAgents/[rol]/ROLE.md` y `multiAgents/[rol]/subroles/` |
 | Protocolos de traspaso, commits, SemVer y RFC | `multiAgents/protocols/` |
@@ -52,14 +52,14 @@ flowchart LR
 ```
 
 > 🛑 = **Halt** (firma del Director Humano) · ⚡ = **Checkpoint** automático del Orquestador (sin halt) · 🔧 = **Bootstrap** (`npm run init:project`).  
-> La definición completa de cada compuerta vive **únicamente** en [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md). Este manual solo las cita por ID.
+> La definición completa de cada compuerta vive **únicamente** en [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md). Este manual solo las cita por ID.
 
 ### 1.2. ¿Por qué es hiper-eficiente?
 1. **Elimina la alucinación y la sobrecarga:** Cada agente se concentra exclusivamente en su especialidad (Principio de Responsabilidad Única aplicado a agentes). El backend no inventa diseños; el frontend no inventa endpoints; el PM no inventa sintaxis SQL.
 2. **Erradica los desacoples (API-First Zod):** Frontend y Backend **NUNCA suponen tipos de datos**. El Software Architect define contratos Zod en TypeScript; el Backend los usa para validar en runtime y el Frontend para tipar en compile-time. Si algo cambia, el compilador avisa antes de que el código toque producción.
 3. **Inmutabilidad y Blindaje de Reglas de Dominio:** Toda regla crítica de negocio se blinda a nivel de servicio y persistencia.
 4. **Tolerancia Cero al Tipo ANY:** Tanto Backend como Frontend implementan verificadores de Sintaxis Abstracta (AST) integrados en `npm run build` que bloquean la compilación si detectan el tipo `any`.
-5. **Tolerancia a Resets de Contexto:** Cualquier agente puede detenerse, reiniciarse o ser sustituido por otro modelo de IA. La nueva IA solo debe leer este archivo, verificar el estado activo en [`.workflow/current_state.json`](file:///.workflow/current_state.json) y continuar exactamente donde quedó el artefacto anterior.
+5. **Tolerancia a Resets de Contexto:** Cualquier agente puede detenerse, reiniciarse o ser sustituido por otro modelo de IA. La nueva IA solo debe leer este archivo, verificar el estado activo en [`.workflow/current_state.json`](.workflow/current_state.json) y continuar exactamente donde quedó el artefacto anterior.
 
 ---
 
@@ -141,7 +141,7 @@ flowchart LR
 ## 3. Catálogo de Roles Líderes y Subroles
 
 ### 3.0. 🤖 `00_orchestrator` — Orquestador Central
-Controla el flujo global, vigila que nadie se salte una compuerta, gestiona la máquina de estados y mantiene el semáforo del proyecto en [`multiAgents/00_orchestrator/PROJECT_STATUS.md`](file:///multiAgents/00_orchestrator/PROJECT_STATUS.md).
+Controla el flujo global, vigila que nadie se salte una compuerta, gestiona la máquina de estados y mantiene el semáforo del proyecto en [`multiAgents/00_orchestrator/PROJECT_STATUS.md`](multiAgents/00_orchestrator/PROJECT_STATUS.md).
 
 ### 3.1. 📋 `01_product_manager` — Product Manager Lead (Fase 1)
 Transforma la visión de negocio en especificaciones formales sin ambigüedad.

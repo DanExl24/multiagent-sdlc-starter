@@ -66,7 +66,7 @@ Cada módulo o hito significativo debe incluir un archivo en `docs/walkthroughs/
 
 ## 4. Estándar de Mensajes de Commit (Git Enriquecido con Versión y Módulo)
 
-> **Manual de Referencia Oficial:** Consulta [`multiAgents/protocols/GIT_COMMIT_CONVENTION.md`](file:///multiAgents/protocols/GIT_COMMIT_CONVENTION.md) para el catálogo exhaustivo de scopes, reglas y checklist pre-commit.
+> **Manual de Referencia Oficial:** Consulta [`multiAgents/protocols/GIT_COMMIT_CONVENTION.md`](GIT_COMMIT_CONVENTION.md) para el catálogo exhaustivo de scopes, reglas y checklist pre-commit.
 
 Todo commit en el repositorio debe seguir la estructura canónica obligatoria:
 ```text

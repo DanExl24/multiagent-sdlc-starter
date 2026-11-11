@@ -9,13 +9,13 @@
 ---
 
 ## 1. ¿Qué es este Subrol?
-Es el especialista de DevOps responsable de la **salud operacional del sistema en ejecución, los procedimientos de recuperación ante desastres y la entrega formal al usuario**. Diseña los endpoints de telemetría y healthcheck, establece las políticas de copias de seguridad de la base de datos escolar (`pg_dump`) y redacta los manuales paso a paso (Runbooks) para que el Director Humano y los operadores gestionen la plataforma con total certidumbre.
+Es el especialista de DevOps responsable de la **salud operacional del sistema en ejecución, los procedimientos de recuperación ante desastres y la entrega formal al usuario**. Diseña los endpoints de telemetría y healthcheck, establece las políticas de copias de seguridad de la base de datos (`pg_dump`) y redacta los manuales paso a paso (Runbooks) para que el Director Humano y los operadores gestionen la plataforma con total certidumbre.
 
 ---
 
 ## 2. ¿Para qué fue creado?
 1. Para dotar al servidor de un endpoint de diagnóstico en vivo (`GET /api/health`) que audite la salud de la conexión a PostgreSQL y el pool de Kysely.
-2. Para diseñar y probar los scripts de **copia de seguridad y restauración** (`pg_dump` y `pg_restore`), garantizando que las notas y expedientes escolares no se pierdan ante una contingencia.
+2. Para diseñar y probar los scripts de **copia de seguridad y restauración** (`pg_dump` y `pg_restore`), garantizando que los datos críticos del negocio no se pierdan ante una contingencia.
 3. Para estructurar los logs de la aplicación con identificadores de correlación (`X-Correlation-Id`) para trazabilidad de errores.
 4. Para elaborar el **Runbook Maestro de Puesta en Marcha** en 5 pasos reproducibles sin fricción.
 

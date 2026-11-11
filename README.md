@@ -50,7 +50,7 @@ Abre el proyecto en tu entorno de IA favorito (**Antigravity IDE**, **Cursor**, 
 ```text
 🤖 He abierto este repositorio. Por favor lee AGENTS.md y .workflow/current_state.json para conocer la metodología y tu rol activo. Confírmame qué rol asumes y cuál es la siguiente tarea según el Stage-Gate activo.
 ```
-*(También disponible en [`LANDING_PROMPT.md`](file:///LANDING_PROMPT.md))*
+*(También disponible en [`LANDING_PROMPT.md`](LANDING_PROMPT.md))*
 
 ---
 
@@ -88,13 +88,13 @@ graph TD
 
 | Rol | Directorio | Misión Principal | Subroles Incluidos |
 | :--- | :--- | :--- | :--- |
-| **00_orchestrator** | [`multiAgents/00_orchestrator/`](file:///multiAgents/00_orchestrator/) | Gobernanza del semáforo y control de compuertas | Máquina de estados, halts HITL obligatorios |
-| **01_product_manager** | [`multiAgents/01_product_manager/`](file:///multiAgents/01_product_manager/) | Descubrimiento funcional y blindaje normativo | Discovery (/grill-me), Legal/Compliance, BDD Gherkin, UAT |
-| **02_software_architect** | [`multiAgents/02_software_architect/`](file:///multiAgents/02_software_architect/) | Topología C4, modelo de datos y contratos Zod | C4 Modeler, DDL Modeler, Zod Protocol Designer, Security Multi-tenant |
-| **03_backend_engineer** | [`multiAgents/03_backend_engineer/`](file:///multiAgents/03_backend_engineer/) | API REST, transacciones y lógica de dominio | API Gateway, Domain Rules, DB Optimizer, TDD Tester |
-| **04_frontend_engineer** | [`multiAgents/04_frontend_engineer/`](file:///multiAgents/04_frontend_engineer/) | SPA Reactiva, Design System y DataViz | Design System Core, State Pinia/Store, Views/UX, DataViz |
-| **05_qa_security_tester** | [`multiAgents/05_qa_security_tester/`](file:///multiAgents/05_qa_security_tester/) | Auditoría forense con poder de veto (Stop-the-Line) | SDET Contratos, E2E & A11y axe-core, Performance k6 |
-| **06_devops_release** | [`multiAgents/06_devops_release/`](file:///multiAgents/06_devops_release/) | Contenedores, seeders idempotentes y CI/CD | Docker Ops, Seeders Lifecycle, CI/CD Automator, Observability |
+| **00_orchestrator** | [`multiAgents/00_orchestrator/`](multiAgents/00_orchestrator/) | Gobernanza del semáforo y control de compuertas | Máquina de estados, halts HITL obligatorios |
+| **01_product_manager** | [`multiAgents/01_product_manager/`](multiAgents/01_product_manager/) | Descubrimiento funcional y blindaje normativo | Discovery (/grill-me), Legal/Compliance, BDD Gherkin, UAT |
+| **02_software_architect** | [`multiAgents/02_software_architect/`](multiAgents/02_software_architect/) | Topología C4, modelo de datos y contratos Zod | C4 Modeler, DDL Modeler, Zod Protocol Designer, Security Multi-tenant |
+| **03_backend_engineer** | [`multiAgents/03_backend_engineer/`](multiAgents/03_backend_engineer/) | API REST, transacciones y lógica de dominio | API Gateway, Domain Rules, DB Optimizer, TDD Tester |
+| **04_frontend_engineer** | [`multiAgents/04_frontend_engineer/`](multiAgents/04_frontend_engineer/) | SPA Reactiva, Design System y DataViz | Design System Core, State Pinia/Store, Views/UX, DataViz |
+| **05_qa_security_tester** | [`multiAgents/05_qa_security_tester/`](multiAgents/05_qa_security_tester/) | Auditoría forense con poder de veto (Stop-the-Line) | SDET Contratos, E2E & A11y axe-core, Performance k6 |
+| **06_devops_release** | [`multiAgents/06_devops_release/`](multiAgents/06_devops_release/) | Contenedores, seeders idempotentes y CI/CD | Docker Ops, Seeders Lifecycle, CI/CD Automator, Observability |
 
 ---
 

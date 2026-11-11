@@ -11,7 +11,7 @@
 
 | Módulo ID | Nombre del Módulo | Versión Activa | Stage-Gate Actual | Estado de QA | Walkthrough Asociado |
 | :---: | :--- | :---: | :---: | :---: | :--- |
-| `00_starter` | Plantilla Base de Gobernanza | `v1.0.0` | **Gate 5 (Release)** | ✅ PASS | [WALKTHROUGH.md](file:///docs/walkthroughs/00_starter/v1.0.0/WALKTHROUGH.md) |
+| `00_starter` | Plantilla Base de Gobernanza | `v1.0.0` | **Gate 5 (Release)** | ✅ PASS | [WALKTHROUGH.md](../walkthroughs/00_starter/v1.0.0/WALKTHROUGH.md) |
 | `01_auth` | Autenticación y Sesiones | `v0.1.0` | **Gate 1 (PRD)** | ⏳ PENDIENTE | _(pendiente)_ |
 
 ---

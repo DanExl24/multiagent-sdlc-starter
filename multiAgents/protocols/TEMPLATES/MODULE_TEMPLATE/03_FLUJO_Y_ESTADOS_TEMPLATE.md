@@ -40,7 +40,7 @@ stateDiagram-v2
     [*] --> Estado_Inicial
     Estado_Inicial --> Estado_En_Progreso: Acción del usuario
     Estado_En_Progreso --> Estado_Cerrado: Cierre formal
-    Estado_Cerrado --> Estado_En_Progreso: Reapertura autorizada por Rector
+    Estado_Cerrado --> Estado_En_Progreso: Reapertura autorizada por [Rol con permiso]
     Estado_Cerrado --> [*]: Consolidación final
 ```
 

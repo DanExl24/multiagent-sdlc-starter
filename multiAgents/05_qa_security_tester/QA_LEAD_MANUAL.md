@@ -62,7 +62,7 @@ El QA Lead busca proactivamente prácticas deficientes:
 ### Paso 4: Despliegue Crítico y Proporcional del Arsenal de Herramientas
 
 > 📖 **CONSULTA OBLIGATORIA:**  
-> El QA Lead debe consultar obligatoriamente [QA_TOOLING_GUIDE.md](file:///multiAgents/05_qa_security_tester/QA_TOOLING_GUIDE.md) para determinar qué herramientas activar según el tamaño del cambio (**Small / Medium / Large**). **Queda prohibido disparar todo el arsenal para cambios pequeños.**
+> El QA Lead debe consultar obligatoriamente [QA_TOOLING_GUIDE.md](QA_TOOLING_GUIDE.md) para determinar qué herramientas activar según el tamaño del cambio (**Small / Medium / Large**). **Queda prohibido disparar todo el arsenal para cambios pequeños.**
 
 1. **SDET ➔ Contratos Zod & Vitest (Q1/Q2 - Lógica e Integración):**
    - Ejecuta: `npm run test:contracts` (validación de esquemas y envelopes DTO) y `npm run test` (pruebas unitarias).

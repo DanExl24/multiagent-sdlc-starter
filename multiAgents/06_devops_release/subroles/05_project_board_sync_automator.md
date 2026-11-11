@@ -1,8 +1,8 @@
 # 🛠️ Subrol 05: Project Board & Issue Lifecycle Automator (Agile DevOps)
 
-> **Rol Padre:** [`06_devops_release`](file:///multiAgents/06_devops_release/ROLE.md)  
+> **Rol Padre:** [`06_devops_release`](../ROLE.md)  
 > **Fase SDLC:** Transversal (Gobernanza Ágil de Compuertas y Trazabilidad de Ciclo de Vida)  
-> **Artefacto Central:** Repositorio GitHub, Tablero GitHub Projects V2, GitHub Actions y [`docs/modules/`](file:///docs/modules/)  
+> **Artefacto Central:** Repositorio GitHub, Tablero GitHub Projects V2, GitHub Actions y [`docs/modules/`](../../../docs/modules/)  
 > **Herramientas de Arsenal:** GitHub CLI (`gh`), GitHub Actions GraphQL, TypeScript (`tsx`), Kysely DB, SemVer.
 
 ---
@@ -73,7 +73,7 @@ El subrol supervisa que los siguientes 5 campos personalizados permanezcan sincr
 | Campo | Tipo | Origen de Datos | Regla de Auto-Asignación |
 | :--- | :---: | :--- | :--- |
 | **`Status`** | Single Select | Ciclo de vida | `Backlog / Discovery` al nacer ➔ `Released / Done` al cerrarse el issue o commitear `closes #ID`. |
-| **`Modulo`** | Single Select | Prefijo de título | Se extrae `XX` de `[HU-XX-YY]` y se mapea a la opción del módulo (ej. `06_matriculas`). |
+| **`Modulo`** | Single Select | Prefijo de título | Se extrae `XX` de `[HU-XX-YY]` y se mapea a la opción del módulo (ej. `06_pedidos`). |
 | **`Stage-Gate`** | Single Select | Estado del ciclo | `Gate 1 (PRD)` en creación; avanza por compuertas según prefijo de issue o revisión HITL. |
 | **`SemVer Target`**| Text | `docs/project/version-matrix.md` | Versión vigente o planificada para el módulo (ej. `v0.9.1`, `v0.11.0`). |
 | **`Reglas de Negocio (RN)`** | Text | Cuerpo del Issue | Expresión regular sobre `RN-[A-Z0-9]+-[0-9]+` unificadas por comas. |

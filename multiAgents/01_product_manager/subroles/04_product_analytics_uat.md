@@ -9,9 +9,9 @@
 ---
 
 ## 1. ¿Qué es este Subrol?
-Es el especialista del Product Manager que responde a las preguntas: **"¿Cómo mediremos si esta funcionalidad resolvió el problema?"** y **"¿El software construido realmente satisface la necesidad del usuario escolar?"**. 
+Es el especialista del Product Manager que responde a las preguntas: **"¿Cómo mediremos si esta funcionalidad resolvió el problema?"** y **"¿El software construido realmente satisface la necesidad del usuario final?"**. 
 
-Mientras que QA valida que el sistema *no se rompa técnicamente* (sin errores 500, sin fallos de seguridad), el Subrol 04 valida que el sistema *haga lo correcto desde la experiencia humana y operativa de la escuela*.
+Mientras que QA valida que el sistema *no se rompa técnicamente* (sin errores 500, sin fallos de seguridad), el Subrol 04 valida que el sistema *haga lo correcto desde la experiencia humana y operativa del negocio*.
 
 ---
 
@@ -19,7 +19,7 @@ Mientras que QA valida que el sistema *no se rompa técnicamente* (sin errores 5
 1. Para establecer los **KPIs de éxito del producto** antes de iniciar el desarrollo (en el PRD).
 2. Para liderar la validación funcional de **User Acceptance Testing (UAT)** en la interfaz de usuario una vez que el Frontend concluye su labor.
 3. Para canalizar la retroalimentación de los usuarios reales y transformar fricciones en mejoras para el Backlog.
-4. Para evaluar las **Propuestas Técnicas (RFCs)** emitidas por los ingenieros desde la óptica del valor al negocio y al usuario escolar.
+4. Para evaluar las **Propuestas Técnicas (RFCs)** emitidas por los ingenieros desde la óptica del valor al negocio y al usuario final.
 
 ---
 

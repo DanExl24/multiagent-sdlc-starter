@@ -3,6 +3,17 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.4.1] - 2026-11-10
+
+### Changed
+- **Enlaces relativos:** los 76 enlaces `file:///…` de 19 documentos pasan a rutas relativas al archivo, de modo que funcionan en GitHub, en el editor y para los agentes, sin depender de la raíz del sistema de archivos.
+- **Neutralidad de dominio:** se eliminaron los restos del caso piloto educativo y de Colombia (comunidad escolar, normativa escolar colombiana, marco legal MEN, notas y expedientes, `es-CO`, cédulas, ejemplo de calificación en el envelope, reapertura "por Rector", módulo `06_matriculas`). Se sustituyeron por redacción universal o placeholders. El subrol legal conserva Educación como uno más de sus sectores de ejemplo.
+
+### Added
+- Regla F de `check:docs`: los enlaces Markdown deben ser relativos (prohíbe `file://` y rutas absolutas) y apuntar a un destino existente. Ignora URLs externas, anclas, placeholders y bloques de código.
+
+---
+
 ## [1.4.0] - 2026-11-10
 
 ### Changed
@@ -91,15 +102,15 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### Added
 - **Gobernanza y Orquestación Multiagente:**
-  - Manual rector [`AGENTS.md`](file:///AGENTS.md) con las 11 Reglas de Oro, arquitectura de roles y protocolo de Stage-Gates.
-  - Máquina de estados en [`.workflow/current_state.json`](file:///.workflow/current_state.json) y compuertas en [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md).
+  - Manual rector [`AGENTS.md`](AGENTS.md) con las 11 Reglas de Oro, arquitectura de roles y protocolo de Stage-Gates.
+  - Máquina de estados en [`.workflow/current_state.json`](.workflow/current_state.json) y compuertas en [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md).
   - Kit completo de 7 Roles Líderes y 26 Subroles especializados en `multiAgents/`.
   - Protocolos de colaboración técnica (`HANDOFF_PROTOCOL`, `COLLABORATION_PROTOCOL_TECH_TRIO`, `GIT_COMMIT_CONVENTION`, `SEMVER_CHANGELOG_PROTOCOL`).
 - **Tooling y Compuertas Mecánicas AST:**
-  - Asistente interactivo de personalización de proyectos [`tooling/init-project.mjs`](file:///tooling/init-project.mjs) (`npm run init:project`).
-  - Auditor AST de TypeScript para Backend [`tooling/check-no-any-backend.ts`](file:///tooling/check-no-any-backend.ts).
-  - Auditor AST de TypeScript y Vue para Frontend [`tooling/check-no-any-frontend.mjs`](file:///tooling/check-no-any-frontend.mjs) (`npm run check:no-any`).
+  - Asistente interactivo de personalización de proyectos [`tooling/init-project.mjs`](tooling/init-project.mjs) (`npm run init:project`).
+  - Auditor AST de TypeScript para Backend [`tooling/check-no-any-backend.ts`](tooling/check-no-any-backend.ts).
+  - Auditor AST de TypeScript y Vue para Frontend [`tooling/check-no-any-frontend.mjs`](tooling/check-no-any-frontend.mjs) (`npm run check:no-any`).
 - **Artefactos y Plantillas de Ingeniería:**
   - Plantillas rectoras en `docs/`: PRD (`01_prd.md`), Arquitectura (`02_architecture.md`), Reporte QA (`03_qa_report.md`), Design System (`04_ui_design_system.md`), y Matriz de Versiones (`VERSION_MATRIX.md`).
   - Plantillas modulares en `multiAgents/protocols/TEMPLATES/` y catálogo de ADRs.
-  - Prompt canónico de bienvenida para agentes de IA en [`LANDING_PROMPT.md`](file:///LANDING_PROMPT.md).
+  - Prompt canónico de bienvenida para agentes de IA en [`LANDING_PROMPT.md`](LANDING_PROMPT.md).

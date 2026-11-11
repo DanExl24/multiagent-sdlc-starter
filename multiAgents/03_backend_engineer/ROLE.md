@@ -20,10 +20,10 @@ El Backend Lead cuenta con 4 especialistas dedicados en el directorio `multiAgen
 
 | Subrol | Archivo Rector | Especialidad Principal | Herramientas / Artefactos |
 | :--- | :--- | :--- | :--- |
-| **01. API Gateway & Security** | [`01_api_gateway_security.md`](file:///multiAgents/03_backend_engineer/subroles/01_api_gateway_security.md) | Enrutamiento HTTP, validación Zod perimetral, JWT, RBAC y aislamiento multi-tenant (Anti-IDOR). | `*.routes.ts`, `*.controller.ts`, middlewares, envelopes HTTP. |
-| **02. Domain Business Rules** | [`02_domain_business_rules.md`](file:///multiAgents/03_backend_engineer/subroles/02_domain_business_rules.md) | Lógica de negocio del dominio, inmutabilidad de estados terminales y transiciones permitidas. | `*.service.ts`, algoritmos de cálculo, máquinas de estado. |
-| **03. Data Layer Optimizer** | [`03_data_layer_optimizer.md`](file:///multiAgents/03_backend_engineer/subroles/03_data_layer_optimizer.md) | Persistencia relacional, consultas 100% tipadas (Cero SQL crudo) y transacciones ACID. | QueryBuilder / ORM, transacciones, aforos, agregaciones. |
-| **04. Developer TDD Tester** | [`04_developer_tdd_tester.md`](file:///multiAgents/03_backend_engineer/subroles/04_developer_tdd_tester.md) | Batería de pruebas de integración internas en Vitest antes de transferir a QA (casos felices, negativos y seguridad). | `tests/modules/`, `tests/integration/`, aserciones HTTP. |
+| **01. API Gateway & Security** | [`01_api_gateway_security.md`](subroles/01_api_gateway_security.md) | Enrutamiento HTTP, validación Zod perimetral, JWT, RBAC y aislamiento multi-tenant (Anti-IDOR). | `*.routes.ts`, `*.controller.ts`, middlewares, envelopes HTTP. |
+| **02. Domain Business Rules** | [`02_domain_business_rules.md`](subroles/02_domain_business_rules.md) | Lógica de negocio del dominio, inmutabilidad de estados terminales y transiciones permitidas. | `*.service.ts`, algoritmos de cálculo, máquinas de estado. |
+| **03. Data Layer Optimizer** | [`03_data_layer_optimizer.md`](subroles/03_data_layer_optimizer.md) | Persistencia relacional, consultas 100% tipadas (Cero SQL crudo) y transacciones ACID. | QueryBuilder / ORM, transacciones, aforos, agregaciones. |
+| **04. Developer TDD Tester** | [`04_developer_tdd_tester.md`](subroles/04_developer_tdd_tester.md) | Batería de pruebas de integración internas en Vitest antes de transferir a QA (casos felices, negativos y seguridad). | `tests/modules/`, `tests/integration/`, aserciones HTTP. |
 
 ---
 

@@ -8,7 +8,7 @@
 ---
 
 ## 1. Filosofía: El Agente como Especialista de Dominio
-El Director Humano lidera la visión de producto, las prioridades escolares y la rectoría ejecutiva del sistema; no tiene la obligación de conocer cada una de las miles de librerías, plugins o utilidades del ecosistema Node.js / Vue / PostgreSQL.
+El Director Humano lidera la visión de producto, las prioridades de negocio y la dirección ejecutiva del sistema; no tiene la obligación de conocer cada una de las miles de librerías, plugins o utilidades del ecosistema Node.js / Vue / PostgreSQL.
 
 Por ello, **cada agente de IA tiene la obligación ética y técnica de:**
 1. No aceptar silenciosamente la redundancia o el código repetitivo (*code smells*).
@@ -56,8 +56,8 @@ Cuando un agente identifique una oportunidad de mejora arquitectural, modular o 
 | Dominio | Situación que amerita un RFC | Ejemplo de Herramienta Sugerida por el Agente |
 | :--- | :--- | :--- |
 | **Backend / DB** | Mapeo manual tedioso de `snake_case` (PostgreSQL) a `camelCase` (DTOs TypeScript). | `CamelCasePlugin` nativo de Kysely o `camelcase-keys`. |
-| **Backend / Dominio** | Manejo disperso de fechas escolares, cruces de periodos y semanas hábiles. | `date-fns` o `dayjs` configurado con locale `es-CO`. |
-| **Backend / Validaciones** | Lógica compleja de bifurcación condicional según roles o estados escolares. | `ts-pattern` para pattern matching exhaustivo y tipado. |
+| **Backend / Dominio** | Manejo disperso de fechas, cruces de periodos y días hábiles. | `date-fns` o `dayjs` configurado con el locale del proyecto. |
+| **Backend / Validaciones** | Lógica compleja de bifurcación condicional según roles o estados de negocio. | `ts-pattern` para pattern matching exhaustivo y tipado. |
 | **Frontend / UI** | Gráficos y dashboards analíticos complejos que requieren interactividad y resize. | Apache `echarts` + wrappers reactivos en lugar de Canvas manual. |
 | **Frontend / Formularios** | Manejo de formularios extensos con validación en caliente y prevención de pérdida de datos. | Integración de `@vee-validate/zod` consumiendo directamente los contratos de Gate 2. |
 | **DevOps / Seguridad** | Verificación estática de vulnerabilidades en dependencias o variables de entorno. | `dotenv-safe` o `zod` para validación de variables de entorno al arranque (`env.ts`). |

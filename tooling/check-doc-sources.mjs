@@ -8,6 +8,8 @@
  *   D. CLAUDE.md y GEMINI.md existen y se limitan a importar AGENTS.md (línea "@AGENTS.md").
  *   E. Toda ruta "docs/..." mencionada en un documento existe en el repositorio. Se ignoran placeholders ([XX], vX.Y.Z), informes generados y los
  *      registros históricos (CHANGELOG.md y WORKLOG.md).
+ *   F. Los enlaces Markdown son relativos al archivo (nunca "file://" ni rutas absolutas)
+ *      y su destino existe. Se ignoran URLs externas, anclas, placeholders y bloques de código.
  *   C. Los IDs de compuerta del diagrama de AGENTS.md coinciden con la tabla de
  *      .workflow/STAGE_GATES.md.
  */
@@ -99,9 +101,34 @@ for (const file of walk(rootDir)) {
   });
 }
 
+// F. Enlaces Markdown: siempre relativos y con destino existente
+const LINK_RE = /\]\(([^)\s]+)\)/g;
+const EXTERNAL = /^(?:https?:|mailto:|#)/i;
+for (const file of walk(rootDir)) {
+  if (path.extname(file) !== '.md') continue;
+  const name = rel(file);
+  const historical = HISTORICAL.has(path.basename(file));
+  let inFence = false;
+  fs.readFileSync(file, 'utf-8').split(/\r?\n/).forEach((line, i) => {
+    if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; return; }
+    if (inFence) return;
+    for (const match of line.matchAll(LINK_RE)) {
+      const target = match[1];
+      if (EXTERNAL.test(target)) continue;
+      if (/^file:/i.test(target) || /^(?:\/|[A-Za-z]:[\\/])/.test(target)) {
+        errors.push(`${name}:${i + 1} usa un enlace absoluto ("${target}"). Usa una ruta relativa al archivo.`);
+        continue;
+      }
+      const clean = decodeURIComponent(target.split('#')[0]);
+      if (!clean || historical || PLACEHOLDER.test(clean)) continue;
+      if (!fs.existsSync(path.resolve(path.dirname(file), clean))) errors.push(`${name}:${i + 1} enlaza a "${target}", que no existe.`);
+    }
+  });
+}
+
 if (errors.length > 0) {
   console.error('❌ Política de fuentes de verdad incumplida (ver AGENTS.md §0):');
   for (const e of errors) console.error(`   - ${e}`);
   process.exit(1);
 }
-console.log('✅ Fuentes de verdad coherentes: sin citas numeradas fuera de AGENTS.md, puentes limpios, diagrama alineado con STAGE_GATES.md y rutas de docs/ existentes.');
+console.log('✅ Fuentes de verdad coherentes: sin citas numeradas fuera de AGENTS.md, puentes limpios, diagrama alineado con STAGE_GATES.md, rutas de docs/ existentes y enlaces relativos válidos.');

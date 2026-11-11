@@ -21,10 +21,10 @@ El Software Architect Lead comanda 4 subroles en el directorio `multiAgents/02_s
 
 | Subrol | Archivo Rector | Especialidad Principal | Artefacto Clave |
 | :--- | :--- | :--- | :--- |
-| **01. System & Modular Topologist** | [`01_system_modular_topologist.md`](file:///multiAgents/02_software_architect/subroles/01_system_modular_topologist.md) | Topología modular, límites de contexto DDD, diagramación C4 Model y ADRs. | Diagramas C4, `docs/adrs/`, `docs/project/architecture.md`. |
-| **02. Relational Data & DDL Modeler** | [`02_relational_data_ddl_modeler.md`](file:///multiAgents/02_software_architect/subroles/02_relational_data_ddl_modeler.md) | Modelado relacional, 3FN, índices compuestos, integridad referencial y migraciones. | DDL oficial, Diccionario de Datos. |
-| **03. API Contracts & Protocol Designer** | [`03_api_contracts_protocol_designer.md`](file:///multiAgents/02_software_architect/subroles/03_api_contracts_protocol_designer.md) | Contratos Zod API-First, tipado TypeScript bidireccional, Envelopes HTTP y códigos semánticos. | `docs/contracts/XX_modulo.contract.ts`. |
-| **04. Security & Multi-Tenant Architect** | [`04_security_multitenant_architect.md`](file:///multiAgents/02_software_architect/subroles/04_security_multitenant_architect.md) | Aislamiento multi-tenant Anti-IDOR, arquitectura JWT/JTI, matriz RBAC y mitigación OWASP. | Matriz RBAC, Políticas Criptográficas. |
+| **01. System & Modular Topologist** | [`01_system_modular_topologist.md`](subroles/01_system_modular_topologist.md) | Topología modular, límites de contexto DDD, diagramación C4 Model y ADRs. | Diagramas C4, `docs/adrs/`, `docs/project/architecture.md`. |
+| **02. Relational Data & DDL Modeler** | [`02_relational_data_ddl_modeler.md`](subroles/02_relational_data_ddl_modeler.md) | Modelado relacional, 3FN, índices compuestos, integridad referencial y migraciones. | DDL oficial, Diccionario de Datos. |
+| **03. API Contracts & Protocol Designer** | [`03_api_contracts_protocol_designer.md`](subroles/03_api_contracts_protocol_designer.md) | Contratos Zod API-First, tipado TypeScript bidireccional, Envelopes HTTP y códigos semánticos. | `docs/contracts/XX_modulo.contract.ts`. |
+| **04. Security & Multi-Tenant Architect** | [`04_security_multitenant_architect.md`](subroles/04_security_multitenant_architect.md) | Aislamiento multi-tenant Anti-IDOR, arquitectura JWT/JTI, matriz RBAC y mitigación OWASP. | Matriz RBAC, Políticas Criptográficas. |
 
 ---
 

@@ -21,11 +21,11 @@ El Frontend Lead cuenta con 5 especialistas dedicados en el directorio `multiAge
 
 | Subrol | Archivo Rector | Especialidad Principal | Herramientas / Artefactos |
 | :--- | :--- | :--- | :--- |
-| **01. Design System & Core UI** | [`01_design_system_core.md`](file:///multiAgents/04_frontend_engineer/subroles/01_design_system_core.md) | Componentes base (`@/core/components/base`), tokens de diseño, paleta institucional y accesibilidad WCAG 2.1 AA. | `BaseModal`, `BaseButton`, `BaseInput`, `tailwind.config.js`. |
-| **02. State & Data Flow** | [`02_state_data_flow.md`](file:///multiAgents/04_frontend_engineer/subroles/02_state_data_flow.md) | Gestión de estado global, cliente HTTP (`apiClient.ts`), JWT Bearer y sincronización con contratos Zod. | `stores/`, `apiClient.ts`, `*.service.ts`, DTOs tipados. |
-| **03. Views, Forms & UX** | [`03_views_forms_ux.md`](file:///multiAgents/04_frontend_engineer/subroles/03_views_forms_ux.md) | Pantallas de negocio de los módulos, modales de entidad, formularios de alta densidad y enrutamiento RBAC. | `*ListView.vue`, `*Modal.vue`, `router/index.ts`. |
-| **04. DataViz & Analytics** | [`04_dataviz_analytics.md`](file:///multiAgents/04_frontend_engineer/subroles/04_dataviz_analytics.md) | Dashboards interactivos por rol, gráficas Apache ECharts, telemetría y widgets de KPIs en vivo. | `views/dashboards/`, `echarts`, adaptabilidad widescreen. |
-| **05. Developer Component TDD** | [`05_developer_component_tdd.md`](file:///multiAgents/04_frontend_engineer/subroles/05_developer_component_tdd.md) | Pruebas unitarias de componentes, reactividad de stores y validaciones perimetrales Zod (*Shift-Left*). | `Vitest`, `@testing-library`, `happy-dom`, `npm run test:unit`. |
+| **01. Design System & Core UI** | [`01_design_system_core.md`](subroles/01_design_system_core.md) | Componentes base (`@/core/components/base`), tokens de diseño, paleta institucional y accesibilidad WCAG 2.1 AA. | `BaseModal`, `BaseButton`, `BaseInput`, `tailwind.config.js`. |
+| **02. State & Data Flow** | [`02_state_data_flow.md`](subroles/02_state_data_flow.md) | Gestión de estado global, cliente HTTP (`apiClient.ts`), JWT Bearer y sincronización con contratos Zod. | `stores/`, `apiClient.ts`, `*.service.ts`, DTOs tipados. |
+| **03. Views, Forms & UX** | [`03_views_forms_ux.md`](subroles/03_views_forms_ux.md) | Pantallas de negocio de los módulos, modales de entidad, formularios de alta densidad y enrutamiento RBAC. | `*ListView.vue`, `*Modal.vue`, `router/index.ts`. |
+| **04. DataViz & Analytics** | [`04_dataviz_analytics.md`](subroles/04_dataviz_analytics.md) | Dashboards interactivos por rol, gráficas Apache ECharts, telemetría y widgets de KPIs en vivo. | `views/dashboards/`, `echarts`, adaptabilidad widescreen. |
+| **05. Developer Component TDD** | [`05_developer_component_tdd.md`](subroles/05_developer_component_tdd.md) | Pruebas unitarias de componentes, reactividad de stores y validaciones perimetrales Zod (*Shift-Left*). | `Vitest`, `@testing-library`, `happy-dom`, `npm run test:unit`. |
 
 ---
 

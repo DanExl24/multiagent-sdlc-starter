@@ -21,11 +21,11 @@ El DevOps Lead comanda los subroles en el directorio `multiAgents/06_devops_rele
 
 | Subrol | Archivo Rector | Especialidad Principal | Artefacto Clave |
 | :--- | :--- | :--- | :--- |
-| **01. Environment & Container Orchestrator** | [`01_env_container_orchestrator.md`](file:///multiAgents/06_devops_release/subroles/01_env_container_orchestrator.md) | Docker Compose, contenedores PostgreSQL 16 Alpine, aislamiento de red y gobernanza de `.env.example`. | `docker-compose.yml`, `.env.example`. |
-| **02. DB Lifecycle & Seeder Engineer** | [`02_db_seeder_lifecycle.md`](file:///multiAgents/06_devops_release/subroles/02_db_seeder_lifecycle.md) | Pipeline `npm run seed:reset`, migración de tablas, datos piloto y emisión de `seed-credentials.md`. | `migrate.ts`, `seed.ts`, `seed-credentials.md`. |
-| **03. CI/CD Pipeline & Build Automator** | [`03_cicd_pipeline_automator.md`](file:///multiAgents/06_devops_release/subroles/03_cicd_pipeline_automator.md) | Automatización de compuertas de compilación (`vue-tsc`, `tsc`), tests automáticos y versionamiento SemVer. | Scripts de build, tags SemVer, Git conventions. |
-| **04. Observability & Release Runbooks** | [`04_observability_release_ops.md`](file:///multiAgents/06_devops_release/subroles/04_observability_release_ops.md) | Telemetría `/api/health`, estado de conexión de base de datos, copias de seguridad `pg_dump` y Runbook maestro de 5 pasos. | `GET /api/health`, Runbook de Despliegue. |
-| **05. Project Board & Issue Lifecycle Automator** | [`05_project_board_sync_automator.md`](file:///multiAgents/06_devops_release/subroles/05_project_board_sync_automator.md) | Ingesta automática de HUs desde docs, sincronización con GitHub Projects V2, trazabilidad y auto-enrutamiento. | Scripts de sync, CI workflows. |
+| **01. Environment & Container Orchestrator** | [`01_env_container_orchestrator.md`](subroles/01_env_container_orchestrator.md) | Docker Compose, contenedores PostgreSQL 16 Alpine, aislamiento de red y gobernanza de `.env.example`. | `docker-compose.yml`, `.env.example`. |
+| **02. DB Lifecycle & Seeder Engineer** | [`02_db_seeder_lifecycle.md`](subroles/02_db_seeder_lifecycle.md) | Pipeline `npm run seed:reset`, migración de tablas, datos piloto y emisión de `seed-credentials.md`. | `migrate.ts`, `seed.ts`, `seed-credentials.md`. |
+| **03. CI/CD Pipeline & Build Automator** | [`03_cicd_pipeline_automator.md`](subroles/03_cicd_pipeline_automator.md) | Automatización de compuertas de compilación (`vue-tsc`, `tsc`), tests automáticos y versionamiento SemVer. | Scripts de build, tags SemVer, Git conventions. |
+| **04. Observability & Release Runbooks** | [`04_observability_release_ops.md`](subroles/04_observability_release_ops.md) | Telemetría `/api/health`, estado de conexión de base de datos, copias de seguridad `pg_dump` y Runbook maestro de 5 pasos. | `GET /api/health`, Runbook de Despliegue. |
+| **05. Project Board & Issue Lifecycle Automator** | [`05_project_board_sync_automator.md`](subroles/05_project_board_sync_automator.md) | Ingesta automática de HUs desde docs, sincronización con GitHub Projects V2, trazabilidad y auto-enrutamiento. | Scripts de sync, CI workflows. |
 
 ---
 
@@ -53,7 +53,7 @@ graph TD
    * Convoca al **Subrol 04** para verificar el endpoint `/api/health` y actualizar el Runbook de instalación en el `README.md`.
    * El Lead somete los artefactos al **Stage-Gate 5** para cierre de despliegue y firma humana.
 3. **Convocatoria de Retrospectiva Kaizen y Plan de Mejora (Stage-Gate 6):**
-   * Tras la firma del release, el Lead activa el protocolo [`protocols/CONTINUOUS_IMPROVEMENT_PROTOCOL.md`](file:///multiAgents/protocols/CONTINUOUS_IMPROVEMENT_PROTOCOL.md).
+   * Tras la firma del release, el Lead activa el protocolo [`protocols/CONTINUOUS_IMPROVEMENT_PROTOCOL.md`](../protocols/CONTINUOUS_IMPROVEMENT_PROTOCOL.md).
    * Co-convoca con el QA Lead y el Orquestador la sesión de análisis causal (Ishikawa + Pareto 80/20) para consolidar `docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md` y transferir los compromisos al Product Manager para el Sprint N+1.
 4. **Sincronización de Historias y Gobernanza de Tableros (Stage-Gate 1):**
    * El Lead convoca al **Subrol 05** inmediatamente tras la formalización de `02_HISTORIAS_USUARIO.md` por parte del Product Manager.

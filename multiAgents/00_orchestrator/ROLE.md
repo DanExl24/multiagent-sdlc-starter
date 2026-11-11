@@ -116,7 +116,7 @@ stateDiagram-v2
 
 ## 4. Checklists del Orquestador por Compuerta
 
-> 📌 La definición canónica de cada compuerta (tipo, entregables, aprobador y valores de `current_state.json`) vive **únicamente** en [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md). Esta sección contiene solo el **checklist que el Orquestador verifica** por ID de compuerta. G0 (Bootstrap) es automático y no requiere checklist.
+> 📌 La definición canónica de cada compuerta (tipo, entregables, aprobador y valores de `current_state.json`) vive **únicamente** en [`.workflow/STAGE_GATES.md`](../../.workflow/STAGE_GATES.md). Esta sección contiene solo el **checklist que el Orquestador verifica** por ID de compuerta. G0 (Bootstrap) es automático y no requiere checklist.
 
 ### 🛑 Gate 1: Validación de Requerimientos y Rito ATDD (PM -> Arquitecto)
 - **Checklist del Orquestador:**

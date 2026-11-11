@@ -5,7 +5,7 @@
 > **Área:** Fase 1 — Especificación Funcional de Requerimientos y Gobernanza del Dominio  
 > **Estándares:** Reglas de Negocio Canónicas (RN), ATDD (Three Amigos: PM + Arquitecto + QA), INVEST, BDD Gherkin (`Given-When-Then`), Definition of Ready (DoR)  
 > **Artefactos Clave:**  
-> - Reglas Globales (`RNG-XX`): [`docs/project/prd.md`](file:///docs/project/prd.md)  
+> - Reglas Globales (`RNG-XX`): [`docs/project/prd.md`](../../../docs/project/prd.md)  
 > - Especificación ATDD: `docs/modules/[XX]/01_ATDD_SPEC.md` (`protocols/TEMPLATES/ATDD_SPEC_TEMPLATE.md`)  
 > - Reglas Modulares (`RN-[MOD]-XX`): `docs/modules/[XX]/01_SPEC_FUNCIONAL.md` (Sección 4)  
 > - Catálogo de HUs: `docs/modules/[XX]/02_HISTORIAS_USUARIO.md`
@@ -42,7 +42,7 @@ Una **Regla de Negocio (RN)** es una **declaración atómica, no negociable e in
 | **Alcance** | **Transversal a toda la plataforma:** Aplica a múltiples o a todos los módulos por igual. | **Local y acotada:** Aplica exclusivamente a las entidades y flujos de un único módulo. |
 | **Propósito** | Gobernanza corporativa, seguridad perimetral, multi-tenancy y leyes del sector (Compliance, Privacidad, Cifrado, Inmutabilidad). | Validaciones de formularios, cálculos internos, topes de cupos, transiciones de estado del módulo. |
 | **Nomenclatura** | `RNG-[NUMERO]` (ej. `RNG-01`, `RNG-02`). | `RN-[PREFIJO_MODULO]-[NUMERO]` (ej. `RN-USR-01`, `RN-OP-02`, `RN-REP-01`). |
-| **Dónde Vive** | 📍 [`docs/project/prd.md`](file:///docs/project/prd.md) (Sección 5: Reglas Globales) y citada en [`AGENTS.md`](file:///AGENTS.md). | 📍 `docs/modules/[XX]/01_SPEC_FUNCIONAL.md` (Sección 4: Reglas de Negocio Inmutables). |
+| **Dónde Vive** | 📍 [`docs/project/prd.md`](../../../docs/project/prd.md) (Sección 5: Reglas Globales) y citada en [`AGENTS.md`](../../../AGENTS.md). | 📍 `docs/modules/[XX]/01_SPEC_FUNCIONAL.md` (Sección 4: Reglas de Negocio Inmutables). |
 | **Ejemplo Real** | **`RNG-02` (Inmutabilidad en Estados Cerrados):** Prohibido mutar registros si el estado de la entidad está `CERRADO` o bloqueado. | **`RN-USR-02` (Exclusividad por Rol):** Ciertos roles no pueden auto-asignarse; emanan de un proceso formal de aprobación. |
 
 ### 3.3. Dónde debe vivir cada archivo según su tipo
@@ -50,7 +50,7 @@ Una **Regla de Negocio (RN)** es una **declaración atómica, no negociable e in
 ```text
 docs/
 ├── project/prd.md                           ──► 📍 REGLAS GLOBALES (RNG-01 a RNG-XX)
-│                                                Marco legal MEN, Multi-Tenancy, Seguridad JWT
+│                                                Marco legal del dominio, Multi-Tenancy, Seguridad JWT
 │
 └── modules/
     └── [XX_nombre_modulo]/

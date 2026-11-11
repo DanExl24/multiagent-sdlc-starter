@@ -9,7 +9,7 @@
 ---
 
 ## 1. ¿Qué es este Subrol?
-Es el especialista del Product Manager encargado de **entender el problema de raíz antes de escribir una sola línea de especificación**. Su trabajo no es adivinar ni suponer, sino interrogar estratégicamente al negocio, mapear los intereses de la comunidad escolar y blindar el proyecto contra el *scope creep* (hinchazón incontrolada del alcance).
+Es el especialista del Product Manager encargado de **entender el problema de raíz antes de escribir una sola línea de especificación**. Su trabajo no es adivinar ni suponer, sino interrogar estratégicamente al negocio, mapear los intereses de los usuarios y partes interesadas y blindar el proyecto contra el *scope creep* (hinchazón incontrolada del alcance).
 
 ---
 

@@ -43,8 +43,8 @@ Resultado esperado: `0 violaciones detectadas`.
 ---
 
 ## 4. Invocación del Primer Agente de IA
-Copiar y pegar el contenido de [`LANDING_PROMPT.md`](file:///LANDING_PROMPT.md) en la ventana de chat del asistente (Antigravity IDE, Cursor, Claude, etc.):
+Copiar y pegar el contenido de [`LANDING_PROMPT.md`](../../../../LANDING_PROMPT.md) en la ventana de chat del asistente (Antigravity IDE, Cursor, Claude, etc.):
 ```text
 🤖 Hola. He iniciado sesión en este repositorio... (ver LANDING_PROMPT.md)
 ```
-El agente leerá automáticamente [`AGENTS.md`](file:///AGENTS.md) y [`.workflow/current_state.json`](file:///.workflow/current_state.json) y se pondrá a tus órdenes bajo el rol correspondiente.
+El agente leerá automáticamente [`AGENTS.md`](../../../../AGENTS.md) y [`.workflow/current_state.json`](../../../../.workflow/current_state.json) y se pondrá a tus órdenes bajo el rol correspondiente.

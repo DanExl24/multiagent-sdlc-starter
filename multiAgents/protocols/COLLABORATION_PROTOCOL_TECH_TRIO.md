@@ -46,14 +46,14 @@ Para que el Frontend siempre sepa qué esperar de cualquier controlador del Back
   "success": true,
   "data": {
     "id": "b3e3e29f-...",
-    "calificacion": 4.5,
-    "desempeno": "Alto"
+    "total": 149.90,
+    "estado": "CONFIRMADO"
   },
-  "message": "Calificación registrada exitosamente"
+  "message": "Registro creado exitosamente"
 }
 ```
 
-### B. Respuesta con Paginación Escolar (`success: true`)
+### B. Respuesta con Paginación (`success: true`)
 ```json
 {
   "success": true,

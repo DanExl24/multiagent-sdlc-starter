@@ -10,7 +10,7 @@
 
 | N.º | Campo | Detalle Técnico Registrado |
 | :---: | :--- | :--- |
-| **1** | **Identificador Único** | `BUG-[MODULO]-[NUM]` (ej. `BUG-AUTH-001`, `BUG-NOTAS-003`) |
+| **1** | **Identificador Único** | `BUG-[MODULO]-[NUM]` (ej. `BUG-AUTH-001`, `BUG-PEDIDOS-003`) |
 | **2** | **Título Descriptivo** | [Descripción corta, precisa y unívoca del fallo] |
 | **3** | **Reportado Por** | [QA Lead & Security Director / Subrol SDET / E2E Specialist] |
 | **4** | **Asignado A** | [Backend Lead Engineer / Frontend Lead Engineer] |

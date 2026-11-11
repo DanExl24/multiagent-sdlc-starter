@@ -32,14 +32,14 @@ Esta tabla debe actualizar en tiempo real el estado de los roles líderes, los s
 
 | Rol Líder | Estado Operativo | Kit de Subroles Activado | Compromiso Técnico / Estado de Entrega |
 | :--- | :---: | :--- | :--- |
-| 🤖 **[00_orchestrator](file:///multiAgents/00_orchestrator/)** | 🟢 **ACTIVO** | Gobernanza HITL, Máquina de Estados, Semáforo | Supervisión de compuertas y transición de estados. |
-| 📋 **[01_product_manager](file:///multiAgents/01_product_manager/)** | 🟢 **CULMINADO** | `01_discovery`, `02_legal`, `03_atdd_bdd`, `04_uat` | PRD, HUs INVEST y criterios de aceptación ATDD aprobados. |
-| 🏛️ **[02_software_architect](file:///multiAgents/02_software_architect/)** | 🟢 **CULMINADO** | `system_modular`, `relational_ddl`, `api_contracts`, `security` | DDL relacional y contratos Zod API-First entregados. |
-| ⚙️ **[03_backend_engineer](file:///multiAgents/03_backend_engineer/)** | 🟢 **CULMINADO** | `api_gateway`, `domain_business`, `data_layer`, `developer_tdd` | API REST, lógica Red-Green-Refactor y tests PASS. |
-| 🎨 **[04_frontend_engineer](file:///multiAgents/04_frontend_engineer/)** | 🟡 **EN TURNO** | `design_system`, `state_flow`, `views_ux`, `dataviz`, `comp_tdd` | Vistas SPA, tests unitarios de componentes y walkthrough. |
-| 🧪 **[05_qa_security_tester](file:///multiAgents/05_qa_security_tester/)** | ⚪ **LISTO (Espera)** | `sdet_api`, `e2e_a11y`, `perf_security`, `exploratory` | Preparado para auditar en 4 Cuadrantes y OWASP ZAP. |
-| 🚀 **[06_devops_release](file:///multiAgents/06_devops_release/)** | ⚪ **LISTO (Espera)** | `env_container`, `seeder_lifecycle`, `cicd`, `release_ops` | Preparado para seeders, changelog y release SemVer. |
-| 📈 **[06_kaizen_committee](file:///multiAgents/protocols/CONTINUOUS_IMPROVEMENT_PROTOCOL.md)** | ⚪ **LISTO (Espera)** | `ishikawa`, `pareto_80_20`, `action_matrix` | Preparado para retrospectiva causal y plan de mejora. |
+| 🤖 **[00_orchestrator](../00_orchestrator/)** | 🟢 **ACTIVO** | Gobernanza HITL, Máquina de Estados, Semáforo | Supervisión de compuertas y transición de estados. |
+| 📋 **[01_product_manager](../01_product_manager/)** | 🟢 **CULMINADO** | `01_discovery`, `02_legal`, `03_atdd_bdd`, `04_uat` | PRD, HUs INVEST y criterios de aceptación ATDD aprobados. |
+| 🏛️ **[02_software_architect](../02_software_architect/)** | 🟢 **CULMINADO** | `system_modular`, `relational_ddl`, `api_contracts`, `security` | DDL relacional y contratos Zod API-First entregados. |
+| ⚙️ **[03_backend_engineer](../03_backend_engineer/)** | 🟢 **CULMINADO** | `api_gateway`, `domain_business`, `data_layer`, `developer_tdd` | API REST, lógica Red-Green-Refactor y tests PASS. |
+| 🎨 **[04_frontend_engineer](../04_frontend_engineer/)** | 🟡 **EN TURNO** | `design_system`, `state_flow`, `views_ux`, `dataviz`, `comp_tdd` | Vistas SPA, tests unitarios de componentes y walkthrough. |
+| 🧪 **[05_qa_security_tester](../05_qa_security_tester/)** | ⚪ **LISTO (Espera)** | `sdet_api`, `e2e_a11y`, `perf_security`, `exploratory` | Preparado para auditar en 4 Cuadrantes y OWASP ZAP. |
+| 🚀 **[06_devops_release](../06_devops_release/)** | ⚪ **LISTO (Espera)** | `env_container`, `seeder_lifecycle`, `cicd`, `release_ops` | Preparado para seeders, changelog y release SemVer. |
+| 📈 **[06_kaizen_committee](CONTINUOUS_IMPROVEMENT_PROTOCOL.md)** | ⚪ **LISTO (Espera)** | `ishikawa`, `pareto_80_20`, `action_matrix` | Preparado para retrospectiva causal y plan de mejora. |
 ```
 
 *Estados Operativos Válidos:*
@@ -92,7 +92,7 @@ stateDiagram-v2
 
 ## 3. Matriz de Firmas de Aprobación (Stage-Gates)
 
-> 📌 Esta matriz es un **resumen**. La definición canónica de cada compuerta (tipo, entregables y condiciones) vive en [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md); ante cualquier discrepancia, prevalece ese archivo.
+> 📌 Esta matriz es un **resumen**. La definición canónica de cada compuerta (tipo, entregables y condiciones) vive en [`.workflow/STAGE_GATES.md`](../../.workflow/STAGE_GATES.md); ante cualquier discrepancia, prevalece ese archivo.
 
 | Gate | Fase Origen -> Destino | Aprobador Requerido | Condición de Desbloqueo |
 | :--- | :--- | :--- | :--- |
@@ -105,9 +105,9 @@ stateDiagram-v2
 | **Gate 6** | Retrospectiva -> Próximo Sprint | **Director Humano** | Plan Kaizen aprobado (`docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md`) con análisis Ishikawa, Pareto 80/20 y matriz priorizada para el siguiente ciclo. |
 
 > 📌 **Implementación y Estado Operativo:**  
-> Consulta el protocolo vinculante en [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md) y la máquina de estados en tiempo real en [`.workflow/current_state.json`](file:///.workflow/current_state.json).
+> Consulta el protocolo vinculante en [`.workflow/STAGE_GATES.md`](../../.workflow/STAGE_GATES.md) y la máquina de estados en tiempo real en [`.workflow/current_state.json`](../../.workflow/current_state.json).
 
 
 > 📌 **Implementación y Estado Operativo:**  
-> Consulta el protocolo vinculante en [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md) y la máquina de estados en tiempo real en [`.workflow/current_state.json`](file:///.workflow/current_state.json).
+> Consulta el protocolo vinculante en [`.workflow/STAGE_GATES.md`](../../.workflow/STAGE_GATES.md) y la máquina de estados en tiempo real en [`.workflow/current_state.json`](../../.workflow/current_state.json).
 

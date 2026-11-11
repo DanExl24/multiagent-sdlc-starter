@@ -93,7 +93,7 @@ npx playwright test --debug
 
 #### ❌ CUÁNDO NO USARLA:
 1. **Para un cambio pequeño de texto o tipografía en un párrafo:** No abras un navegador headless de 30 segundos solo para verificar que un texto cambió; lee el archivo o haz una prueba unitaria ligera.
-2. **Para validar una regla de validación de backend:** Si el backend rechaza cédulas inválidas, eso se prueba con Vitest en 15 milisegundos, no mediante Playwright en 2 segundos.
+2. **Para validar una regla de validación de backend:** Si el backend rechaza documentos de identidad inválidos, eso se prueba con Vitest en 15 milisegundos, no mediante Playwright en 2 segundos.
 3. **En refactorizaciones puramente internas:** Si se refactorizó un servicio sin tocar la UI ni sus contratos, Playwright no debe ejecutarse si la suite previa está intacta.
 
 ---

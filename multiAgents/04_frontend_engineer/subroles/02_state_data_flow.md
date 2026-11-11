@@ -79,4 +79,4 @@ graph LR
 Está facultado para proponer al Director Humano mejoras en:
 * Librerías de caché de servidor y revalidación en segundo plano (`@tanstack/vue-query` / TanStack Query).
 * Estrategias de persistencia reactiva en Pinia (`pinia-plugin-persistedstate`).
-* Clientes WebSocket para actualizaciones en vivo de notificaciones o notas (`socket.io-client`).
+* Clientes WebSocket para actualizaciones en vivo de notificaciones o cambios de estado (`socket.io-client`).

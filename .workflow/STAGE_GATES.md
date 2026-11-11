@@ -4,8 +4,8 @@
 > Este protocolo rige de forma obligatoria para **TODOS los agentes de Inteligencia Artificial** que operen en este repositorio.  
 > Su objetivo es garantizar la soberanía, supervisión y control del **Director Humano (Tech Lead / Product Owner)** en los momentos críticos e irreversibles del desarrollo, erradicando la sobre-autonomía no autorizada.
 
-> 📌 **FUENTE DE LOS DATOS DE LAS COMPUERTAS (delegada por [`AGENTS.md`](file:///AGENTS.md)).**  
-> [`AGENTS.md`](file:///AGENTS.md) es la fuente de verdad del repositorio y **delega en este archivo** la definición de las compuertas: qué gates existen, de qué tipo son, quién las aprueba, qué se entrega en cada una y los valores permitidos de `current_state.json`.  
+> 📌 **FUENTE DE LOS DATOS DE LAS COMPUERTAS (delegada por [`AGENTS.md`](../AGENTS.md)).**  
+> [`AGENTS.md`](../AGENTS.md) es la fuente de verdad del repositorio y **delega en este archivo** la definición de las compuertas: qué gates existen, de qué tipo son, quién las aprueba, qué se entrega en cada una y los valores permitidos de `current_state.json`.  
 > Cualquier otro documento (`README.md`, `HANDOFF_PROTOCOL.md`, ROLE.md, etc.) **solo puede citarlas por su ID** (`G1`, `G3A`, …) o resumirlas, nunca redefinirlas. Ante cualquier contradicción en un punto que no sea un dato de compuerta, prevalece `AGENTS.md`.
 
 ---

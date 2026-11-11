@@ -2,7 +2,7 @@
 
 > **Fase del SDLC:** Fase 6 — Retrospectiva Técnica, Análisis de Causa Raíz y Plan de Mejora  
 > **Comité de Calidad Responsable:** `00_orchestrator`, `05_qa_security_tester`, `06_devops_release`, `02_software_architect`, `01_product_manager`  
-> **Plantilla Vinculante:** [`protocols/TEMPLATES/CONTINUOUS_IMPROVEMENT_TEMPLATE.md`](file:///multiAgents/protocols/TEMPLATES/CONTINUOUS_IMPROVEMENT_TEMPLATE.md)  
+> **Plantilla Vinculante:** [`protocols/TEMPLATES/CONTINUOUS_IMPROVEMENT_TEMPLATE.md`](TEMPLATES/CONTINUOUS_IMPROVEMENT_TEMPLATE.md)  
 > **Artefacto Emitido:** `docs/quality/IMPROVEMENT_PLAN_v[X.Y.Z].md`  
 > **Compuerta Asociada:** **Stage-Gate 6** (Aprobación del Plan de Mejora para el Siguiente Sprint)
 
@@ -74,7 +74,7 @@ Cada propuesta de solución se califica según las 3 variables del estándar ind
 * **Impacto en la Organización:** Mucho / Bastante / Poco / Ninguno.
 
 ### Paso 5: Formulación del Plan de Mejora (`IMPROVEMENT_PLAN_vX.Y.Z.md`)
-El DevOps Lead consolida el informe utilizando [`protocols/TEMPLATES/CONTINUOUS_IMPROVEMENT_TEMPLATE.md`](file:///multiAgents/protocols/TEMPLATES/CONTINUOUS_IMPROVEMENT_TEMPLATE.md), asignando a cada acción:
+El DevOps Lead consolida el informe utilizando [`protocols/TEMPLATES/CONTINUOUS_IMPROVEMENT_TEMPLATE.md`](TEMPLATES/CONTINUOUS_IMPROVEMENT_TEMPLATE.md), asignando a cada acción:
 - Tareas concretas y verificables.
 - Agente líder responsable (Backend Lead, Frontend Lead, Architect o DevOps).
 - Tiempos de inicio y fin dentro del siguiente sprint.
