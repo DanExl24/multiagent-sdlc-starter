@@ -122,7 +122,7 @@ Para que el Frontend siempre sepa qué esperar de cualquier controlador del Back
 Si durante la construcción de la interfaz el Frontend nota que la vista necesita un dato adicional (ejemplo: mostrar el estado de auditoría junto al registro):
 
 1. **El Frontend NO simula datos fijos (hardcodeados) en la UI.**
-2. Agrega una nota en su `WORKLOG.md` y en el del Backend:
+2. Agrega una nota en su bitácora del módulo y en la del Backend (`multiAgents/[rol]/worklog/[XX_nombre].md`):
    ```markdown
    > ⚠️ **SOLICITUD DE EXTENSIÓN DE ENDPOINT**
    > **Módulo:** 02_operaciones

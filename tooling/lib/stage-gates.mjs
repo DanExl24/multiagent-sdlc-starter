@@ -4,6 +4,7 @@
  * Lee dos bloques delimitados por marcadores HTML:
  *   <!-- gates:start --> ... <!-- gates:end -->      Tabla Maestra de Compuertas
  *   <!-- estados:start --> ... <!-- estados:end -->  Valores permitidos de `estado`
+ *   <!-- capas:start --> ... <!-- capas:end -->      Compuertas que dependen de una capa
  *
  * Falla con un Error explícito ante marcadores ausentes o filas mal formadas
  * (diseño intencional: un cambio de formato debe romper el CI, nunca pasar en silencio).
@@ -59,7 +60,8 @@ function parseNiveles(cell, id) {
  * @returns {{
  *   gates: Array<{id: string, tipo: 'halt'|'checkpoint'|'bootstrap', niveles: Nivel[], fase: string|null, gate: string|null}>,
  *   stateful: Array<{id: string, tipo: 'halt'|'checkpoint', niveles: Nivel[], fase: string, gate: string}>,
- *   estados: string[]
+ *   estados: string[],
+ *   capas: Map<string, string>
  * }}
  */
 export function loadStageGates(file = STAGE_GATES_PATH) {
@@ -103,5 +105,14 @@ export function loadStageGates(file = STAGE_GATES_PATH) {
     }
   }
 
-  return { gates, stateful, estados };
+  // Compuertas que solo existen si el proyecto tiene una capa (G3A → backend, G3B → frontend).
+  const capas = new Map(tableRows(extractBlock(markdown, 'capas'), 'capas').map((cells, i) => {
+    const id = cells[0].replace(/\*/g, '').trim();
+    const layer = backticked(cells[1] ?? '');
+    if (!gates.some((g) => g.id === id)) throw new Error(`capas: la fila ${i + 1} cita la compuerta "${id}", que no existe en la Tabla Maestra.`);
+    if (!layer) throw new Error(`capas: la fila ${i + 1} no declara la capa entre acentos graves.`);
+    return [id, layer];
+  }));
+
+  return { gates, stateful, estados, capas };
 }

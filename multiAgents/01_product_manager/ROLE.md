@@ -70,5 +70,5 @@ graph TD
 - [ ] Reglas de negocio identificadas unívocamente (`RN-MOD-01`, `RN-MOD-02`, etc.).
 - [ ] Términos nuevos del módulo registrados en `docs/project/glossary.md` con su nombre técnico.
 - [ ] Índice `docs/modules/[XX]/README.md` creado desde `MODULE_TEMPLATE/00_README_TEMPLATE.md`.
-- [ ] Bitácora actualizada en `multiAgents/01_product_manager/WORKLOG.md`.
+- [ ] Bitácora actualizada en `multiAgents/01_product_manager/worklog/[XX_nombre].md` (o en `WORKLOG.md` si el trabajo es transversal).
 - [ ] Firma aprobatoria del Director Humano registrada en Gate 1.

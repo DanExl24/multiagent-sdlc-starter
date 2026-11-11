@@ -85,4 +85,4 @@ Antes de proponer o ejecutar un comando `git commit`, el agente DEBE validar:
 2. [ ] ¿El tipo (`feat`, `fix`, `docs`, `test`, `style`, `refactor`, `chore`) refleja con exactitud la naturaleza del cambio?
 3. [ ] ¿El scope entre paréntesis `(scope)` identifica el módulo o subsistema transversal?
 4. [ ] ¿La descripción explica concisamente la modificación realizada?
-5. [ ] ¿Se actualizaron previamente las bitácoras `WORKLOG.md` y `current_state.json`?
+5. [ ] ¿Se actualizaron previamente la bitácora del rol, el archivo de estado de la pista y, si hay cambios visibles, el fragmento de `changelog.d/`?

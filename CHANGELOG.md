@@ -3,6 +3,27 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.8.0] - 2026-11-10
+
+### Added
+- **`.workflow/project.json`:** declara las capas activas (backend, frontend), la raíz y la carpeta de módulos de cada una, y la ruta de los contratos. El repositorio que adopta el starter puede usar su propia estructura (monorepo, rutas distintas, proyectos sin frontend o sin backend) sin editar el tooling. Si el archivo no existe, se usan las rutas por defecto.
+- Tabla de compuertas que dependen de una capa en `STAGE_GATES.md` (§2.2): G3A requiere backend y G3B frontend. Con la capa inactiva, la compuerta desaparece de la pista de módulo.
+- `validate:state` exige el contrato (`<contratos>/<id>.contract.ts` o con el nombre sin número) a todo módulo que superó G2, aplicando la regla de oro del contrato previo, y avisa de carpetas de código que no correspondan a ningún módulo.
+- `init-project` pregunta las capas y sus carpetas raíz, escribe `project.json` y crea solo las carpetas de las capas activas.
+- **Fragmentos de changelog (`changelog.d/`):** cada módulo registra sus cambios en `changelog.d/[XX_nombre].md` y los transversales en `changelog.d/proyecto-[descripcion].md`. Ninguna rama edita `CHANGELOG.md`, así que varios módulos en paralelo no chocan al fusionar.
+- `npm run release:changelog -- X.Y.Z [--dry-run]`: consolida los fragmentos por sección de Keep a Changelog anteponiendo el ID del módulo, los borra y registra la versión en `incluido_en_release` de los módulos incluidos. Rechaza fragmentos de módulos que no superaron G4 y versiones ya publicadas.
+- **Bitácoras por módulo:** `multiAgents/[rol]/worklog/[XX_nombre].md` para el trabajo de un módulo; el `WORKLOG.md` de cada rol queda para lo transversal.
+- Reglas I y J de `check:docs`: formato y nombre de los fragmentos, y que fragmentos y bitácoras correspondan a un módulo existente.
+
+### Changed
+- `init-project` reinicia la historia heredada del starter: `CHANGELOG.md`, bitácora del orquestador, historial de la matriz de versiones, fragmentos pendientes y metadatos de `package.json` (nombre, versión 0.1.0, descripción y autor). La versión del starter queda registrada como origen.
+- `check:no-any`, `test:contracts` y `audit:a11y` leen sus rutas de `project.json` en lugar de asumir `backend/`, `frontend/` y `docs/contracts/`.
+- Las herramientas usan la fecha local (no UTC) al registrar fechas.
+- La regla de oro de la bitácora (`AGENTS.md` §6) precisa dónde se registra cada cambio: bitácora del módulo o del rol según corresponda.
+- Entregables de G3A, G4 y G5 en `STAGE_GATES.md`, protocolo de aterrizaje de `AGENTS.md`, Definition of Done de los roles, `SEMVER_CHANGELOG_PROTOCOL.md`, protocolos de colaboración, convención de commits, `init-project` y `new:module` alineados con fragmentos y bitácoras por módulo.
+
+---
+
 ## [1.7.0] - 2026-11-10
 
 ### Added

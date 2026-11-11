@@ -7,7 +7,7 @@
  *      numeran compuertas ni reglas: solo describen y enlazan a AGENTS.md.
  *   D. CLAUDE.md y GEMINI.md existen y se limitan a importar AGENTS.md (línea "@AGENTS.md").
  *   E. Toda ruta "docs/..." mencionada en un documento existe en el repositorio. Se ignoran placeholders ([XX], vX.Y.Z), informes generados y los
- *      registros históricos (CHANGELOG.md y WORKLOG.md).
+ *      registros históricos (CHANGELOG.md, WORKLOG.md y las bitácoras worklog/).
  *   F. Los enlaces Markdown son relativos al archivo (nunca "file://" ni rutas absolutas)
  *      y su destino existe. Se ignoran URLs externas, anclas, placeholders y bloques de código;
  *      en multiAgents/protocols/TEMPLATES/ solo se exige que sean relativos.
@@ -15,12 +15,18 @@
  *      módulo llevan el encabezado estándar: Responsable, Estado, Naturaleza y Última revisión.
  *   H. (Aviso, no bloquea) Documentos que superan el umbral de tamaño: 400 líneas en docs/,
  *      300 en ROLE.md y subroles.
+ *   I. Los fragmentos de changelog.d/ tienen nombre válido, formato Keep a Changelog y, si son
+ *      de un módulo, ese módulo existe en .workflow/modules/.
+ *   J. Las bitácoras por módulo (multiAgents/[rol]/worklog/[XX_nombre].md) corresponden a un
+ *      módulo existente.
  *   C. Los IDs de compuerta del diagrama de AGENTS.md coinciden con la tabla de
  *      .workflow/STAGE_GATES.md.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { loadStageGates, rootDir } from './lib/stage-gates.mjs';
+import { loadFragments } from './lib/changelog-fragments.mjs';
+import { loadModuleStates } from './lib/workflow-state.mjs';
 
 const SKIP_DIRS = new Set(['node_modules', '.git']);
 const SCAN_EXT = new Set(['.md', '.ts']);
@@ -93,9 +99,10 @@ try {
 const PATH_RE = /(?<![\w.-])(docs\/[A-Za-z0-9_\-./\[\]{}*<>]*)/g;
 const PLACEHOLDER = /[\[\]{}*<>]|XX|X\.Y\.Z|\.\.\./;
 const GENERATED = /^docs\/qa\/[^/]+(?:-summary\.json|\.html)$/;
-const HISTORICAL = new Set(['CHANGELOG.md', 'WORKLOG.md']);
+const HISTORICAL_NAMES = new Set(['CHANGELOG.md', 'WORKLOG.md']);
+const isHistorical = (file) => HISTORICAL_NAMES.has(path.basename(file)) || /[\\/]worklog[\\/][^\\/]+\.md$/.test(file);
 for (const file of walk(rootDir)) {
-  if (HISTORICAL.has(path.basename(file))) continue;
+  if (isHistorical(file)) continue;
   const name = rel(file);
   fs.readFileSync(file, 'utf-8').split(/\r?\n/).forEach((line, i) => {
     for (const match of line.matchAll(PATH_RE)) {
@@ -113,7 +120,7 @@ for (const file of walk(rootDir)) {
   if (path.extname(file) !== '.md') continue;
   const name = rel(file);
   // Las plantillas enlazan a rutas que solo existen una vez copiadas a su destino.
-  const skipExistence = HISTORICAL.has(path.basename(file)) || name.startsWith('multiAgents/protocols/TEMPLATES/');
+  const skipExistence = isHistorical(file) || name.startsWith('multiAgents/protocols/TEMPLATES/');
   let inFence = false;
   fs.readFileSync(file, 'utf-8').split(/\r?\n/).forEach((line, i) => {
     if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; return; }
@@ -168,6 +175,26 @@ for (const file of walk(rootDir)) {
   const lines = fs.readFileSync(file, 'utf-8').split(/\r?\n/).length;
   if (lines > limit.max) warnings.push(`${name} tiene ${lines} líneas (umbral ${limit.max}). Considera dividirlo por responsabilidad.`);
 }
+// I. Fragmentos de changelog.d/: nombre, formato Keep a Changelog y módulo existente
+const moduleIds = new Set(loadModuleStates().map((m) => m.id));
+for (const fragment of loadFragments()) {
+  for (const e of fragment.errors) errors.push(`changelog.d/${fragment.name}: ${e}`);
+  if (fragment.owner && fragment.owner !== 'proyecto' && !moduleIds.has(fragment.owner)) {
+    errors.push(`changelog.d/${fragment.name}: el módulo "${fragment.owner}" no existe en .workflow/modules/.`);
+  }
+}
+
+// J. Bitácoras por módulo (multiAgents/[rol]/worklog/[XX_nombre].md): el módulo debe existir
+for (const file of walk(path.join(rootDir, 'multiAgents'))) {
+  const name = rel(file);
+  const match = name.match(/^multiAgents\/[^/]+\/worklog\/([^/]+)\.md$/);
+  if (!match) {
+    if (/\/worklog\//.test(name)) errors.push(`${name}: las bitácoras por módulo van en multiAgents/[rol]/worklog/[XX_nombre].md.`);
+    continue;
+  }
+  if (!moduleIds.has(match[1])) errors.push(`${name}: el módulo "${match[1]}" no existe en .workflow/modules/.`);
+}
+
 if (warnings.length > 0) {
   console.warn('⚠️  Documentos que superan el umbral de tamaño:');
   for (const w of warnings) console.warn(`   - ${w}`);

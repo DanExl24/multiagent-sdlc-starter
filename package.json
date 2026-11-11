@@ -1,6 +1,6 @@
 {
   "name": "multiagent-sdlc-starter",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Plantilla rectora universal para desarrollo de software guiado por multiagentes autónomos, artefactos inmutables y compuertas de calidad HITL.",
   "main": "tooling/init-project.mjs",
   "type": "module",
@@ -11,6 +11,7 @@
     "validate:state": "node tooling/validate-state.mjs",
     "status": "node tooling/status.mjs",
     "new:module": "node tooling/new-module.mjs",
+    "release:changelog": "node tooling/release-changelog.mjs",
     "check:docs": "node tooling/check-doc-sources.mjs",
     "audit:dast": "node tooling/audit-security-runtime.mjs",
     "test:load": "node tooling/run-load-test.mjs",

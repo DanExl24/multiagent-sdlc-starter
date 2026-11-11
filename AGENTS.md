@@ -15,6 +15,7 @@
 | :--- | :--- |
 | Reglas de Oro (texto y numeración), catálogo de roles, protocolo de aterrizaje y precedencia entre documentos | **`AGENTS.md`** (este archivo) |
 | Compuertas: IDs, tipo (Halt / Checkpoint / Bootstrap), entregables, aprobador y valores permitidos de `current_state.json` | [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md), por delegación explícita de este manual |
+| Estructura del proyecto: capas activas (backend, frontend) y rutas de código y contratos | `.workflow/project.json` (lo crea `npm run init:project` y lo valida `npm run validate:state`). Las rutas `backend/` y `frontend/` que citan los documentos son las predeterminadas |
 | Estado vivo del ciclo de vida | `.workflow/current_state.json` (pista de proyecto y release) y `.workflow/modules/*.json` (una pista por módulo), validados contra `STAGE_GATES.md` con `npm run validate:state`. Vista consolidada: `npm run status` |
 | Detalle operativo de cada rol y subrol | `multiAgents/[rol]/ROLE.md` y `multiAgents/[rol]/subroles/` |
 | Protocolos de traspaso, commits, SemVer y RFC | `multiAgents/protocols/` |
@@ -69,12 +70,14 @@ flowchart LR
 / (Raíz del Proyecto)
 ├── AGENTS.md                            # 📍 Este manual rector (Lectura y aterrizaje obligatorio)
 ├── LANDING_PROMPT.md                    # 🚀 Prompt para inicializar sesiones con nuevas IAs
-├── CHANGELOG.md                         # Historial de versiones bajo estándar Keep a Changelog
+├── CHANGELOG.md                         # Historial de versiones (Keep a Changelog); se consolida en G5
+├── changelog.d/                         # Fragmentos de cambios por módulo o transversales (uno por archivo)
 ├── README.md                            # Documentación y guía del proyecto (solo puente hacia este manual)
 ├── CLAUDE.md · GEMINI.md                # 🔗 Puentes de una línea que importan este manual (@AGENTS.md)
 │
 ├── .workflow/                           # 🚦 Máquina de Estados y Gobernanza HITL
 │   ├── STAGE_GATES.md                   # Protocolo canónico de compuertas y altos obligatorios
+│   ├── project.json                     # Capas activas y rutas del proyecto (backend, frontend, contratos)
 │   ├── current_state.json               # Estado de la pista de proyecto (línea base) y de release
 │   └── modules/                         # Un archivo de estado por módulo (XX_nombre.json): pistas paralelas
 │
@@ -82,27 +85,33 @@ flowchart LR
 │   ├── 00_orchestrator/                 # Coordinación central, máquina de estados y semáforo global
 │   ├── 01_product_manager/              # Fase 1: HUs bajo INVEST, criterios BDD y Discovery
 │   │   ├── ROLE.md                      # Manual del Product Manager Lead y árbol de decisión
-│   │   ├── WORKLOG.md                   # Bitácora histórica del rol
+│   │   ├── WORKLOG.md                   # Bitácora del rol para trabajo transversal
+│   │   ├── worklog/                     # Bitácoras del rol por módulo ([XX_nombre].md)
 │   │   └── subroles/                    # 🛠️ Kit de Subroles de Producto (Discovery, Legal, BDD, UAT)
 │   ├── 02_software_architect/           # Fase 2: DDL, contratos Zod y topología C4
 │   │   ├── ROLE.md                      # Manual del Software Architect Lead y árbol de decisión
-│   │   ├── WORKLOG.md                   # Bitácora histórica del rol
+│   │   ├── WORKLOG.md                   # Bitácora del rol para trabajo transversal
+│   │   ├── worklog/                     # Bitácoras del rol por módulo ([XX_nombre].md)
 │   │   └── subroles/                    # 🛠️ Kit de Subroles de Arquitectura (C4, DDL, Zod, Security)
 │   ├── 03_backend_engineer/             # Fase 3A: Capa de datos, API REST y servicios de dominio
 │   │   ├── ROLE.md                      # Manual del Backend Lead y árbol de decisión
-│   │   ├── WORKLOG.md                   # Bitácora histórica del rol
+│   │   ├── WORKLOG.md                   # Bitácora del rol para trabajo transversal
+│   │   ├── worklog/                     # Bitácoras del rol por módulo ([XX_nombre].md)
 │   │   └── subroles/                    # 🛠️ Kit de Subroles de Backend (Gateway, Domain, Data, TDD)
 │   ├── 04_frontend_engineer/            # Fase 3B: Interfaz SPA, State, Tailwind y DataViz
 │   │   ├── ROLE.md                      # Manual del Frontend Lead y árbol de decisión
-│   │   ├── WORKLOG.md                   # Bitácora histórica del rol
+│   │   ├── WORKLOG.md                   # Bitácora del rol para trabajo transversal
+│   │   ├── worklog/                     # Bitácoras del rol por módulo ([XX_nombre].md)
 │   │   └── subroles/                    # 🛠️ Kit de Subroles de Frontend (Design System, State, Views, DataViz)
 │   ├── 05_qa_security_tester/           # Fase 4: Auditoría forense, poder de veto y arsenal de 4 pilares
 │   │   ├── ROLE.md                      # Manual del QA Lead y Mandato de los 4 Pilares
-│   │   ├── WORKLOG.md                   # Bitácora histórica del rol
+│   │   ├── WORKLOG.md                   # Bitácora del rol para trabajo transversal
+│   │   ├── worklog/                     # Bitácoras del rol por módulo ([XX_nombre].md)
 │   │   └── subroles/                    # 🛠️ Kit de Subroles de QA (SDET/Bruno, E2E/Playwright, Perf/k6)
 │   ├── 06_devops_release/               # Fase 5: Infraestructura Docker, seeders y CI/CD
 │   │   ├── ROLE.md                      # Manual del DevOps Lead y árbol de decisión
-│   │   ├── WORKLOG.md                   # Bitácora histórica del rol
+│   │   ├── WORKLOG.md                   # Bitácora del rol para trabajo transversal
+│   │   ├── worklog/                     # Bitácoras del rol por módulo ([XX_nombre].md)
 │   │   └── subroles/                    # 🛠️ Kit de Subroles de DevOps (Env, Seeder, CI/CD, Observability)
 │   │
 │   └── protocols/                       # 🤝 Protocolos de Colaboración e Interoperabilidad
@@ -134,8 +143,8 @@ flowchart LR
 │   ├── check-no-any-frontend.mjs        # Verificador AST contra 'any' en Frontend
 │   └── init-project.mjs                 # Wizard de configuración para nuevos proyectos
 │
-├── backend/                             # API REST / Servicios
-└── frontend/                            # SPA Web / Cliente
+├── backend/                             # API REST / Servicios (ruta por defecto; ver .workflow/project.json)
+└── frontend/                            # SPA Web / Cliente (ruta por defecto; ver .workflow/project.json)
 ```
 
 ---
@@ -205,7 +214,7 @@ Si eres un agente nuevo ingresando al repositorio:
 │ PASO 2: VERIFICACIÓN DE INSUMOS (DOR / PRECONDICIONES)                                 │
 │ 1. Verifica que la fase previa esté aprobada por el Director Humano.                   │
 │ 2. Lee los artefactos de entrada (ej. si eres Backend, lee el contrato en contracts/). │
-│ 3. Si hay ambigüedades, NO improvises: abre un ticket en tu WORKLOG.md.                │
+│ 3. Si hay ambigüedades, NO improvises: abre un ticket en tu bitácora.                  │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ PASO 3: EJECUCIÓN CON KIT DE SUBROLES                                                  │
 │ 1. Convoca al subrol especializado exacto para la tarea (no cargues todo a la vez).    │
@@ -213,8 +222,10 @@ Si eres un agente nuevo ingresando al repositorio:
 │    multiAgents/protocols/TECHNICAL_PROPOSALS_PROTOCOL.md.                              │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ PASO 4: CIERRE, BITÁCORA Y ALTO MECÁNICO (STAGE-GATE)                                  │
-│ 1. Registra tus acciones en multiAgents/[tu_agente]/WORKLOG.md.                        │
-│ 2. Si modificaste código, actualiza CHANGELOG.md con estándar SemVer.                  │
+│ 1. Registra tus acciones en multiAgents/[tu_agente]/worklog/[XX_nombre].md             │
+│    (o en WORKLOG.md si el trabajo es transversal).                                     │
+│ 2. Si hay cambios visibles, añade un fragmento en changelog.d/ (nunca edites           │
+│    CHANGELOG.md en una rama: se consolida en el release).                              │
 │ 3. Si eres Frontend o QA, actualiza el walkthrough versionado.                         │
 │ 4. Si estás en Gate 1, 2, 3B, 4, 5 o 6, DETÉN EL USO DE HERRAMIENTAS (Halt/Yield) y    │
 │    solicita la aprobación explícita del Director Humano.                               │
@@ -229,7 +240,7 @@ Si eres un agente nuevo ingresando al repositorio:
 2. ❌ **PROHIBIDO el SQL crudo en texto:** Toda consulta a la base de datos debe usar QueryBuilders tipados o modelos fuertemente tipados. Prohibidas las cadenas concatenadas vulnerables a inyección SQL.
 3. ❌ **PROHIBIDO violar la inmutabilidad de estados de negocio:** Transiciones de estado irreversibles deben validarse y rechazarse con HTTP 403 / 409 si la entidad se encuentra en un estado terminal o cerrado.
 4. ❌ **PROHIBIDO el salto de Stage-Gates:** Ningún agente puede auto-aprobarse un Stage-Gate. Las compuertas principales requieren la confirmación explícita del Director Humano según `.workflow/STAGE_GATES.md`.
-5. ❌ **PROHIBIDO omitir la bitácora:** Todo cambio de código o documento debe quedar reflejado de forma concisa en el `WORKLOG.md` del agente que lo realizó.
+5. ❌ **PROHIBIDO omitir la bitácora:** Todo cambio de código o documento debe quedar reflejado de forma concisa en la bitácora del agente que lo realizó: `multiAgents/[rol]/worklog/[XX_nombre].md` si pertenece a un módulo, o `multiAgents/[rol]/WORKLOG.md` si es transversal.
 6. ❌ **PROHIBIDO que QA autocorriga código de producción:** El QA Lead tiene poder de veto y debe emitir reportes con análisis de causa raíz (RCA) explicando el error del desarrollador, sin alterar él mismo el código de producción.
 7. ❌ **PROHIBIDO el uso de estilos fuera del Design System:** Todo componente visual debe apegarse estrictamente a la guía de tokens y diseño en `docs/project/design-system.md`.
 8. ❌ **PROHIBIDO maquillar u ocultar bugs (Transparencia Radical en QA):** Todo defecto, error de compilación, falla en tests o fallo de linter detectado DEBE quedar explícitamente documentado en el reporte de QA (`QA_REPORT.md`), catalogado con severidad (S1 a S4) y su causa raíz.

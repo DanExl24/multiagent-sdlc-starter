@@ -76,5 +76,5 @@ Si durante la construcción de módulos se detecta que se escriben decenas de l�
 - [ ] Compilación TypeScript limpia y estricta sin errores (`npm run build`).
 - [ ] 100% de rutas protegidas con autenticación, RBAC y Tenant Isolation.
 - [ ] Suite de pruebas Vitest del módulo pasando al 100% (`npm test`).
-- [ ] Bitácora actualizada en `multiAgents/03_backend_engineer/WORKLOG.md`.
+- [ ] Bitácora actualizada en `multiAgents/03_backend_engineer/worklog/[XX_nombre].md` (o en `WORKLOG.md` si el trabajo es transversal).
 - [ ] Listo para entrega al Agente 05 (QA Lead & Security Tester).

@@ -65,5 +65,5 @@ graph TD
 - [ ] Contrato Zod en `docs/contracts/[XX].contract.ts` con esquemas de entrada y salida tipados al 100%.
 - [ ] Cero uso de `any` en los contratos y tipos exportados.
 - [ ] Matriz RBAC definida con permisos por rol.
-- [ ] Bitácora actualizada en `multiAgents/02_software_architect/WORKLOG.md`.
+- [ ] Bitácora actualizada en `multiAgents/02_software_architect/worklog/[XX_nombre].md` (o en `WORKLOG.md` si el trabajo es transversal).
 - [ ] Firma aprobatoria del Director Humano registrada en Gate 2.

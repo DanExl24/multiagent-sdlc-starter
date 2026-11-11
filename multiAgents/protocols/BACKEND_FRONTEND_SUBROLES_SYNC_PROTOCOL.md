@@ -115,9 +115,9 @@ graph LR
 
 ---
 
-## 4. Matriz de Relevo (Handshake) en WORKLOG.md
+## 4. Matriz de Relevo (Handshake) en la Bitácora del Módulo
 
-Cuando el Backend Lead y sus subroles finalizan un endpoint o módulo, **DEBEN** dejar en su `WORKLOG.md` el siguiente bloque estandarizado:
+Cuando el Backend Lead y sus subroles finalizan un endpoint o módulo, **DEBEN** dejar en su bitácora del módulo (`multiAgents/03_backend_engineer/worklog/[XX_nombre].md`) el siguiente bloque estandarizado:
 
 ```markdown
 ### 🤝 RELEVO TÉCNICO BILATERAL: BACKEND ➔ FRONTEND

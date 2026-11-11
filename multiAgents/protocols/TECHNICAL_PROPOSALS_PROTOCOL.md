@@ -70,4 +70,4 @@ Cuando un agente identifique una oportunidad de mejora arquitectural, modular o 
 2. ❌ **PROHIBIDO el sufrimiento innecesario por omisión:** Si un agente sabe que existe una librería probada que resuelve un problema complejo en 5 líneas en vez de escribir 300 líneas manuales frágiles, **CALLAR ES UNA FALTA PROFESIONAL**. Debe proponerla.
 3. ❌ **PROHIBIDO el sobre-empaquetamiento (Over-engineering):** No se deben sugerir librerías pesadas para tareas triviales que 3 líneas de JavaScript moderno resuelven nativamente.
 4. ✅ **Decisión Ejecutiva HITL (Human-in-the-Loop):** El Director Humano tiene el poder de decisión final: aprobar, posponer o pedir una alternativa.
-5. ✅ **Registro en Bitácora:** Todo RFC aprobado debe quedar registrado en el `WORKLOG.md` del agente y en el `CHANGELOG.md` del proyecto en su respectiva versión.
+5. ✅ **Registro en Bitácora:** Todo RFC aprobado debe quedar registrado en la bitácora del agente y en un fragmento de `changelog.d/` en su respectiva versión.

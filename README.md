@@ -112,11 +112,13 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 ├── LANDING_PROMPT.md                    # 🚀 Prompt canónico para alimentar a la IA
 ├── README.md                            # 📖 Este documento de bienvenida y guía rápida
 ├── CLAUDE.md · GEMINI.md                # 🔗 Puentes que importan AGENTS.md (Claude Code / Gemini CLI)
-├── CHANGELOG.md                         # 📝 Historial bajo Keep a Changelog y SemVer
+├── CHANGELOG.md                         # 📝 Historial bajo Keep a Changelog y SemVer (se consolida en el release)
+├── changelog.d/                         # 🧩 Fragmentos de cambios por módulo (evitan conflictos entre ramas)
 ├── package.json                         # ⚙️ Scripts de gobernanza (init:project, check:no-any)
 │
 ├── .workflow/                           # 🚦 Máquina de Estados y Gobernanza HITL
 │   ├── STAGE_GATES.md                   # Datos de las compuertas (delegado por AGENTS.md)
+│   ├── project.json                     # Capas activas y rutas del proyecto (monorepo, sin frontend, etc.)
 │   ├── current_state.json               # Estado de la pista de proyecto y release
 │   └── modules/                         # Un archivo de estado por módulo (trabajo en paralelo)
 │
@@ -131,6 +133,7 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 │   ├── validate-state.mjs               # Validador de las pistas de estado contra STAGE_GATES.md
 │   ├── status.mjs                       # Semáforo consolidado de proyecto y módulos (npm run status)
 │   ├── new-module.mjs                   # Crea un módulo: docs/modules/XX_nombre/ y su archivo de estado
+│   ├── release-changelog.mjs            # Consolida changelog.d/ en CHANGELOG.md al preparar un release
 │   ├── check-doc-sources.mjs            # Lint de la política de fuentes de verdad (AGENTS.md)
 │   └── lib/                             # Lector de STAGE_GATES.md y lógica de las pistas de estado
 │
@@ -184,6 +187,7 @@ npm run audit:a11y
 npm run new:module -- 04_pagos --responsable "Ana" --depende-de 01_auth
 npm run status
 npm run validate:state
+npm run release:changelog -- 0.2.0 --dry-run   # Al preparar un release: consolida changelog.d/
 
 # 7. Política de Fuentes de Verdad (sin citas numeradas fuera de AGENTS.md):
 npm run check:docs

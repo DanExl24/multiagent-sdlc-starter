@@ -61,6 +61,19 @@ El ciclo de vida se recorre en **pistas independientes**, para que varias person
 - `current_state.json` **no** guarda el estado de los módulos: si lo hiciera, cada avance de cualquier módulo tocaría ese archivo y habría conflictos de Git. La vista consolidada se genera con `npm run status`.
 - Los módulos se crean con `npm run new:module -- [XX_nombre]`, que genera su carpeta en `docs/modules/` y su archivo de estado.
 
+### 2.2. Compuertas que dependen de una capa
+
+Algunas compuertas solo existen si el proyecto tiene la capa correspondiente. Las capas activas y sus rutas se declaran en `.workflow/project.json`. Si una capa está inactiva, su compuerta desaparece de la pista de módulo y el flujo pasa directamente a la siguiente.
+
+<!-- capas:start -->
+
+| Compuerta | Capa requerida | Si la capa está inactiva |
+| :--- | :--- | :--- |
+| **G3A** | `backend` | El módulo pasa de G2 a G3B (frontend que consume una API existente). |
+| **G3B** | `frontend` | El módulo pasa de G3A a G4 (API, servicio o librería sin interfaz). |
+
+<!-- capas:end -->
+
 > ⚠️ **Esta tabla es la única copia de los datos.** `tooling/validate-state.mjs` la lee directamente entre los marcadores `gates:start` y `gates:end`; no existe otra lista que mantener. Si cambias el formato de las columnas o quitas un marcador, el validador falla en CI a propósito.
 
 ---
@@ -181,7 +194,7 @@ El ciclo de vida se recorre en **pistas independientes**, para que varias person
   - Compilación estricta `npm run build` (`check:no-any && tsc`) en verde con **Tolerancia Cero al tipo `any`**.
   - Rutas protegidas con autenticación, RBAC y aislamiento de tenant, según el contrato de G2.
   - Contratos Zod sincronizados entre backend y `docs/contracts/`.
-  - `WORKLOG.md` del backend actualizado.
+  - Bitácora del backend para el módulo (`multiAgents/03_backend_engineer/worklog/[XX_modulo].md`) actualizada.
 - **Acción del Agente al Terminar:**
   1. Registrar la transición en `historial_transiciones` y actualizar el archivo del módulo a `fase_activa: "FASE_3B_FRONTEND"`, `gate_activo: "GATE_3B_FRONTEND_UI_APPROVAL"`, `estado: "EN_PROCESO"`, `rol_en_turno: "04_frontend_engineer"`.
   2. **Transferir directamente al Frontend Engineer.** Este checkpoint **no** detiene el turno.
@@ -215,7 +228,7 @@ El ciclo de vida se recorre en **pistas independientes**, para que varias person
   - `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md`: Auditoría forense con análisis RCA de cualquier defecto encontrado.
   - Suite de pruebas automatizadas 100% en verde y 0 defectos S1/S2 abiertos.
   - **Certificación AST de Cero ANY:** Verificación de `npm run check:no-any` en `backend/` y `frontend/` con 0 incidencias. Si se detecta un solo `any`, el QA Lead aplica **Veto Inmediato (Stop-the-Line)**.
-  - Entrada de la versión candidata preparada en `CHANGELOG.md` (SemVer) y `docs/project/version-matrix.md`, necesaria para el commit canónico.
+  - Fragmento del módulo en `changelog.d/[XX_modulo].md` (formato Keep a Changelog), validado por `npm run check:docs`. En una rama de módulo no se edita `CHANGELOG.md`.
 - **Veto QA:** si QA rechaza, `estado: "BLOQUEADO"` con el motivo en `bloqueos`, y el flujo regresa a `FASE_3A_BACKEND` o `FASE_3B_FRONTEND` según el defecto. QA **no** corrige código de producción.
 - **Acción del Agente al Terminar:**
   1. Actualizar el archivo de estado de su pista (§5) con `gate_activo: "GATE_4_QA_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.
@@ -232,7 +245,7 @@ El ciclo de vida se recorre en **pistas independientes**, para que varias person
   - Lista de módulos incluidos (todos `COMPLETADO` en G4). Al aprobarse, cada uno registra la versión en `incluido_en_release`.
   - Seeders y migraciones idempotentes, ejecutables de forma limpia.
   - Contenedores Docker que levantan sin advertencias y `/api/health` en OK.
-  - `CHANGELOG.md` finalizado bajo SemVer y **tag de Git** `vX.Y.Z` creado.
+  - `CHANGELOG.md` consolidado con `npm run release:changelog -- X.Y.Z` (une los fragmentos de `changelog.d/` y marca `incluido_en_release` en los módulos incluidos), `docs/project/version-matrix.md` actualizado y **tag de Git** `vX.Y.Z` creado.
   - Runbooks y documentación de entrega listos para firma.
 - **Acción del Agente al Terminar:**
   1. Actualizar el archivo de estado de su pista (§5) con `gate_activo: "GATE_5_RELEASE_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.

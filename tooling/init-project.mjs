@@ -35,6 +35,56 @@ function replaceInFile(filePath, replacements) {
   fs.writeFileSync(filePath, content, 'utf-8');
 }
 
+/**
+ * El proyecto nuevo no hereda la historia del starter: su CHANGELOG, la bitácora del
+ * orquestador, el historial de la matriz de versiones y los metadatos de package.json
+ * empiezan en v0.1.0. La versión del starter queda registrada como origen.
+ */
+function resetStarterHistory({ projectSlug, projectDesc, author, date }) {
+  const pkgPath = path.join(rootDir, 'package.json');
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+  const starter = `${pkg.name}@${pkg.version}`;
+  Object.assign(pkg, { name: projectSlug, version: '0.1.0', description: projectDesc, author });
+  fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
+
+  const origin = `Proyecto inicializado con \`npm run init:project\` a partir de ${starter} (G0 Bootstrap).`;
+  fs.writeFileSync(path.join(rootDir, 'CHANGELOG.md'), [
+    '# 📝 Changelog',
+    '',
+    'Todos los cambios notables en este proyecto serán documentados en este archivo.',
+    'El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).',
+    'Durante el desarrollo, los cambios se registran como fragmentos en `changelog.d/` y se consolidan en cada release con `npm run release:changelog`.',
+    '',
+    `## [0.1.0] - ${date}`,
+    '',
+    '### Added',
+    `- ${origin}`,
+    '',
+  ].join('\n'));
+
+  fs.writeFileSync(path.join(rootDir, 'multiAgents', '00_orchestrator', 'WORKLOG.md'), [
+    '# 📝 WORKLOG — 00_ORCHESTRATOR',
+    '',
+    '## Bitácora de Acciones',
+    `- **[Inicialización] (${date}):** ${origin} Línea base del proyecto en G1; sin módulos todavía.`,
+    '',
+  ].join('\n'));
+
+  const matrixPath = path.join(rootDir, 'docs', 'project', 'version-matrix.md');
+  if (fs.existsSync(matrixPath)) {
+    const matrix = fs.readFileSync(matrixPath, 'utf-8');
+    const marker = matrix.search(/^## 3\. Registro Histórico/m);
+    if (marker !== -1) {
+      const head = matrix.slice(0, marker);
+      fs.writeFileSync(matrixPath, `${head}## 3. Registro Histórico de Entregas por Versión\n- **v0.1.0** (${date}): ${origin}\n`);
+    }
+  }
+
+  for (const fragment of fs.existsSync(path.join(rootDir, 'changelog.d')) ? fs.readdirSync(path.join(rootDir, 'changelog.d')) : []) {
+    if (fragment.endsWith('.md') && fragment !== 'README.md') fs.unlinkSync(path.join(rootDir, 'changelog.d', fragment));
+  }
+}
+
 async function main() {
   console.log('\n================================================================');
   console.log('🤖  INICIALIZADOR DE PROYECTO MULTIAGENTE (SDLC STAGE-GATES)   ');
@@ -49,6 +99,10 @@ async function main() {
   const backendStack = await ask('4. Stack Backend preferido', 'Express + TypeScript + Kysely + PostgreSQL');
   const frontendStack = await ask('5. Stack Frontend preferido', 'Vue 3 + Pinia + TailwindCSS + Vite');
   const author = await ask('6. Autor u Organización', 'Equipo de Desarrollo');
+  const capasText = await ask('7. Capas del proyecto (backend, frontend o ambas, separadas por coma)', 'backend,frontend');
+  const capas = capasText.split(',').map((c) => c.trim().toLowerCase()).filter(Boolean);
+  const backendRoot = capas.includes('backend') ? await ask('8. Carpeta raíz del backend', 'backend') : 'backend';
+  const frontendRoot = capas.includes('frontend') ? await ask('9. Carpeta raíz del frontend', 'frontend') : 'frontend';
 
   console.log('\n⚙️  Configurando archivos y artefactos de gobernanza...');
 
@@ -60,7 +114,7 @@ async function main() {
     BACKEND_STACK: backendStack,
     FRONTEND_STACK: frontendStack,
     AUTHOR: author,
-    INIT_DATE: new Date().toISOString().split('T')[0],
+    INIT_DATE: new Date().toLocaleDateString('sv-SE'),
   };
 
   // Reemplazar en archivos clave
@@ -85,6 +139,23 @@ async function main() {
     replaceInFile(file, replacements);
   }
 
+  resetStarterHistory({ projectSlug, projectDesc, author, date: replacements.INIT_DATE });
+
+  // Estructura de carpetas del proyecto: la leen el validador y el tooling (.workflow/project.json)
+  const projectConfig = {
+    capas: {
+      backend: { activa: capas.includes('backend'), raiz: backendRoot, modulos: `${backendRoot}/src/modules` },
+      frontend: { activa: capas.includes('frontend'), raiz: frontendRoot, modulos: `${frontendRoot}/src/modules` },
+    },
+    rutas: { contratos: 'docs/contracts' },
+  };
+  if (!projectConfig.capas.backend.activa && !projectConfig.capas.frontend.activa) {
+    console.warn('⚠️  No se declaró ninguna capa válida; se activan backend y frontend por defecto.');
+    projectConfig.capas.backend.activa = true;
+    projectConfig.capas.frontend.activa = true;
+  }
+  fs.writeFileSync(path.join(rootDir, '.workflow', 'project.json'), `${JSON.stringify(projectConfig, null, 2)}\n`);
+
   // Asegurar directorios requeridos
   const dirsToEnsure = [
     path.join(rootDir, 'docs', 'contracts'),
@@ -93,8 +164,8 @@ async function main() {
     path.join(rootDir, 'docs', 'qa'),
     path.join(rootDir, 'docs', 'walkthroughs'),
     path.join(rootDir, '.workflow', 'modules'),
-    path.join(rootDir, 'backend'),
-    path.join(rootDir, 'frontend'),
+    path.join(rootDir, 'changelog.d'),
+    ...['backend', 'frontend'].filter((c) => projectConfig.capas[c].activa).map((c) => path.join(rootDir, projectConfig.capas[c].raiz)),
   ];
 
   for (const dir of dirsToEnsure) {

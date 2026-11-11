@@ -1,6 +1,7 @@
 import ts from 'typescript';
 import fs from 'node:fs';
 import path from 'node:path';
+import { loadProjectConfig, activeLayers } from './lib/project-config.mjs';
 
 /**
  * 🔍 Verificador AST Estricto: Erradicación del tipo 'any' (.ts, .tsx, .vue)
@@ -10,9 +11,11 @@ import path from 'node:path';
  * Si detecta ts.SyntaxKind.AnyKeyword, aborta la compilación con código 1.
  */
 
+// Sin argumentos: raíces de las capas activas y contratos, según .workflow/project.json.
+const { config } = loadProjectConfig();
 const candidateDirs = process.argv.slice(2).length > 0
   ? process.argv.slice(2).map(d => path.resolve(process.cwd(), d))
-  : ['src', 'frontend/src', 'backend/src', 'docs/contracts']
+  : ['src', ...activeLayers(config).map(layer => config.capas[layer].raiz), config.rutas.contratos]
       .map(d => path.resolve(process.cwd(), d))
       .filter(d => fs.existsSync(d));
 

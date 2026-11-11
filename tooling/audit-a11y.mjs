@@ -17,6 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadProjectConfig } from './lib/project-config.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,8 +48,9 @@ function scanFilesRecursively(dir, extensions, fileList = []) {
   return fileList;
 }
 
+const { config } = loadProjectConfig();
 const targetDirs = [
-  path.join(rootDir, 'frontend'),
+  ...(config.capas.frontend.activa ? [path.join(rootDir, config.capas.frontend.raiz)] : []),
   path.join(rootDir, 'src'),
   path.join(rootDir, 'docs', 'project', 'design-system.md'),
 ];

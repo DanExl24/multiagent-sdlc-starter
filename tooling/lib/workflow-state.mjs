@@ -8,6 +8,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { rootDir } from './stage-gates.mjs';
+import { DEFAULT_CONFIG, activeLayers, contractsDir, layerModulesDir } from './project-config.mjs';
 
 export const PROJECT_STATE_PATH = path.join(rootDir, '.workflow', 'current_state.json');
 export const MODULES_DIR = path.join(rootDir, '.workflow', 'modules');
@@ -16,10 +17,17 @@ export const MODULE_ID_RE = /^\d{2}_[a-z0-9]+(?:_[a-z0-9]+)*$/;
 const COMMON_FIELDS = ['fase_activa', 'gate_activo', 'estado', 'rol_en_turno', 'bloqueos', 'historial_transiciones'];
 const MODULE_FIELDS = ['modulo', 'responsable', 'rama', 'depende_de', 'incluido_en_release'];
 
-/** Compuertas con estado que pertenecen a una pista. */
-export function gatesForTrack(table, track) {
+/** Compuertas omitidas porque su capa está inactiva en project.json (ej. G3B sin frontend). */
+export function skippedGates(table, config = DEFAULT_CONFIG) {
+  const active = new Set(activeLayers(config));
+  return new Map([...table.capas].filter(([, layer]) => !active.has(layer)));
+}
+
+/** Compuertas con estado que pertenecen a una pista, sin las de capas inactivas. */
+export function gatesForTrack(table, track, config = DEFAULT_CONFIG) {
+  const skipped = skippedGates(table, config);
   return track === 'modulo'
-    ? table.stateful.filter((g) => g.niveles.includes('modulo'))
+    ? table.stateful.filter((g) => g.niveles.includes('modulo') && !skipped.has(g.id))
     : table.stateful.filter((g) => g.niveles.includes('proyecto') || g.niveles.includes('release'));
 }
 
@@ -52,9 +60,10 @@ export function loadModuleStates() {
 }
 
 /** Reglas comunes a cualquier pista: campos, fase/gate de la misma fila, estados y coherencia. */
-function validateTrack(state, table, track, label) {
+function validateTrack(state, table, track, label, config) {
   const errors = [];
-  const allowed = gatesForTrack(table, track);
+  const allowed = gatesForTrack(table, track, config);
+  const skipped = skippedGates(table, config);
   const required = track === 'modulo' ? [...MODULE_FIELDS, ...COMMON_FIELDS] : COMMON_FIELDS;
   for (const key of required) {
     if (!(key in state)) errors.push(`${label}: falta el campo obligatorio "${key}".`);
@@ -63,7 +72,9 @@ function validateTrack(state, table, track, label) {
   const current = allowed.find((g) => g.fase === state.fase_activa);
   if (!current) {
     const elsewhere = table.stateful.find((g) => g.fase === state.fase_activa);
-    errors.push(elsewhere
+    errors.push(elsewhere && track === 'modulo' && skipped.has(elsewhere.id)
+      ? `${label}: ${elsewhere.id} no aplica porque la capa "${skipped.get(elsewhere.id)}" está inactiva en .workflow/project.json. Permitidas: ${allowed.map((g) => g.id).join(', ')}.`
+      : elsewhere
       ? `${label}: ${elsewhere.id} no se recorre en la pista de ${track === 'modulo' ? 'módulo' : 'proyecto/release'}. Permitidas: ${allowed.map((g) => g.id).join(', ')}.`
       : `${label}: fase_activa "${state.fase_activa}" no es válida. Permitidas: ${allowed.map((g) => g.fase).join(', ')}.`);
   } else if (state.gate_activo !== current.gate) {
@@ -120,15 +131,16 @@ function findCycle(graph) {
 
 /**
  * Valida la pista de proyecto y todas las de módulo, incluidas las reglas entre pistas.
- * @returns {string[]} errores (vacío si todo es coherente)
+ * @returns {{errors: string[], warnings: string[]}} errores (bloquean) y avisos (no bloquean)
  */
-export function validateWorkflow(table, project, modules) {
+export function validateWorkflow(table, project, modules, config = DEFAULT_CONFIG) {
   const errors = [];
+  const warnings = [];
 
   if ('modulo_en_curso' in project) {
     errors.push('current_state.json: "modulo_en_curso" ya no se usa. Cada módulo tiene su propio archivo en .workflow/modules/ (crea uno con npm run new:module).');
   }
-  errors.push(...validateTrack(project, table, 'proyecto', 'current_state.json'));
+  errors.push(...validateTrack(project, table, 'proyecto', 'current_state.json', config));
 
   // Compuertas de línea base: las que se recorren en proyecto y en módulo (G1, G2).
   const baseline = table.stateful.filter((g) => g.niveles.includes('proyecto') && g.niveles.includes('modulo'));
@@ -148,7 +160,7 @@ export function validateWorkflow(table, project, modules) {
       errors.push(`${label}: "incluido_en_release" solo puede tener valor cuando el módulo está COMPLETADO (superó G4).`);
     }
     if ('depende_de' in s && !Array.isArray(s.depende_de)) errors.push(`${label}: "depende_de" debe ser un arreglo de IDs de módulo.`);
-    errors.push(...validateTrack(s, table, 'modulo', label));
+    errors.push(...validateTrack(s, table, 'modulo', label, config));
     if (errors.length === before) valid.set(mod.id, s);
   }
 
@@ -167,6 +179,13 @@ export function validateWorkflow(table, project, modules) {
       gateIndex(table, s.gate_activo) > gateIndex(table, gate.gate) && !hasPassed(table, project, gate));
     if (ahead) {
       errors.push(`${label}: el módulo ya superó ${ahead.id}, pero la línea base del proyecto aún no (current_state.json está en ${project.gate_activo}).`);
+    }
+    // Regla de oro del contrato previo (AGENTS.md §6): pasada la línea base, el contrato debe existir.
+    if (lastBaseline && hasPassed(table, s, lastBaseline)) {
+      const names = [id, id.slice(3)].flatMap((n) => [`${n}.contract.ts`, `${n}.contract.js`]);
+      if (!names.some((n) => fs.existsSync(path.join(contractsDir(config), n)))) {
+        errors.push(`${label}: superó ${lastBaseline.id} pero no existe su contrato (${config.rutas.contratos}/${id}.contract.ts). No hay código sin contrato previo (AGENTS.md §6).`);
+      }
     }
     for (const dep of s.depende_de) {
       if (dep === id) { errors.push(`${label}: un módulo no puede depender de sí mismo.`); continue; }
@@ -187,5 +206,17 @@ export function validateWorkflow(table, project, modules) {
   const cycle = findCycle(new Map([...valid].map(([id, s]) => [id, s.depende_de.filter((d) => valid.has(d))])));
   if (cycle) errors.push(`modules/: dependencia circular entre módulos: ${cycle.join(' → ')}.`);
 
-  return errors;
+  // Carpetas de código: cada una debería llevar el ID del módulo (o su nombre sin número).
+  const known = new Set(modules.flatMap((m) => [m.id, m.id.slice(3)]));
+  for (const layer of activeLayers(config)) {
+    const dir = layerModulesDir(config, layer);
+    if (!fs.existsSync(dir)) continue;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.isDirectory() && !known.has(entry.name)) {
+        warnings.push(`${config.capas[layer].modulos}/${entry.name}: no corresponde a ningún módulo de .workflow/modules/ (usa el ID "XX_nombre" o el nombre sin número).`);
+      }
+    }
+  }
+
+  return { errors, warnings };
 }

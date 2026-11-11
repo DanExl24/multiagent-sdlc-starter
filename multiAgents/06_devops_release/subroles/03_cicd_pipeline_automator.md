@@ -50,6 +50,7 @@ graph LR
    * Commits sin versión o con Conventional Commits planos son vetados por este subrol.
 3. **Sincronización SemVer:**
    * La versión en `package.json`, `CHANGELOG.md` y `PROJECT_STATUS.md` debe estar perfectamente alineada.
+   * En las ramas de módulo, los cambios se registran en `changelog.d/` y no en `CHANGELOG.md`; la consolidación ocurre en G5 con `npm run release:changelog`.
 
 ---
 

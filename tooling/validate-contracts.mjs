@@ -3,7 +3,7 @@
  * 📋 API & DTO Contracts Validator
  * multiagent-sdlc-starter — Herramienta de Auditoría Estática de Contratos Zod
  *
- * Audita los contratos en docs/contracts/:
+ * Audita los contratos de la ruta declarada en .workflow/project.json (por defecto docs/contracts/):
  * 1. Existencia y completitud de Schemas Zod de Entrada (Request DTO).
  * 2. Existencia y completitud de Envelopes Canónicos de Salida (Response DTO).
  * 3. Prohibición absoluta de z.any() o tipos any en contratos.
@@ -16,6 +16,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadProjectConfig, contractsDir as resolveContractsDir } from './lib/project-config.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,7 +26,7 @@ console.log('\n=============================================================');
 console.log('📋  [AUDIT-CONTRACTS] Validador de Contratos Zod API ↔ SPA');
 console.log('=============================================================\n');
 
-const contractsDir = path.join(rootDir, 'docs', 'contracts');
+const contractsDir = resolveContractsDir(loadProjectConfig().config);
 
 if (!fs.existsSync(contractsDir)) {
   console.error(`❌ Directorio de contratos no encontrado en: ${contractsDir}`);
@@ -35,7 +36,7 @@ if (!fs.existsSync(contractsDir)) {
 const contractFiles = fs.readdirSync(contractsDir).filter((f) => f.endsWith('.contract.ts') || f.endsWith('.contract.js'));
 
 if (contractFiles.length === 0) {
-  console.warn('⚠️  No se encontraron archivos de contrato en docs/contracts/');
+  console.warn(`⚠️  No se encontraron archivos de contrato en ${path.relative(rootDir, contractsDir)}/`);
   process.exit(0);
 }
 
@@ -49,7 +50,7 @@ for (const file of contractFiles) {
   const content = fs.readFileSync(filePath, 'utf8');
   const lines = content.split('\n');
 
-  console.log(`🔍 Auditando contrato: docs/contracts/${file}`);
+  console.log(`🔍 Auditando contrato: ${path.relative(rootDir, contractsDir).split(path.sep).join('/')}/${file}`);
 
   let hasZodImport = false;
   let hasRequestSchema = false;
