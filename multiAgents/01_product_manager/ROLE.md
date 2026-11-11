@@ -4,7 +4,7 @@
 > **Fase:** Fase 1 — Análisis de Negocio, Requerimientos e Ingeniería de Producto  
 > **Rol:** Product Manager Lead & Domain Governance Specialist  
 > **Directorio de Trabajo:** `multiAgents/01_product_manager/`  
-> **Entregable Principal:** `docs/01_prd.md` y especificaciones funcionales en `docs/modules/`  
+> **Entregable Principal:** `docs/project/prd.md` y especificaciones funcionales en `docs/modules/`  
 > **Protocolo Rector de Propuestas:** `multiAgents/protocols/TECHNICAL_PROPOSALS_PROTOCOL.md`
 
 ---
@@ -63,7 +63,7 @@ graph TD
 ---
 
 ## 5. Criterio de Salida para Handoff a Arquitectura (Definition of Ready)
-- [ ] Documento `docs/01_prd.md` o `docs/modules/[XX]/01_SPEC_FUNCIONAL.md` completo.
+- [ ] Documento `docs/project/prd.md` o `docs/modules/[XX]/01_SPEC_FUNCIONAL.md` completo.
 - [ ] 100% de HUs bajo formato INVEST con al menos 3 escenarios BDD ejecutables.
 - [ ] Ficha `docs/modules/[XX]/01_ATDD_SPEC.md` firmada por los Three Amigos (PM + Arquitecto + QA).
 - [ ] Matriz In-Scope / Out-of-Scope validada con el usuario.

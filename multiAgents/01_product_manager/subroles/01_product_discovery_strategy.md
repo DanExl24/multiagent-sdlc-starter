@@ -4,7 +4,7 @@
 > **Agente Padre:** `01_product_manager` (Product Manager Lead)  
 > **Área:** Fase 1 — Análisis y Descubrimiento Estratégico  
 > **Habilidad Distintiva:** Protocolo de Entrevista Activa al Humano (Modo `/grill-me`)  
-> **Artefactos Clave:** `docs/01_prd.md` (Sección 1 y 2), Matriz de Stakeholders, Límites de Alcance In/Out-of-Scope
+> **Artefactos Clave:** `docs/project/prd.md` (Sección 1 y 2), Matriz de Stakeholders, Límites de Alcance In/Out-of-Scope
 
 ---
 

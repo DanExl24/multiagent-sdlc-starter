@@ -121,7 +121,7 @@ Existen **tres tipos** de compuerta:
 - **Agente Receptor:** `02_software_architect`
 - **Aprobador Requerido:** **Director Humano**
 - **Entregables Obligatorios:**
-  - `docs/01_prd.md`: Documento rector de requerimientos de producto.
+  - `docs/project/prd.md`: Documento rector de requerimientos de producto.
   - `docs/modules/[XX_modulo]/01_SPEC_FUNCIONAL.md`: Reglas funcionales del dominio y casos de uso.
   - `docs/modules/[XX_modulo]/02_HISTORIAS_USUARIO.md`: Historias bajo estándar **INVEST** y criterios en formato **BDD (Given-When-Then)**, con casos límite (BVA).
   - `docs/modules/[XX_modulo]/03_FLUJO_Y_ESTADOS.md`: Diagramas de flujo y ciclo de vida en Mermaid.
@@ -138,7 +138,7 @@ Existen **tres tipos** de compuerta:
 - **Agente Receptor:** `03_backend_engineer`
 - **Aprobador Requerido:** **Director Humano**
 - **Entregables Obligatorios:**
-  - `docs/02_architecture.md`: Topología técnica (C4).
+  - `docs/project/architecture.md`: Topología técnica (C4).
   - `docs/modules/[XX_modulo]/04_ARQUITECTURA_Y_CODIGO.md`: Modelo relacional y sentencias DDL (3FN).
   - `docs/contracts/[modulo].contract.ts`: Contratos de entrada y salida tipados estrictamente con schemas de **Zod**.
   - Matriz de permisos RBAC para los roles del sistema, aislamiento multi-tenant y manejo transaccional ACID.
@@ -171,11 +171,11 @@ Existen **tres tipos** de compuerta:
 - **Agente Receptor:** `05_qa_security_tester`
 - **Aprobador Requerido:** **Director Humano**
 - **Entregables Obligatorios:**
-  - Vistas y componentes en `frontend/src/modules/[XX_modulo]/` consumiendo el **Design System** (`docs/04_ui_design_system.md`).
+  - Vistas y componentes en `frontend/src/modules/[XX_modulo]/` consumiendo el **Design System** (`docs/project/design-system.md`).
   - Cero estilos o colores hardcodeados fuera del Design System oficial.
   - Formularios, modales interactivos y tablas reactivas con feedback visual (estados Loading, Empty, Error, Success).
   - Pruebas de componentes y stores en verde (`@testing-library`).
-  - `walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md` reproducible.
+  - `docs/walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md` reproducible.
   - Compilación limpia con `npm run build` (`check:no-any && typecheck && build`) con 0 errores y **0 usos de `any`**.
 - **Acción del Agente al Terminar:**
   1. Actualizar `.workflow/current_state.json` con `gate_activo: "GATE_3B_FRONTEND_UI_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.
@@ -192,7 +192,7 @@ Existen **tres tipos** de compuerta:
   - `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md`: Auditoría forense con análisis RCA de cualquier defecto encontrado.
   - Suite de pruebas automatizadas 100% en verde y 0 defectos S1/S2 abiertos.
   - **Certificación AST de Cero ANY:** Verificación de `npm run check:no-any` en `backend/` y `frontend/` con 0 incidencias. Si se detecta un solo `any`, el QA Lead aplica **Veto Inmediato (Stop-the-Line)**.
-  - Entrada de la versión candidata preparada en `CHANGELOG.md` (SemVer) y `docs/VERSION_MATRIX.md`, necesaria para el commit canónico.
+  - Entrada de la versión candidata preparada en `CHANGELOG.md` (SemVer) y `docs/project/version-matrix.md`, necesaria para el commit canónico.
 - **Veto QA:** si QA rechaza, `estado: "BLOQUEADO"` con el motivo en `bloqueos`, y el flujo regresa a `FASE_3A_BACKEND` o `FASE_3B_FRONTEND` según el defecto. QA **no** corrige código de producción.
 - **Acción del Agente al Terminar:**
   1. Actualizar `.workflow/current_state.json` con `gate_activo: "GATE_4_QA_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.

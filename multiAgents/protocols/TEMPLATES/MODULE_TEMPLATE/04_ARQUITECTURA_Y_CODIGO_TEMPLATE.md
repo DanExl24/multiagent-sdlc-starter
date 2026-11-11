@@ -67,4 +67,4 @@ CREATE INDEX IF NOT EXISTS idx_modulo_entidad_tenant ON modulo_entidad(tenant_id
 - **Suite de Pruebas Backend (Vitest):** `backend/tests/modules/XX_[modulo].test.ts`
 - **Suite de Pruebas Frontend (Playwright E2E):** `frontend/tests/e2e/XX_[modulo].spec.ts`
 - **Colección API (Bruno):** `tests/bruno/XX_[modulo]/`
-- **Guía de Verificación Interactiva:** `walkthroughs/XX_[modulo]/[vX.Y.Z]/WALKTHROUGH.md`
+- **Guía de Verificación Interactiva:** `docs/walkthroughs/XX_[modulo]/[vX.Y.Z]/WALKTHROUGH.md`

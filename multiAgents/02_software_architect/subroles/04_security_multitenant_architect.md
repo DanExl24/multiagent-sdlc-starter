@@ -4,7 +4,7 @@
 > **Agente Padre:** `02_software_architect` (Software Architect Lead)  
 > **Área:** Fase 2 — Seguridad Perimetral, Criptografía, Multi-Tenancy y RBAC  
 > **Estándares:** OWASP Top 10, RFC 7519 (JWT), NIST Criptografía, Multi-Tenancy Aislado  
-> **Artefactos Clave:** Matriz RBAC, Arquitectura de Sesiones y Seguridad en `docs/02_architecture.md`
+> **Artefactos Clave:** Matriz RBAC, Arquitectura de Sesiones y Seguridad en `docs/project/architecture.md`
 
 ---
 
@@ -69,7 +69,7 @@ El Subrol 04 modela los permisos por rol en la matriz de acceso:
 ### ✅ Lo que SÍ HACE:
 - Diseña el modelo de aislamiento multi-inquilino y políticas Anti-IDOR.
 - Define el ciclo de vida de tokens, hashing y políticas de contraseñas.
-- Modela la matriz de permisos RBAC en `docs/02_architecture.md`.
+- Modela la matriz de permisos RBAC en `docs/project/architecture.md`.
 - Diseña las defensas estructurales contra vulnerabilidades OWASP Top 10.
 
 ### ❌ Lo que NO HACE:

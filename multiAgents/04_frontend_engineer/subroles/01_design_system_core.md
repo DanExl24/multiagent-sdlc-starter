@@ -3,7 +3,7 @@
 > **Área:** Sistema de Diseño Visual, Componentes Base Atómicos y Accesibilidad (WCAG 2.1 AA)  
 > **Líder Inmediato:** Frontend Lead Engineer (`04_frontend_engineer/ROLE.md`)  
 > **Directorio de Acción:** `frontend/src/core/components/base/`, `frontend/tailwind.config.js`, `frontend/src/assets/`  
-> **Documento Rector:** `docs/04_ui_design_system.md` (Paleta Oficial "Azul Real Institucional & Slate Ejecutivo")
+> **Documento Rector:** `docs/project/design-system.md` (Paleta Oficial "Azul Real Institucional & Slate Ejecutivo")
 
 ---
 
@@ -59,7 +59,7 @@ graph LR
 ## 6. ¿Qué Cosas NO HACE este Subrol? (Límites Estrictos)
 * ❌ **NO maqueta vistas de negocio completas:** No construye formularios específicos de módulos ni listados de entidades; solo construye los bloques de construcción atómicos.
 * ❌ **NO hace llamadas HTTP ni almacena datos de negocio en Pinia:** Los componentes base son 100% tontos (*dumb / presentational components*), recibiendo props y emitiendo eventos.
-* ❌ **PROHIBIDO inventar colores fuera de `docs/04_ui_design_system.md`:** Todo color debe estar registrado en los tokens del sistema.
+* ❌ **PROHIBIDO inventar colores fuera de `docs/project/design-system.md`:** Todo color debe estar registrado en los tokens del sistema.
 
 ---
 

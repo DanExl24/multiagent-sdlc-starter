@@ -3,6 +3,23 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.4.0] - 2026-11-10
+
+### Changed
+- **Reestructuración de `docs/`:** los documentos transversales pasan de la raíz a `docs/project/` con nombres sin prefijo numérico (`01_prd.md` → `project/prd.md`, `02_architecture.md` → `project/architecture.md`, `04_ui_design_system.md` → `project/design-system.md`, `VERSION_MATRIX.md` → `project/version-matrix.md`). El panel monolítico `03_qa_report.md` pasa a ser el índice `qa/index.md`. `walkthroughs/` se mueve a `docs/walkthroughs/`. `contracts/`, `adrs/`, `modules/` y `qa/` conservan su ubicación. Movimientos con `git mv` (historial preservado) y 32 archivos con rutas actualizadas.
+- `QA_REPORT_TEMPLATE.md` y el ROLE de QA ahora apuntan el reporte modular a `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md` (coherente con `STAGE_GATES.md`), y `SEMVER_CHANGELOG_PROTOCOL.md` adopta la ruta canónica de walkthroughs en lugar del esquema `WALKTHROUGH_[MODULO]_[NOMBRE].md`.
+- `init-project.mjs` y `audit-a11y.mjs` apuntan a las nuevas rutas.
+
+### Fixed
+- `init-project.mjs` omitía en silencio los archivos que no encontraba. Ahora avisa por consola. Además faltaban en su lista `design-system.md`, el panel de QA y el subrol legal, que contienen placeholders y quedaban sin personalizar.
+
+### Added
+- `docs/README.md`: índice maestro de la documentación, con el mapa de carpetas, su naturaleza (viva o inmutable) y el rol responsable.
+- Regla E de `check:docs`: toda ruta `docs/...` mencionada en un documento debe existir (ignora placeholders, informes generados y los registros históricos CHANGELOG/WORKLOG).
+- Carpetas `docs/quality/` y `docs/qa/incidents/` (con `.gitkeep`), referenciadas por los protocolos de mejora continua y QA.
+
+---
+
 ## [1.3.0] - 2026-11-10
 
 ### Changed

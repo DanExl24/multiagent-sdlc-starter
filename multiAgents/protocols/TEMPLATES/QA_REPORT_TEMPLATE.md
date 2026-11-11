@@ -1,6 +1,6 @@
 # 📊 PLANTILLA: Reporte de Calidad, Pruebas y Seguridad (QA Report)
 
-> **Documento:** `docs/03_qa_report.md`  
+> **Documento:** `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md`  
 > **Versión:** 1.0.0  
 > **Autor:** QA Lead & Security Compliance Director  
 > **Resultado Global:** [APROBADO (PASS) / BLOQUEADO (FAIL)]  

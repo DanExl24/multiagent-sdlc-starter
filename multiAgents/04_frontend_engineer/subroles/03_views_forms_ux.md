@@ -64,7 +64,7 @@ graph TD
 ## 6. ¿Qué Cosas NO HACE este Subrol? (Límites Estrictos)
 * ❌ **PROHIBIDO maquetar modales o botones HTML nativos desde cero:** Todo modal DEBE usar `BaseModal` y todo botón `BaseButton`.
 * ❌ **PROHIBIDO hacer llamadas HTTP con URLs quemadas:** Todo request debe pasar por los servicios de módulo o stores tipadas.
-* ❌ **PROHIBIDO usar colores fuera de la paleta oficial:** No se admiten colores sin estar justificados en `docs/04_ui_design_system.md`.
+* ❌ **PROHIBIDO usar colores fuera de la paleta oficial:** No se admiten colores sin estar justificados en `docs/project/design-system.md`.
 * ❌ **PROHIBIDO usar `any`:** Vetado por el comprobador AST.
 
 ---

@@ -4,9 +4,9 @@
 > **Agente:** QA Lead & Security Compliance Director  
 > **Entregables Principales:** 
 > - `docs/qa/[MODULO]_[VERSION]/QA_REPORT.md` (Reportes modulares exhaustivos)
-> - `docs/qa/QA_RTM_MATRIX.md` (Matriz viva de trazabilidad)
+> - `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_RTM_MATRIX.md` (Matriz de trazabilidad)
 > - Suites automatizadas en `backend/tests/modules/`
-> - `docs/03_qa_report.md` (Panel ejecutivo de certificación)
+> - `docs/qa/index.md` (Panel ejecutivo de certificación)
 
 ---
 
@@ -20,10 +20,10 @@ Actuar como la **máxima autoridad de calidad e integridad técnica** del proyec
 
 ## 2. Insumos Obligatorios de Entrada
 El QA Lead inicia su auditoría analizando la cadena completa de trazabilidad:
-1. `docs/01_prd.md` y `docs/modules/[MODULO]/02_HISTORIAS_USUARIO.md` (Criterios BDD Given-When-Then y Reglas de Negocio).
+1. `docs/project/prd.md` y `docs/modules/[MODULO]/02_HISTORIAS_USUARIO.md` (Criterios BDD Given-When-Then y Reglas de Negocio).
 2. `docs/contracts/[MODULO].contract.ts` (Contratos tipados Zod).
-3. `docs/04_ui_design_system.md` (**Sistema de Diseño Visual y Paleta Oficial:** Fuente de la verdad para validar ausencia de colores hardcodeados).
-4. `walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md` (Punto de partida: la guía de verificación elaborada por Backend/Frontend).
+3. `docs/project/design-system.md` (**Sistema de Diseño Visual y Paleta Oficial:** Fuente de la verdad para validar ausencia de colores hardcodeados).
+4. `docs/walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md` (Punto de partida: la guía de verificación elaborada por Backend/Frontend).
 5. Código fuente implementado en `backend/src/modules/` y `frontend/src/modules/`.
 
 ---
@@ -44,7 +44,7 @@ El QA Lead evalúa si la implementación tiene **trazabilidad completa**:
 - Si la trazabilidad es parcial, el módulo se clasifica con riesgo de deuda técnica y se exige completitud.
 
 ### Regla 3: Verificación de Walkthroughs y Versionamiento
-El QA Lead toma el Walkthrough versionado (`walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md`) y lo somete a prueba de estrés:
+El QA Lead toma el Walkthrough versionado (`docs/walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md`) y lo somete a prueba de estrés:
 - ¿Los pasos descritos son realmente reproducibles?
 - ¿La versión declarada en el walkthrough coincide con el estado del código y los tags de SemVer?
 
@@ -146,5 +146,5 @@ Para que el Orquestador y el Director Humano firmen el **Stage-Gate 4**, el QA L
 - [ ] 5. Sesión de Testing Exploratorio documentada con su respectivo Test Charter.
 - [ ] 6. 100% de los defectos S1 (Blocker) y S2 (Critical) en estado **CERRADO** (0 bugs bloqueantes abiertos).
 - [ ] 7. Auditoría AST Cero ANY certificada: `npm run check:no-any` en Backend y Frontend con 0 violaciones.
-- [ ] 8. Reporte modular de QA emitido en `docs/03_qa_report.md` con análisis forense RCA.
+- [ ] 8. Reporte modular de QA emitido en `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md` con análisis forense RCA, y panel consolidado `docs/qa/index.md` actualizado.
 

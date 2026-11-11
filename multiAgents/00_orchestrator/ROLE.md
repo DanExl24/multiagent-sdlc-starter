@@ -104,11 +104,11 @@ stateDiagram-v2
 | Fase | Agente Responsable | Carpeta del Agente | Artefacto de Entrada (Inputs) | Artefacto de Salida (Outputs) |
 | :--- | :--- | :--- | :--- | :--- |
 | **00** | **Orquestador Central** | `multiAgents/00_orchestrator/` | Petición del Humano | Estado del proyecto, asignación de tareas, gobierno HITL |
-| **01** | **Product Manager (PM)** | `multiAgents/01_product_manager/` | Visión del Humano, Normativa | `docs/01_prd.md`, HUs INVEST, Criterios ATDD (`docs/modules/XX/01_ATDD_SPEC.md`) |
-| **02** | **Software Architect** | `multiAgents/02_software_architect/` | `docs/01_prd.md`, Criterios ATDD | `docs/02_architecture.md`, DDL 3FN, Contratos Zod API-First (`docs/contracts/`) |
+| **01** | **Product Manager (PM)** | `multiAgents/01_product_manager/` | Visión del Humano, Normativa | `docs/project/prd.md`, HUs INVEST, Criterios ATDD (`docs/modules/XX/01_ATDD_SPEC.md`) |
+| **02** | **Software Architect** | `multiAgents/02_software_architect/` | `docs/project/prd.md`, Criterios ATDD | `docs/project/architecture.md`, DDL 3FN, Contratos Zod API-First (`docs/contracts/`) |
 | **03A** | **Backend Engineer** | `multiAgents/03_backend_engineer/` | `docs/contracts/*.contract.ts` | `backend/src/` (Kysely, Zod), Tests TDD unitarios y de integración (`Vitest`) |
 | **03B** | **Frontend Engineer** | `multiAgents/04_frontend_engineer/` | `docs/contracts/`, Design System | `frontend/src/` (SPA), Tests Component TDD (`@testing-library`), Walkthrough |
-| **04** | **QA & Security Tester** | `multiAgents/05_qa_security_tester/` | Código en `src/`, Walkthroughs | `tests/`, Fichas de Bugs (10 campos), `docs/03_qa_report.md` (Cuadrantes Q1-Q4) |
+| **04** | **QA & Security Tester** | `multiAgents/05_qa_security_tester/` | Código en `src/`, Walkthroughs | `tests/`, Fichas de Bugs (10 campos), `docs/qa/index.md` (Cuadrantes Q1-Q4) |
 | **05** | **DevOps & Release** | `multiAgents/06_devops_release/` | Código probado, Esquema DB | Seeders, Docker/Config, Changelog SemVer, `README.md` final |
 | **06** | **Comité de Calidad (Kaizen)** | `multiAgents/06_devops_release/` & QA | Historial de bugs cerrados | `docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md` (Ishikawa, Pareto, Matriz Mejora) |
 
@@ -143,8 +143,8 @@ stateDiagram-v2
 ### 🛑 Gate 3B: Validación de Frontend y UI/UX (Frontend -> QA Lead)
 - **Checklist del Orquestador:**
   - [ ] ¿Frontend implementó pruebas unitarias de componentes base y stores con `@testing-library`?
-  - [ ] ¿Se cumple el Design System (`docs/04_ui_design_system.md`) sin colores hardcodeados?
-  - [ ] ¿Se emitió el Walkthrough versionado y reproducible en `walkthroughs/[XX]/[vX.Y.Z]/WALKTHROUGH.md`?
+  - [ ] ¿Se cumple el Design System (`docs/project/design-system.md`) sin colores hardcodeados?
+  - [ ] ¿Se emitió el Walkthrough versionado y reproducible en `docs/walkthroughs/[XX]/[vX.Y.Z]/WALKTHROUGH.md`?
 - **Acción:** Solicitar firma al Director Humano (revisión UI/UX) antes de pasar a Fase 4 (Auditoría Forense de QA).
 
 ### 🛑 Gate 4: Validación de Calidad y Seguridad en 4 Cuadrantes (QA -> DevOps)

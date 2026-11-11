@@ -1,6 +1,6 @@
 # 🏷️ PROTOCOLO DE VERSIONAMIENTO SEMVER, CHANGELOG Y WALKTHROUGHS
 
-> **Propósito:** Definir el estándar formal de versionamiento (`SemVer`), registro de cambios (`CHANGELOG.md`) y guías de verificación paso a paso (`walkthroughs/`) para garantizar auditoría forense del desarrollo.
+> **Propósito:** Definir el estándar formal de versionamiento (`SemVer`), registro de cambios (`CHANGELOG.md`) y guías de verificación paso a paso (`docs/walkthroughs/`) para garantizar auditoría forense del desarrollo.
 
 ---
 
@@ -48,10 +48,10 @@ Todo cambio que impacte el código debe registrarse bajo las siguientes categor�
 
 ---
 
-## 3. Estándar de Walkthroughs (`walkthroughs/`)
+## 3. Estándar de Walkthroughs (`docs/walkthroughs/`)
 
-Cada módulo o hito significativo debe incluir un archivo en `walkthroughs/` con el nombre:
-`WALKTHROUGH_[MODULO]_[NOMBRE].md` (ej. `WALKTHROUGH_01_AUTH.md`).
+Cada módulo o hito significativo debe incluir un archivo en `docs/walkthroughs/` con la ruta:
+`docs/walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md`.
 
 ### Contenido Obligatorio de un Walkthrough:
 1. **Objetivo:** Qué se está demostrando.

@@ -33,7 +33,7 @@ graph LR
     SF[02_State & Data Flow] -->|Endpoints macro y datasets en vivo| DV
     DV -->|Vistas de Dashboards interactivos| UX[03_Views & Routing]
 ```
-* **Con Design System & Core UI:** Utiliza estrictamente la paleta cromática oficial de `docs/04_ui_design_system.md` en las series de ECharts (Azul institucional `#2563EB`, Esmeralda `#10B981`, Ámbar `#F59E0B`, Púrpura `#7C3AED`, Slate `#64748B`), asegurando armonía visual con el resto de la UI.
+* **Con Design System & Core UI:** Utiliza estrictamente la paleta cromática oficial de `docs/project/design-system.md` en las series de ECharts (Azul institucional `#2563EB`, Esmeralda `#10B981`, Ámbar `#F59E0B`, Púrpura `#7C3AED`, Slate `#64748B`), asegurando armonía visual con el resto de la UI.
 * **Con State & Data Flow:** Consume las estadísticas agregadas emitidas por el Backend mediante `apiClient`, garantizando que ninguna gráfica pinte datos quemados.
 * **Con Views, Forms & UX:** Se enlaza con `DashboardPlaceholder.vue` y el enrutador para conmutar dinámicamente el panel según el rol del usuario autenticado.
 
@@ -61,7 +61,7 @@ graph LR
 ## 6. ¿Qué Cosas NO HACE este Subrol? (Límites Estrictos)
 * ❌ **PROHIBIDO pintar datos estáticos inventados o mocks fijos:** Toda gráfica debe reflejar valores devueltos por la base de datos en tiempo real.
 * ❌ **PROHIBIDO dejar gráficos sin evento `resize`:** Todo gráfico debe adaptarse fluidamente si la ventana cambia de tamaño o pasa a pantalla completa.
-* ❌ **PROHIBIDO usar colores chillones o ajenos al Design System:** No se admiten colores aleatorios de ECharts por defecto; las paletas deben estar calibradas según `docs/04_ui_design_system.md`.
+* ❌ **PROHIBIDO usar colores chillones o ajenos al Design System:** No se admiten colores aleatorios de ECharts por defecto; las paletas deben estar calibradas según `docs/project/design-system.md`.
 
 ---
 

@@ -142,18 +142,14 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 │   └── protocols/                       # Handshakes, Tech Trio, Git Commit y Templates
 │
 ├── docs/                                # 📚 Artefactos de Ingeniería (Fuente de la Verdad)
-│   ├── 01_prd.md                        # Documento Rector de Requerimientos
-│   ├── 02_architecture.md               # Topología técnica y Modelo C4
-│   ├── 03_qa_report.md                  # Certificación ejecutiva de calidad
-│   ├── 04_ui_design_system.md           # Tokens semánticos y componentes UI
-│   ├── VERSION_MATRIX.md                # Trazabilidad de versiones y módulos
+│   ├── README.md                        # Índice maestro de la documentación
+│   ├── project/                         # PRD, arquitectura global, design system y matriz de versiones
+│   ├── modules/                         # Especificaciones por módulo (01_ a XX_)
 │   ├── contracts/                       # Contratos API-First Zod (.contract.ts)
 │   ├── adrs/                            # Architectural Decision Records
-│   ├── modules/                         # Especificaciones por módulo (01_ a XX_)
-│   └── qa/                              # Reportes forenses, DAST, k6 HTML/JSON y A11y
-│
-└── walkthroughs/                        # 🚶 Guías de Verificación Reproducibles
-    └── 00_starter/v1.0.0/               # WALKTHROUGH.md inicial
+│   ├── qa/                              # Panel de QA, reportes forenses, DAST, k6 HTML/JSON y A11y
+│   ├── walkthroughs/                    # Guías de verificación reproducibles por módulo y versión
+│   └── quality/                         # Planes de mejora continua
 ```
 
 ---

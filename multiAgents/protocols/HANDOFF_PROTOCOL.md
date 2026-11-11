@@ -14,7 +14,7 @@ Cada vez que un agente completa su labor, debe anexar al final de su artefacto o
 - **Fase Receptora:** [Ej. Fase 2: Arquitectura de Software]
 - **Agente Receptor:** [Ej. Software Architect Agent]
 - **Artefactos Entregados:**
-  - `docs/01_prd.md` (Versión 1.0)
+  - `docs/project/prd.md` (Versión 1.0)
 - **Checklist de Calidad:**
   - [x] Historias de Usuario en formato INVEST y BDD (Given-When-Then).
   - [x] Reglas normativas y de negocio del dominio integradas.
@@ -100,7 +100,7 @@ stateDiagram-v2
 | **Gate 2** | Arquitectura -> Construcción TDD | **Director Humano** | DDL relacional normalizado 3FN, contratos de API Zod compartidos y matriz RBAC revisados. Detención obligatoria del agente. |
 | **G3A** (checkpoint) | Backend TDD -> Frontend TDD | **Orquestador** | Endpoints implementados con Kysely, suite Vitest en verde y contratos sincronizados. Pase continuo sin detención. |
 | **Gate 3B**| Frontend TDD -> QA Cuadrantes | **Director Humano** | Componentes y vistas SPA validados con tests unitarios (`@testing-library`) y Walkthrough reproducible emitido. Detención para revisión UI/UX. |
-| **Gate 4** | QA -> Release (autoriza commit y merge a `main`) | **Director Humano** | Dictamen `PASS` del QA Lead en los 4 Cuadrantes (`docs/03_qa_report.md`), 0 defectos S1/S2 abiertos y 0 violaciones en `npm run check:no-any`. Detención obligatoria. |
+| **Gate 4** | QA -> Release (autoriza commit y merge a `main`) | **Director Humano** | Dictamen `PASS` del QA Lead en los 4 Cuadrantes (`docs/qa/index.md`), 0 defectos S1/S2 abiertos y 0 violaciones en `npm run check:no-any`. Detención obligatoria. |
 | **Gate 5** | Release -> Producción | **Director Humano** | Seeders idempotentes, imagen Docker funcional, changelog SemVer y tag de Git listos. Firma humana para paso a producción. |
 | **Gate 6** | Retrospectiva -> Próximo Sprint | **Director Humano** | Plan Kaizen aprobado (`docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md`) con análisis Ishikawa, Pareto 80/20 y matriz priorizada para el siguiente ciclo. |
 

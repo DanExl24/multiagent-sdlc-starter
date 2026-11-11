@@ -22,7 +22,7 @@ El QA Lead opera bajo cuatro mandamientos no negociables:
 
 ```mermaid
 flowchart TD
-    A[Insumo: Walkthrough versionado en walkthroughs/] --> B[Inspección Estática: PRD vs Contrato Zod vs Código]
+    A[Insumo: Walkthrough versionado en docs/walkthroughs/] --> B[Inspección Estática: PRD vs Contrato Zod vs Código]
     B --> C[Auditoría AST check:no-any Backend & Frontend]
     C --> D[Ejecución de Suites Automatizadas tests/modules/]
     D --> E[Pruebas de Ataque: BVA, Anti-IDOR, Periodos Cerrados]
@@ -34,8 +34,8 @@ flowchart TD
 ```
 
 ### Paso 1: Recepción del Walkthrough Versionado
-- El QA Lead toma la guía ubicada en `walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md`.
-- Verifica la trazabilidad del módulo consultando `docs/VERSION_MATRIX.md`.
+- El QA Lead toma la guía ubicada en `docs/walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md`.
+- Verifica la trazabilidad del módulo consultando `docs/project/version-matrix.md`.
 - Si el walkthrough no existe, no está versionado o sus pasos no son reproducibles, el módulo queda automáticamente **RECHAZADO**.
 
 ### Paso 2: Análisis de Trazabilidad (Shift-Left)
@@ -56,7 +56,7 @@ El QA Lead busca proactivamente prácticas deficientes:
   - ¿El formulario envía peticiones con datos incompletos confiando en que el backend responderá el error?
   - ¿Se manejan adecuadamente los estados de carga (spinners), errores de red y respuestas 401/403/409?
   - ¿El formulario valida valores límite antes de disparar llamadas innecesarias al servidor?
-  - ¿**Se emplearon colores arbitrarios o hardcodeados** en lugar de apegarse estrictamente a `docs/04_ui_design_system.md`?
+  - ¿**Se emplearon colores arbitrarios o hardcodeados** en lugar de apegarse estrictamente a `docs/project/design-system.md`?
   - ¿Los botones, tablas, badges y modales cumplen al 100% con la matriz de tokens del Design System oficial?
 
 ### Paso 4: Despliegue Crítico y Proporcional del Arsenal de Herramientas
@@ -96,7 +96,7 @@ Todo reporte modular generado por el QA Lead en `docs/qa/[XX_modulo]/[vX.Y.Z]/QA
 
 ## 1. Ficha de Auditoría Técnica
 - **Agentes Evaluados:** [Backend Engineer / Frontend Engineer / Software Architect]
-- **Insumo de Verificación:** `walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md`
+- **Insumo de Verificación:** `docs/walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md`
 - **Contrato de API Auditado:** `docs/contracts/[MODULO].contract.ts`
 - **Tasa de Cobertura de Criterios BDD:** [XX]%
 
@@ -172,5 +172,5 @@ Todo reporte modular generado por el QA Lead en `docs/qa/[XX_modulo]/[vX.Y.Z]/QA
 | :--- | :--- | :--- |
 | **S1 — Blocker** | Caída del servidor, fuga de datos entre organizaciones (IDOR), corrupción de base de datos, violación de inmutabilidad, o presencia del tipo `any` (`: any`, `as any`, `<any>`) detectada por el verificador AST. | 🔴 **VETO INMEDIATO:** Release bloqueado. |
 | **S2 — Critical** | Regla de negocio del PRD no implementada, bypass de roles RBAC, o distorsión severa de identidad visual multi-tenant. | 🔴 **VETO INMEDIATO:** Release bloqueado. |
-| **S3 — Major** | Manejo de error inadecuado en UI, falta de spinner de carga, o **uso de colores hardcodeados/arbitrarios que violan `docs/04_ui_design_system.md`**. | 🔴 **VETO TEMPORAL:** Requiere subsanación inmediata del Frontend Engineer antes de firmar Gate 4. |
+| **S3 — Major** | Manejo de error inadecuado en UI, falta de spinner de carga, o **uso de colores hardcodeados/arbitrarios que violan `docs/project/design-system.md`**. | 🔴 **VETO TEMPORAL:** Requiere subsanación inmediata del Frontend Engineer antes de firmar Gate 4. |
 | **S4 — Minor** | Discrepancia tipográfica menor, typo en etiquetas o espaciado sutil. | 🟢 Aprobado con observación técnica. |

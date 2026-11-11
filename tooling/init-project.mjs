@@ -23,7 +23,10 @@ function ask(question, defaultValue) {
 }
 
 function replaceInFile(filePath, replacements) {
-  if (!fs.existsSync(filePath)) return;
+  if (!fs.existsSync(filePath)) {
+    console.warn(`⚠️  Archivo no encontrado, no se personalizó: ${path.relative(rootDir, filePath)}`);
+    return;
+  }
   let content = fs.readFileSync(filePath, 'utf-8');
   for (const [key, value] of Object.entries(replacements)) {
     const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
@@ -69,9 +72,12 @@ async function main() {
     path.join(rootDir, '.workflow', 'current_state.json'),
     path.join(rootDir, '.workflow', 'STAGE_GATES.md'),
     path.join(rootDir, 'multiAgents', '00_orchestrator', 'PROJECT_STATUS.md'),
-    path.join(rootDir, 'docs', '01_prd.md'),
-    path.join(rootDir, 'docs', '02_architecture.md'),
-    path.join(rootDir, 'docs', 'VERSION_MATRIX.md'),
+    path.join(rootDir, 'docs', 'project', 'prd.md'),
+    path.join(rootDir, 'docs', 'project', 'architecture.md'),
+    path.join(rootDir, 'docs', 'project', 'design-system.md'),
+    path.join(rootDir, 'docs', 'project', 'version-matrix.md'),
+    path.join(rootDir, 'docs', 'qa', 'index.md'),
+    path.join(rootDir, 'multiAgents', '01_product_manager', 'subroles', '02_legal_domain_compliance.md'),
   ];
 
   for (const file of filesToProcess) {
@@ -84,7 +90,7 @@ async function main() {
     path.join(rootDir, 'docs', 'adrs'),
     path.join(rootDir, 'docs', 'modules'),
     path.join(rootDir, 'docs', 'qa'),
-    path.join(rootDir, 'walkthroughs'),
+    path.join(rootDir, 'docs', 'walkthroughs'),
     path.join(rootDir, 'backend'),
     path.join(rootDir, 'frontend'),
   ];

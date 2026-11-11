@@ -62,5 +62,5 @@ Cada sesión exploratoria se documenta en `tests/exploratory/CHARTER-[MODULO]-[N
 
 ## 5. Definition of Done (DoD) del Subrol
 - [ ] Sesión de testing exploratorio ejecutada con su Test Charter registrado.
-- [ ] Verificación de usabilidad y coherencia con `docs/04_ui_design_system.md` completada.
+- [ ] Verificación de usabilidad y coherencia con `docs/project/design-system.md` completada.
 - [ ] 100% de los comportamientos anómalos descubiertos documentados como fichas técnicas de defecto en `docs/qa/incidents/`.

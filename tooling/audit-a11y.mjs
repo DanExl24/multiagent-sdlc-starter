@@ -50,7 +50,7 @@ function scanFilesRecursively(dir, extensions, fileList = []) {
 const targetDirs = [
   path.join(rootDir, 'frontend'),
   path.join(rootDir, 'src'),
-  path.join(rootDir, 'docs', '04_ui_design_system.md'),
+  path.join(rootDir, 'docs', 'project', 'design-system.md'),
 ];
 
 let filesToAudit = [];
@@ -66,8 +66,8 @@ for (const target of targetDirs) {
 
 if (filesToAudit.length === 0) {
   console.log('ℹ️  No se encontraron componentes frontend creados aún.');
-  console.log('ℹ️  Auditando especificación del Design System en docs/04_ui_design_system.md...');
-  const designSystemPath = path.join(rootDir, 'docs', '04_ui_design_system.md');
+  console.log('ℹ️  Auditando especificación del Design System en docs/project/design-system.md...');
+  const designSystemPath = path.join(rootDir, 'docs', 'project', 'design-system.md');
   if (fs.existsSync(designSystemPath)) {
     filesToAudit.push(designSystemPath);
   }

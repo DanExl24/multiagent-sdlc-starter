@@ -75,7 +75,7 @@ El subrol supervisa que los siguientes 5 campos personalizados permanezcan sincr
 | **`Status`** | Single Select | Ciclo de vida | `Backlog / Discovery` al nacer ➔ `Released / Done` al cerrarse el issue o commitear `closes #ID`. |
 | **`Modulo`** | Single Select | Prefijo de título | Se extrae `XX` de `[HU-XX-YY]` y se mapea a la opción del módulo (ej. `06_matriculas`). |
 | **`Stage-Gate`** | Single Select | Estado del ciclo | `Gate 1 (PRD)` en creación; avanza por compuertas según prefijo de issue o revisión HITL. |
-| **`SemVer Target`**| Text | `docs/VERSION_MATRIX.md` | Versión vigente o planificada para el módulo (ej. `v0.9.1`, `v0.11.0`). |
+| **`SemVer Target`**| Text | `docs/project/version-matrix.md` | Versión vigente o planificada para el módulo (ej. `v0.9.1`, `v0.11.0`). |
 | **`Reglas de Negocio (RN)`** | Text | Cuerpo del Issue | Expresión regular sobre `RN-[A-Z0-9]+-[0-9]+` unificadas por comas. |
 
 ---

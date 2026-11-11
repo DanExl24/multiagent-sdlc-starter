@@ -1,6 +1,6 @@
 # 📄 PLANTILLA: Product Requirements Document (PRD)
 
-> **Documento:** `docs/01_prd.md`  
+> **Documento:** `docs/project/prd.md`  
 > **Versión:** 1.0  
 > **Autor:** Product Manager Lead  
 > **Estado:** [BORRADOR / REVISIÓN / APROBADO]

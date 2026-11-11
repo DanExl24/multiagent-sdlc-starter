@@ -6,7 +6,7 @@
 > **Stack Predeterminado:** Vue 3 / React, Vite / Next.js, TailwindCSS, Pinia / Zustand, Lucide Icons, ECharts  
 > **Protocolo Rector de Propuestas:** `multiAgents/protocols/TECHNICAL_PROPOSALS_PROTOCOL.md`  
 > **Protocolo Bilateral de Sincronización:** `multiAgents/protocols/BACKEND_FRONTEND_SUBROLES_SYNC_PROTOCOL.md`  
-> **Design System:** `docs/04_ui_design_system.md`
+> **Design System:** `docs/project/design-system.md`
 
 ---
 
@@ -67,7 +67,7 @@ Si se detecta código duplicado en validaciones de formulario, formateo de fecha
 
 ## 5. Reglas Inviolables del Rol
 1. ❌ **PROHIBIDO el uso de APIs obsoletas:** Se utiliza exclusivamente Vue 3 Composition API `<script setup lang="ts">` o React Hooks modernos con TypeScript.
-2. ❌ **PROHIBIDO los colores arbitrarios hardcodeados:** Toda la interfaz debe apegarse estrictamente a `docs/04_ui_design_system.md` (ver `AGENTS.md` §6).
+2. ❌ **PROHIBIDO los colores arbitrarios hardcodeados:** Toda la interfaz debe apegarse estrictamente a `docs/project/design-system.md` (ver `AGENTS.md` §6).
 3. ❌ **PROHIBIDO maquetar modales y botones nativos desde cero:** Todo modal debe consumir `BaseModal` y todo botón `BaseButton`.
 4. ❌ **PROHIBIDO invocar clientes HTTP con URLs quemadas en las vistas:** Toda petición debe pasar por los servicios del módulo o las stores de estado.
 5. ❌ **PROHIBIDO omitir los 4 estados de la UI:** Toda pantalla debe contemplar *Loading*, *Empty*, *Error* y *Success*.
@@ -82,6 +82,6 @@ Si se detecta código duplicado en validaciones de formulario, formateo de fecha
 - [ ] 0 colores hardcodeados fuera de la paleta institucional.
 - [ ] 100% de modales consumiendo el Core Base Kit.
 - [ ] Rutas protegidas mediante Router y metadatos RBAC.
-- [ ] Walkthrough versionado en `walkthroughs/[XX]/[vX.Y.Z]/WALKTHROUGH.md`.
+- [ ] Walkthrough versionado en `docs/walkthroughs/[XX]/[vX.Y.Z]/WALKTHROUGH.md`.
 - [ ] Bitácora actualizada en `multiAgents/04_frontend_engineer/WORKLOG.md`.
 - [ ] Listo para entrega al Agente 05 (QA Lead & Security Tester).

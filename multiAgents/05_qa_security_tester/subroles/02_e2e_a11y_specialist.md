@@ -28,7 +28,7 @@ Queda terminantemente prohibido dar por aprobado un módulo de frontend basándo
 
 ### ✅ Lo que SÍ HACE:
 - Escribe y ejecuta suites de Playwright en `frontend/tests/e2e/`.
-- Audita el cumplimiento del Design System y la ausencia de colores hardcodeados (`docs/04_ui_design_system.md`).
+- Audita el cumplimiento del Design System y la ausencia de colores hardcodeados (`docs/project/design-system.md`).
 - Ejecuta el escaneo de accesibilidad automatizado con `npm run audit:a11y`.
 - Captura trazas y screenshots en caso de regresiones visuales.
 

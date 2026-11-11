@@ -4,7 +4,7 @@
 > **Agente Padre:** `02_software_architect` (Software Architect Lead)  
 > **Área:** Fase 2 — Modelado Relacional, Integridad de Datos y DDL  
 > **Motor:** PostgreSQL 16+  
-> **Artefactos Clave:** DDL y Diccionario de Datos en `docs/02_architecture.md`, Migraciones SQL
+> **Artefactos Clave:** DDL y Diccionario de Datos en `docs/project/architecture.md`, Migraciones SQL
 
 ---
 
@@ -15,7 +15,7 @@ Es el especialista del Arquitecto de Software custodio del **modelo de datos rel
 
 ## 2. ¿Para qué fue creado?
 1. Para erradicar esquemas relacionales deficientes (como usar tipos genéricos `TEXT` para UUIDs o enteros para dinero/decimales).
-2. Para diseñar y mantener el catálogo DDL oficial en `docs/02_architecture.md`.
+2. Para diseñar y mantener el catálogo DDL oficial en `docs/project/architecture.md`.
 3. Para planificar la estrategia de **indexación B-Tree y GIN** que permite a las consultas responder en milisegundos aun bajo alto volumen de registros.
 4. Para implementar la inmutabilidad de datos a nivel de motor (triggers PL/pgSQL y columnas de auditoría).
 
@@ -56,7 +56,7 @@ graph LR
 ## 4. ¿Qué HACE y qué NO HACE este Subrol?
 
 ### ✅ Lo que SÍ HACE:
-- Redacta el script DDL SQL completo de cada tabla en `docs/02_architecture.md`.
+- Redacta el script DDL SQL completo de cada tabla en `docs/project/architecture.md`.
 - Diseña restricciones `CHECK`, llaves foráneas `FOREIGN KEY` e índices `CREATE INDEX`.
 - Modela triggers de inmutabilidad (ej. bloquear updates directos sobre entidades cerradas o finalizadas).
 - Define la estrategia de migraciones incrementales.
@@ -72,4 +72,4 @@ graph LR
 - [ ] DDL SQL formalmente redactado y verificado sintácticamente para PostgreSQL 16+.
 - [ ] Diccionario de datos documentado con tipo, nulabilidad, clave foránea y descripción.
 - [ ] Índices de búsqueda y restricciones de integridad definidas.
-- [ ] Actualización reflejada en el DDL general de `docs/02_architecture.md`.
+- [ ] Actualización reflejada en el DDL general de `docs/project/architecture.md`.

@@ -114,23 +114,23 @@ flowchart LR
 │       └── TEMPLATES/                   # Plantillas para PRD, ADRs, contratos y módulos
 │
 ├── docs/                                # 📚 Artefactos de Ingeniería (Fuente de la Verdad)
-│   ├── 01_prd.md                        # Documento Rector de Requerimientos de Producto
-│   ├── 02_architecture.md               # Especificación técnica, C4 Model y DDL
-│   ├── 03_qa_report.md                  # Panel Ejecutivo Consolidado de QA y Certificación
-│   ├── 04_ui_design_system.md           # Sistema de Diseño Visual y Paleta Oficial
-│   ├── VERSION_MATRIX.md                # Matriz Bidireccional de Versiones y Ciclo de Vida
-│   ├── contracts/                       # Contratos de API REST tipados con Zod (.contract.ts)
-│   ├── adrs/                            # Architectural Decision Records (Decisiones estructurales)
+│   ├── README.md                        # Índice maestro de la documentación (humanos e IAs)
+│   ├── project/                         # Transversal, cambia poco (un archivo por proyecto)
+│   │   ├── prd.md                       # Documento Rector de Requerimientos de Producto
+│   │   ├── architecture.md              # Arquitectura global y Modelo C4 (el DDL vive en cada módulo)
+│   │   ├── design-system.md             # Sistema de Diseño Visual y Paleta Oficial
+│   │   └── version-matrix.md            # Matriz Bidireccional de Versiones y Ciclo de Vida
 │   ├── modules/                         # Especificaciones funcionales y BDD por módulo
-│   └── qa/                              # Reportes Modulares Forenses de Calidad
+│   ├── contracts/                       # Contratos de API REST tipados con Zod (.contract.ts)
+│   ├── adrs/                            # Architectural Decision Records (un archivo por decisión)
+│   ├── qa/                              # index.md (panel consolidado) y reportes forenses [XX]/[vX.Y.Z]/
+│   ├── walkthroughs/                    # Guías de Verificación Versionadas: [XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md
+│   └── quality/                         # Planes de mejora continua (Kaizen)
 │
 ├── tooling/                             # 🛡️ Scripts de Verificación y Scaffolding
 │   ├── check-no-any-backend.ts          # Verificador AST contra 'any' en Backend
 │   ├── check-no-any-frontend.mjs        # Verificador AST contra 'any' en Frontend
 │   └── init-project.mjs                 # Wizard de configuración para nuevos proyectos
-│
-├── walkthroughs/                        # Guías de Verificación Versionadas Jerárquicas
-│   └── [XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md
 │
 ├── backend/                             # API REST / Servicios
 └── frontend/                            # SPA Web / Cliente
@@ -146,12 +146,12 @@ Controla el flujo global, vigila que nadie se salte una compuerta, gestiona la m
 ### 3.1. 📋 `01_product_manager` — Product Manager Lead (Fase 1)
 Transforma la visión de negocio en especificaciones formales sin ambigüedad.
 - **Subroles:** Discovery (`/grill-me`), Legal/Compliance, BDD INVEST Gherkin, UAT/KPIs.
-- **Entregables:** `docs/01_prd.md`, `docs/modules/[XX]/01_SPEC_FUNCIONAL.md`, `02_HISTORIAS_USUARIO.md`.
+- **Entregables:** `docs/project/prd.md`, `docs/modules/[XX]/01_SPEC_FUNCIONAL.md`, `02_HISTORIAS_USUARIO.md`.
 
 ### 3.2. 🏛️ `02_software_architect` — Software Architect Lead (Fase 2)
 Traduce el PRD en arquitectura técnica, contratos Zod y esquemas de base de datos relacionales normalizados.
 - **Subroles:** Modular Topologist (C4), DDL Relational Modeler, Zod Protocol Designer, Security & Isolation.
-- **Entregables:** `docs/02_architecture.md`, `docs/contracts/[XX].contract.ts`, ADRs.
+- **Entregables:** `docs/project/architecture.md`, `docs/contracts/[XX].contract.ts`, ADRs.
 
 ### 3.3. ⚙️ `03_backend_engineer` — Backend Lead Engineer (Fase 3A)
 Construye la API REST, la lógica de negocio y las consultas tipadas a la base de datos con Cero SQL crudo.
@@ -179,7 +179,7 @@ Asegura despliegue en 2 minutos, seeders reproducibles, observabilidad y CI/CD.
 
 | Agente / Rol | Insumo Obligatorio que DEBE Verificar | Entregable Obligatorio que DEBE Dejar en Disco | Compuerta (Stage-Gate) |
 | :--- | :--- | :--- | :--- |
-| **01. Product Manager** | Visión del Director Humano / `PROJECT_STATUS.md` | `docs/01_prd.md`, HUs INVEST con BDD Gherkin en `docs/modules/XX/` | **Gate 1** (Firma Humana Requerida) |
+| **01. Product Manager** | Visión del Director Humano / `PROJECT_STATUS.md` | `docs/project/prd.md`, HUs INVEST con BDD Gherkin en `docs/modules/XX/` | **Gate 1** (Firma Humana Requerida) |
 | **02. Software Architect** | PRD firmado en Gate 1 con DoR completa | DDL de tablas, Contratos Zod en `docs/contracts/XX.contract.ts`, ADRs | **Gate 2** (Firma Humana Requerida) |
 | **03. Backend Engineer** | Contrato Zod y DDL migrado en base de datos | Código en `backend/src/modules/XX/`, 0 ANYs (`check:no-any` OK), 100% Vitest PASS | **G3A** (Checkpoint automático: transfiere a Frontend sin halt) |
 | **04. Frontend Engineer** | Endpoints de backend en verde en Vitest | Vistas en `frontend/src/modules/XX/`, 0 ANYs (`check:no-any` OK), build OK, `WALKTHROUGH.md` | **Gate 3B** (Firma Humana de UI Requerida) |
@@ -228,7 +228,7 @@ Si eres un agente nuevo ingresando al repositorio:
 4. ❌ **PROHIBIDO el salto de Stage-Gates:** Ningún agente puede auto-aprobarse un Stage-Gate. Las compuertas principales requieren la confirmación explícita del Director Humano según `.workflow/STAGE_GATES.md`.
 5. ❌ **PROHIBIDO omitir la bitácora:** Todo cambio de código o documento debe quedar reflejado de forma concisa en el `WORKLOG.md` del agente que lo realizó.
 6. ❌ **PROHIBIDO que QA autocorriga código de producción:** El QA Lead tiene poder de veto y debe emitir reportes con análisis de causa raíz (RCA) explicando el error del desarrollador, sin alterar él mismo el código de producción.
-7. ❌ **PROHIBIDO el uso de estilos fuera del Design System:** Todo componente visual debe apegarse estrictamente a la guía de tokens y diseño en `docs/04_ui_design_system.md`.
+7. ❌ **PROHIBIDO el uso de estilos fuera del Design System:** Todo componente visual debe apegarse estrictamente a la guía de tokens y diseño en `docs/project/design-system.md`.
 8. ❌ **PROHIBIDO maquillar u ocultar bugs (Transparencia Radical en QA):** Todo defecto, error de compilación, falla en tests o fallo de linter detectado DEBE quedar explícitamente documentado en el reporte de QA (`QA_REPORT.md`), catalogado con severidad (S1 a S4) y su causa raíz.
 9. ❌ **PROHIBIDO el commit sin nomenclatura canónica:** Todo commit DEBE seguir la nomenclatura `[vX.Y.Z] tipo(scope): descripcion`. Consulta `multiAgents/protocols/GIT_COMMIT_CONVENTION.md`.
 10. ❌ **PROHIBIDO el encadenamiento no autorizado de fases (Alto Mecánico Obligatorio):** Al culminar entregables de Gate 1, Gate 2, Gate 3B, Gate 4, Gate 5 o Gate 6, el agente DEBE detenerse inmediatamente (Halt/Yield), actualizar `.workflow/current_state.json` y esperar la confirmación del Director Humano.

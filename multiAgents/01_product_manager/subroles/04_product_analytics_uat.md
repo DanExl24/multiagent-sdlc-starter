@@ -60,7 +60,7 @@ graph LR
 ## 5. ¿Qué HACE y qué NO HACE este Subrol?
 
 ### ✅ Lo que SÍ HACE:
-- Define los KPIs y métricas de éxito de cada módulo en `docs/01_prd.md`.
+- Define los KPIs y métricas de éxito de cada módulo en `docs/project/prd.md`.
 - Realiza revisiones de aceptación funcional (UAT) en la aplicación web.
 - Valida si una propuesta técnica (RFC) de los desarrolladores beneficia o perjudica a los usuarios finales.
 - Cierra el ciclo de feedback retroalimentando al **Subrol 01 (Discovery)** con nuevas necesidades.

@@ -13,7 +13,7 @@
 | Fase | Agente Responsable | Entregable Clave | Estado | Gate | Aprobación Humana |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **00. Gobernanza** | Orquestador | Estructura Multiagente, SemVer, Reglas de Oro | 🟢 COMPLETADO | G0 (Bootstrap) | Automática (`init:project`) |
-| **M01. PRD & Reglas** | Product Manager Lead | `docs/01_prd.md`, HUs INVEST con BDD Gherkin | 🟡 EN PROCESO | Gate 1 (PRD) | 🛑 Pendiente Firma Humana |
+| **M01. PRD & Reglas** | Product Manager Lead | `docs/project/prd.md`, HUs INVEST con BDD Gherkin | 🟡 EN PROCESO | Gate 1 (PRD) | 🛑 Pendiente Firma Humana |
 | **Arquitectura M01** | Software Architect | DDL de tablas + Contratos Zod API-First | ⚪ SIGUIENTE | Gate 2 | Pendiente Gate 1 |
 | **Backend M01** | Backend Engineer | API REST tipada + Lógica + Tests Vitest | ⚪ EN ESPERA | G3A (Checkpoint) | Automática (Orquestador); pendiente Gate 2 |
 | **Frontend M01** | Frontend Engineer | SPA reactiva + Design System + Walkthrough | ⚪ EN ESPERA | Gate 3B | Pendiente checkpoint G3A |

@@ -18,7 +18,7 @@ Es el especialista del Frontend Lead responsable del **aseguramiento de calidad 
 1. **Erradicar el "Testing a Ciegas":** Prohibir la práctica de entregar pantallas a QA confiando únicamente en que "se ve bien en el navegador", evitando que la suite E2E de Playwright colapse por errores elementales de renderizado.
 2. **Validar Formularios y Esquemas Zod Client-Side:** Probar que los inputs muestren mensajes de error contextuales y deshabiliten botones de envío ante datos inválidos antes de disparar peticiones de red.
 3. **Auditar la Reactividad de Stores:** Verificar que las acciones de Pinia muten el estado correctamente, limpien datos al cerrar sesión y manejen flags de carga (`isLoading: true/false`).
-4. **Verificar Cumplimiento del Design System en Código:** Validar que los componentes utilicen los componentes base (`BaseModal`, `BaseButton`, `BaseInput`) y no introduzcan colores o estilos hardcodeados fuera de `docs/04_ui_design_system.md`.
+4. **Verificar Cumplimiento del Design System en Código:** Validar que los componentes utilicen los componentes base (`BaseModal`, `BaseButton`, `BaseInput`) y no introduzcan colores o estilos hardcodeados fuera de `docs/project/design-system.md`.
 
 ---
 
@@ -74,7 +74,7 @@ flowchart LR
 ---
 
 ## 5. Criterio de Salida para Handoff a QA (Gate 3B)
-Antes de que el Frontend Lead emita el Walkthrough en `walkthroughs/[XX]/[vX.Y.Z]/WALKTHROUGH.md`:
+Antes de que el Frontend Lead emita el Walkthrough en `docs/walkthroughs/[XX]/[vX.Y.Z]/WALKTHROUGH.md`:
 - [ ] 100% de las pruebas unitarias de componentes en verde (`npm run test:unit`).
 - [ ] Cero advertencias de linting y formateo en componentes (`npm run lint`).
 - [ ] Auditoría AST `npm run check:no-any` ejecutada con 0 violaciones.

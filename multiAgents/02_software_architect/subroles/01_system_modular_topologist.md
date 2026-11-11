@@ -4,7 +4,7 @@
 > **Agente Padre:** `02_software_architect` (Software Architect Lead)  
 > **Área:** Fase 2 — Diseño Topológico, Límites Modulares y Bounded Contexts  
 > **Estándares:** C4 Model (Contexto, Contenedores, Componentes), ADRs (Architectural Decision Records)  
-> **Artefactos Clave:** `docs/02_architecture.md`, `docs/adrs/`
+> **Artefactos Clave:** `docs/project/architecture.md`, `docs/adrs/`
 
 ---
 
@@ -75,7 +75,7 @@ Cuando el equipo deba tomar una decisión técnica estructural permanente (ej. c
 ## 5. ¿Qué HACE y qué NO HACE este Subrol?
 
 ### ✅ Lo que SÍ HACE:
-- Diseña y actualiza los diagramas C4 en `docs/02_architecture.md`.
+- Diseña y actualiza los diagramas C4 en `docs/project/architecture.md`.
 - Define los límites entre `core/` y `modules/` en backend y frontend.
 - Redacta y clasifica los ADRs institucionales.
 - Mapea la matriz de dependencias inter-modular.

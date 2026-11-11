@@ -4,7 +4,7 @@
 > **Agente Padre:** `02_software_architect` (Software Architect Lead)  
 > **Área:** Fase 2 — Especificación de Interfaces, Contratos Zod y Envelopes HTTP  
 > **Enfoque:** API-First, Contratos Fuertemente Tipados, REST Semántico  
-> **Artefactos Clave:** `docs/contracts/XX_modulo.contract.ts`, Matriz de Endpoints en `docs/02_architecture.md`
+> **Artefactos Clave:** `docs/contracts/XX_modulo.contract.ts`, Matriz de Endpoints en `docs/project/architecture.md`
 
 ---
 
@@ -84,7 +84,7 @@ El Subrol 03 estandariza el significado de las respuestas del servidor para que 
 ### ✅ Lo que SÍ HACE:
 - Redacta todos los archivos de contrato en `docs/contracts/`.
 - Define los esquemas Zod de entrada y los DTOs de salida.
-- Mapea las rutas HTTP de los módulos en `docs/02_architecture.md`.
+- Mapea las rutas HTTP de los módulos en `docs/project/architecture.md`.
 - Estandariza los códigos de error de negocio (`RESOURCE_LOCKED_CONFLICT`, `LIMIT_EXCEEDED`).
 
 ### ❌ Lo que NO HACE:
