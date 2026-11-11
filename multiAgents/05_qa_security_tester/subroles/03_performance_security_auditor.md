@@ -19,7 +19,7 @@ Es el especialista de QA responsable de someter al sistema a condiciones de **es
 Queda terminantemente prohibido asumir que un endpoint soporta concurrencia sin una prueba k6 si cumple cualquiera de las siguientes condiciones:
 1. **Módulos de Alta Demanda Pública:** Generación de OTPs, consumo de cupos concurrentes o registro masivo.
 2. **Módulos de Mutación Masiva:** Operaciones en lote de actualización o procesamiento de datos.
-3. **Módulos con Inmutabilidad Sagrada (Regla de Oro #3):** Validación bajo estrés de que ningún hilo concurrente pueda alterar entidades cuando su estado se encuentre bloqueado o cerrado (HTTP 409 o 403 obligatorio).
+3. **Módulos con Inmutabilidad Sagrada (ver `AGENTS.md` §6):** Validación bajo estrés de que ningún hilo concurrente pueda alterar entidades cuando su estado se encuentre bloqueado o cerrado (HTTP 409 o 403 obligatorio).
 
 ### Ejecución Estandarizada:
 ```bash

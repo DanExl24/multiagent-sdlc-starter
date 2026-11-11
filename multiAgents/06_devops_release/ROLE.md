@@ -61,11 +61,11 @@ graph TD
 
 ---
 
-## 4. Las 5 Reglas de Oro Inviolables de DevOps & Release
+## 4. Las 5 Reglas Inviolables de DevOps & Release
 1. ❌ **PROHIBIDO subir credenciales o secretos a Git:** Todo archivo `.env` local debe estar excluido en `.gitignore`; solo se versiona `.env.example`.
 2. ❌ **PROHIBIDO un seeder no idempotente:** `npm run seed:reset` debe poder correr 10 veces seguidas en frío sin arrojar errores de colisión.
 3. ❌ **PROHIBIDO liberar sin pruebas de compilación estática:** Todo release exige compilación limpia (`tsc --noEmit`, etc.) con 0 errores y 100% de tests en verde.
-4. ❌ **PROHIBIDO ignorar el estándar canónico de commits (Regla de Oro #10):** Todo commit debe seguir `[vX.Y.Z] tipo(scope): descripcion`.
+4. ❌ **PROHIBIDO ignorar el estándar canónico de commits (ver `AGENTS.md` §6):** Todo commit debe seguir `[vX.Y.Z] tipo(scope): descripcion`.
 5. ❌ **PROHIBIDO operar sin healthcheck:** El endpoint `/api/health` debe ser la primera línea de diagnóstico ante cualquier incidencia.
 
 ---

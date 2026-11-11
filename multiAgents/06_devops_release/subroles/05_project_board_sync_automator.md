@@ -28,7 +28,7 @@ flowchart TD
     ISSUES -->|"Webhook / GitHub Actions"| CI["🤖 02_project_board_sync.yml<br/>(PROJECT_PAT)"]
     CI -->|"GraphQL Mutation"| BOARD["📊 GitHub Projects V2<br/>Project Board"]
     
-    BOARD -.->|"Asigna columnas"| COLS["• Status: Backlog ➔ Done<br/>• Modulo: XX_nombre<br/>• Stage-Gate: Gate 1..5<br/>• SemVer: vX.Y.Z<br/>• Reglas: RN-XX-XX"]
+    BOARD -.->|"Asigna columnas"| COLS["• Status: Backlog ➔ Done<br/>• Modulo: XX_nombre<br/>• Stage-Gate: G1..G6<br/>• SemVer: vX.Y.Z<br/>• Reglas: RN-XX-XX"]
 
     style PM fill:#003366,stroke:#38bdf8,color:#ffffff
     style DOC fill:#0f172a,stroke:#94a3b8,color:#ffffff

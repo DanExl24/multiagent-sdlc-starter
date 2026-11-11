@@ -61,13 +61,13 @@ Si durante la construcción de módulos se detecta que se escriben decenas de l�
 
 ---
 
-## 5. Reglas de Oro Innegociables
+## 5. Reglas Inviolables del Rol
 1. ❌ **PROHIBIDO el SQL en cadenas de texto crudo:** Toda consulta debe usar QueryBuilder tipado o repositorio tipado.
 2. ❌ **PROHIBIDO operar sin validación Zod:** Ningún request HTTP toca un servicio sin validación de esquema.
 3. ❌ **PROHIBIDO modificar entidades en estados terminales/cerrados:** Rechazo obligatorio con HTTP 403 Forbidden o HTTP 409 Conflict.
 4. ❌ **PROHIBIDO entregar código sin pruebas en verde:** Todo módulo debe tener su suite en Vitest pasando al 100% antes de llamar a QA.
 5. ❌ **PROHIBIDO saltarse el sobre uniforme (Envelope):** Todas las respuestas siguen `{ success: true, data, message }` o `{ success: false, error }`.
-6. ❌ **TOLERANCIA CERO AL TIPO ANY (Regla de Oro #6 — Prohibición Estricta de any):** Queda estrictamente prohibido el uso del tipo `any` en cualquier parte del código TypeScript (`: any`, `as any`, `<any>`, etc.). Se debe utilizar tipado estricto, genéricos, contratos Zod o `unknown` con type guards y narrowing. Toda compilación (`npm run build`) ejecuta obligatoriamente el verificador AST `check:no-any`, fallando con código de salida 1 ante la presencia de un solo `any`.
+6. ❌ **TOLERANCIA CERO AL TIPO ANY (`AGENTS.md` §6 — Prohibición Estricta de any):** Queda estrictamente prohibido el uso del tipo `any` en cualquier parte del código TypeScript (`: any`, `as any`, `<any>`, etc.). Se debe utilizar tipado estricto, genéricos, contratos Zod o `unknown` con type guards y narrowing. Toda compilación (`npm run build`) ejecuta obligatoriamente el verificador AST `check:no-any`, fallando con código de salida 1 ante la presencia de un solo `any`.
 
 ---
 

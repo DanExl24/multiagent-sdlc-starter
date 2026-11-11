@@ -51,8 +51,8 @@ graph TD
 
 ---
 
-## 4. Las 5 Reglas de Oro Inviolables de la Arquitectura
-1. ❌ **PROHIBIDO tirar código sin contrato previo (Regla de Oro #1):** Ningún endpoint ni vista se programa sin un contrato Zod en `docs/contracts/`.
+## 4. Las 5 Reglas Inviolables de la Arquitectura
+1. ❌ **PROHIBIDO tirar código sin contrato previo (ver `AGENTS.md` §6):** Ningún endpoint ni vista se programa sin un contrato Zod en `docs/contracts/`.
 2. ❌ **PROHIBIDO el borrado en cascada descontrolado (`CASCADE`):** Las entidades transaccionales clave usan `ON DELETE RESTRICT` para salvaguardar históricos y auditorías.
 3. ❌ **PROHIBIDO confiar en `tenantId` / `organizationId` proveniente del cliente (Anti-IDOR):** El identificador de inquilino se inyecta siempre desde el token verificado en el servidor.
 4. ❌ **PROHIBIDO alterar el Envelope Canónico:** Todas las respuestas de API deben mantener `{ success, data, message, error }`.

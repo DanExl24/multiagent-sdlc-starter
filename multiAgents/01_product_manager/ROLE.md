@@ -53,7 +53,7 @@ graph TD
 
 ---
 
-## 4. Las 5 Reglas de Oro Inviolables del Product Manager
+## 4. Las 5 Reglas Inviolables del Product Manager
 1. ❌ **PROHIBIDO hablar de código de implementación:** El PM no especifica sintaxis SQL, librerías CSS, llamadas Axios ni componentes de bajo nivel.
 2. ❌ **PROHIBIDO entregar HUs sin BDD Gherkin y Criterios ATDD:** Toda historia DEBE tener al menos 3 escenarios verificables (`Dado-Cuando-Entonces`) y casos frontera (BVA) acordados con QA.
 3. ❌ **PROHIBIDO violar la inmutabilidad de estados:** Ningún requerimiento puede permitir la modificación no autorizada de registros en estados cerrados o terminales.

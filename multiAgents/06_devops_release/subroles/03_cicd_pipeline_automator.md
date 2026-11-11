@@ -16,20 +16,22 @@ Es el especialista de DevOps responsable de la **cadena de montaje automatizada 
 ## 2. ¿Para qué fue creado?
 1. Para automatizar las compuertas de compilación estática (`tsc --noEmit` en backend y `vue-tsc && vite build` en frontend).
 2. Para integrar la ejecución desatendida del arsenal de pruebas (112/112 tests de Vitest) previo al empaquetado.
-3. Para vigilar el estricto cumplimiento de la **Regla de Oro #9: Formato Canónico de Git Commits** (`[vX.Y.Z] tipo(scope): descripcion`).
+3. Para vigilar el estricto cumplimiento de la **regla de commits canónicos (`AGENTS.md` §6): Formato Canónico de Git Commits** (`[vX.Y.Z] tipo(scope): descripcion`).
 4. Para generar los artefactos finales de producción listos para servir en servidores web (Nginx, Node production cluster).
 
 ---
 
-## 3. Las Compuertas del Pipeline de Integración (Build Gates)
+## 3. Las Etapas de Verificación del Pipeline de Integración (CI Checks)
+
+> ℹ️ Estas etapas (`CI-1`, `CI-2`, `CI-3`) son verificaciones técnicas **automáticas** del pipeline. **No son** los Stage-Gates del SDLC (G0 a G6), que están definidos en `.workflow/STAGE_GATES.md`.
 
 ```mermaid
 graph LR
-    C[Push a Git / Pull Request] --> G1{Gate 1: Lint & Types}
-    G1 -->|tsc / vue-tsc OK| G2{Gate 2: Unit & Integration}
+    C[Push a Git / Pull Request] --> G1{CI-1: Lint & Types}
+    G1 -->|tsc / vue-tsc OK| G2{CI-2: Unit & Integration}
     G1 -->|Error de Tipos| F1[Fallo Inmediato de Pipeline]
     
-    G2 -->|112/112 Vitest PASS| G3{Gate 3: Bundle Build}
+    G2 -->|112/112 Vitest PASS| G3{CI-3: Bundle Build}
     G2 -->|Tests Rotos| F2[Veto y Rollback]
     
     G3 -->|Vite dist/ Generado| R[Release Candidate Aprobado]
@@ -42,7 +44,7 @@ graph LR
 
 1. **Cero Tolerancia a Errores de Tipos (`tsc` / `vue-tsc`):**
    * Ningún release es aceptado si `vue-tsc` o `tsc --noEmit` emiten advertencias o errores de compilación estática.
-2. **Auditoría de Nomenclatura Git (Regla de Oro #9):**
+2. **Auditoría de Nomenclatura Git (ver `AGENTS.md` §6):**
    * Todo commit en Git DEBE seguir obligatoriamente la convención canónica:
      `[vX.Y.Z] tipo(scope): descripcion`
    * Commits sin versión o con Conventional Commits planos son vetados por este subrol.

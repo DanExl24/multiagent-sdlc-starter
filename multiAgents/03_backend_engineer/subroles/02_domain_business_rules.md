@@ -22,7 +22,7 @@ El Backend Lead debe activar este subrol cuando:
 * Se implementa un servicio de negocio (`*.service.ts`).
 * Se definen transiciones de estado (ej. de BORRADOR a APROBADO, o de ACTIVO a CERRADO).
 * Se deben validar restricciones de concurrencia, topes máximos o cupos de negocio.
-* Se requiere hacer cumplir la inmutabilidad de entidades en estados terminales (Regla de Oro #3).
+* Se requiere hacer cumplir la inmutabilidad de entidades en estados terminales (ver `AGENTS.md` §6).
 
 ---
 
@@ -42,8 +42,8 @@ graph LR
 
 ---
 
-## 5. Reglas de Oro del Subrol
-1. **Inmutabilidad en Estados Terminales (Regla de Oro #3):** Toda entidad que haya alcanzado un estado bloqueado, cerrado o finalizado rechaza cualquier mutación posterior con código `409 Conflict`.
+## 5. Reglas Inviolables del Subrol
+1. **Inmutabilidad en Estados Terminales (ver `AGENTS.md` §6):** Toda entidad que haya alcanzado un estado bloqueado, cerrado o finalizado rechaza cualquier mutación posterior con código `409 Conflict`.
 2. **Cero SQL Crudo o Acoplamiento a HTTP:** El servicio no recibe `req` ni `res`; solo recibe parámetros tipados y retorna resultados tipados.
 3. **Cero uso de `any`:** Todos los cálculos y retornos utilizan tipos TypeScript explícitos.
 

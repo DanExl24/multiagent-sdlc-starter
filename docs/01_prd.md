@@ -4,7 +4,7 @@
 > **Dominio:** `{{PROJECT_DOMAIN}}`  
 > **Versión:** 1.0.0  
 > **Autor Líder:** Product Manager Lead (Fase 1)  
-> **Estado:** APROBADO (Stage-Gate 1)  
+> **Estado:** PENDIENTE DE APROBACIÓN (Stage-Gate G1)  
 > **Fecha de Emisión:** 2026-10-07  
 
 ---

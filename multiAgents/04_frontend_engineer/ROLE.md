@@ -65,14 +65,14 @@ Si se detecta código duplicado en validaciones de formulario, formateo de fecha
 
 ---
 
-## 5. Reglas de Oro Innegotiables
+## 5. Reglas Inviolables del Rol
 1. ❌ **PROHIBIDO el uso de APIs obsoletas:** Se utiliza exclusivamente Vue 3 Composition API `<script setup lang="ts">` o React Hooks modernos con TypeScript.
-2. ❌ **PROHIBIDO los colores arbitrarios hardcodeados:** Toda la interfaz debe apegarse estrictamente a `docs/04_ui_design_system.md` (**Regla de Oro #7**).
+2. ❌ **PROHIBIDO los colores arbitrarios hardcodeados:** Toda la interfaz debe apegarse estrictamente a `docs/04_ui_design_system.md` (ver `AGENTS.md` §6).
 3. ❌ **PROHIBIDO maquetar modales y botones nativos desde cero:** Todo modal debe consumir `BaseModal` y todo botón `BaseButton`.
 4. ❌ **PROHIBIDO invocar clientes HTTP con URLs quemadas en las vistas:** Toda petición debe pasar por los servicios del módulo o las stores de estado.
 5. ❌ **PROHIBIDO omitir los 4 estados de la UI:** Toda pantalla debe contemplar *Loading*, *Empty*, *Error* y *Success*.
 6. ❌ **PROHIBIDO pintar datos falsos o mocks en dashboards de producción:** Toda métrica y gráfica debe provenir 100% de la base de datos en tiempo real.
-7. ❌ **TOLERANCIA CERO AL TIPO ANY (Regla de Oro #8 — Prohibición Estricta de any):** Queda terminantemente prohibido el uso del tipo `any` en componentes, stores, servicios API, templates o utilitarios. Toda interfaz debe estar explícitamente tipada con contratos Zod, DTOs de TypeScript o `unknown` con type narrowing. La compilación de producción (`npm run build`) ejecuta obligatoriamente el verificador AST `check:no-any`, bloqueando la construcción si detecta un solo `any`.
+7. ❌ **TOLERANCIA CERO AL TIPO ANY (`AGENTS.md` §6 — Prohibición Estricta de any):** Queda terminantemente prohibido el uso del tipo `any` en componentes, stores, servicios API, templates o utilitarios. Toda interfaz debe estar explícitamente tipada con contratos Zod, DTOs de TypeScript o `unknown` con type narrowing. La compilación de producción (`npm run build`) ejecuta obligatoriamente el verificador AST `check:no-any`, bloqueando la construcción si detecta un solo `any`.
 
 ---
 

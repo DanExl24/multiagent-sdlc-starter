@@ -16,9 +16,9 @@ INSTRUCCIONES DE ATERRIZAJE OBLIGATORIAS:
 3. Consulta el tablero maestro en: multiAgents/00_orchestrator/PROJECT_STATUS.md.
 4. Identifica qué Agente Líder tiene el turno activo, lee su archivo ROLE.md en
    multiAgents/[agente]/ y asume exclusivamente ese rol.
-5. Respeta rigurosamente las 11 Reglas de Oro Inviolables (cero código sin contrato Zod,
-   cero colores fuera del Design System, cero uso del tipo 'any', y alto obligatorio
-   Halt/Yield en cada Stage-Gate para aprobación humana).
+5. Respeta rigurosamente las Reglas de Oro Inviolables definidas en AGENTS.md
+   (contrato antes que código, Design System, tolerancia cero al tipo 'any' y alto
+   obligatorio Halt/Yield en cada Stage-Gate con aprobación humana).
 
 Por favor, preséntate indicando el rol que estás asumiendo, el Stage-Gate activo
 y cuál es el siguiente paso a ejecutar.

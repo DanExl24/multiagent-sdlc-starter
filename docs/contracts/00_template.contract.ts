@@ -4,8 +4,7 @@ import { z } from 'zod';
  * ============================================================================
  * CONTRATO DE API REST: Módulo de Muestra (Template)
  * ============================================================================
- * Regla de Oro #1: Cero código sin contrato previo.
- * Regla de Oro #4: Mandato Zero ANY Innegociable.
+ * Reglas rectoras (AGENTS.md §6): cero código sin contrato previo y mandato Zero ANY.
  */
 
 // Esquema de Creación / Petición (Request)

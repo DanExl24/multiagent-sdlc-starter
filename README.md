@@ -19,23 +19,7 @@ El desarrollo de software asistido por IAs suele fracasar cuando se utiliza un �
 
 **Este Starter Kit erradica esos problemas** convirtiendo tu repositorio en una **fábrica de software concurrente**, donde cada rol líder y sus subroles operan bajo **Compuertas de Calidad ("Stage-Gates")**, validación estricta por AST (Cero `any`) y contratos Zod API-First compartidos.
 
-```mermaid
-flowchart LR
-    G0["🚦 Gate 0<br/>Gobernanza"] --> G1["📋 Gate 1<br/>PRD & Requisitos"]
-    G1 --> G2["🏛️ Gate 2<br/>DDL & Zod Contracts"]
-    G2 --> G3A["⚙️ Gate 3A<br/>Backend API"]
-    G3A --> G3B["🎨 Gate 3B<br/>Frontend SPA"]
-    G3B --> G4["🧪 Gate 4<br/>QA Forense (4 Pilares)"]
-    G4 --> G5["🚀 Gate 5<br/>Release & Despliegue"]
-
-    style G0 fill:#0f172a,stroke:#94a3b8,color:#ffffff
-    style G1 fill:#003366,stroke:#38bdf8,color:#ffffff
-    style G2 fill:#003366,stroke:#34d399,color:#ffffff
-    style G3A fill:#003366,stroke:#fbbf24,color:#ffffff
-    style G3B fill:#003366,stroke:#f87171,color:#ffffff
-    style G4 fill:#003366,stroke:#a78bfa,color:#ffffff
-    style G5 fill:#003366,stroke:#34d399,color:#ffffff
-```
+> 🧭 **Dónde está la verdad:** este README es solo un puente. El mapa de compuertas, las reglas innegociables y el catálogo de roles están en [`AGENTS.md`](AGENTS.md); los datos de cada compuerta, en [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md).
 
 ---
 
@@ -114,19 +98,9 @@ graph TD
 
 ---
 
-## 🛡️ Las 11 Reglas de Oro Innegociables
+## 🛡️ Reglas Innegociables
 
-1. **Regla de Oro #1 — Cero Código Sin Contrato Previo:** Ningún endpoint o pantalla se construye sin un contrato Zod aprobado en `docs/contracts/*.contract.ts`.
-2. **Regla de Oro #2 — Alto Obligatorio HITL:** El agente no puede auto-aprobarse compuertas; debe detenerse mecánicamente (**Yield/Halt**) y solicitar la venia del Director Humano.
-3. **Regla de Oro #3 — Respeto Estricto de Reglas de Negocio:** Las entidades en estados cerrados o inmutables devuelven rechazos HTTP semánticos (409 Conflict / 403 Forbidden).
-4. **Regla de Oro #4 — Mandato Zero ANY Innegociable:** Prohibido el uso de `any` en TypeScript. Se audita mecánicamente con AST parsers (`npm run check:no-any`).
-5. **Regla de Oro #5 — Prohibición Absoluta de Mocks Ficticios:** Todo dato en pantalla proviene de endpoints reales con contratos tipados.
-6. **Regla de Oro #6 — Poder de Veto de QA (Stop-the-Line):** Si una prueba de integración, E2E o auditoría de tipos falla, el pase a producción queda revocado.
-7. **Regla de Oro #7 — Envelope Canónico de Respuestas:** Todas las respuestas de la API siguen la estructura unificada `{ success: true, data: T }` o `{ success: false, error: ... }`.
-8. **Regla de Oro #8 — Aislamiento Multi-Tenant Anti-IDOR:** El identificador del tenant se extrae exclusivamente del JWT autenticado, jamás de parámetros de entrada no confiables.
-9. **Regla de Oro #9 — Sistema de Diseño Consistente:** Prohibidos colores hexadecimales hardcodeados; uso estricto de tokens semánticos accesibles (WCAG 2.1 AA).
-10. **Regla de Oro #10 — Convención Semántica de Commits:** Commits formateados bajo el estándar `[vX.Y.Z] tipo(scope): descripcion`.
-11. **Regla de Oro #11 — Inmutabilidad de Artefactos de Memoria:** El estado del proyecto reside en `current_state.json` y los manuales en disco, no en la ventana de chat efímera.
+Contrato antes que código, alto obligatorio con aprobación humana, cero `any`, veto de QA y commits canónicos son parte de las reglas innegociables del proyecto. Su texto y su numeración viven **únicamente** en [`AGENTS.md`](AGENTS.md); este README no las repite para evitar discrepancias. Las reglas propias de cada rol (envelope de respuestas, aislamiento multi-tenant, datos reales sin mocks, etc.) están en el `ROLE.md` correspondiente.
 
 ---
 
@@ -137,11 +111,12 @@ graph TD
 ├── AGENTS.md                            # 📍 Manual Rector Multiagente (Lectura obligatoria)
 ├── LANDING_PROMPT.md                    # 🚀 Prompt canónico para alimentar a la IA
 ├── README.md                            # 📖 Este documento de bienvenida y guía rápida
+├── CLAUDE.md · GEMINI.md                # 🔗 Puentes que importan AGENTS.md (Claude Code / Gemini CLI)
 ├── CHANGELOG.md                         # 📝 Historial bajo Keep a Changelog y SemVer
 ├── package.json                         # ⚙️ Scripts de gobernanza (init:project, check:no-any)
 │
 ├── .workflow/                           # 🚦 Máquina de Estados y Gobernanza HITL
-│   ├── STAGE_GATES.md                   # Protocolo formal de compuertas 0 a 5
+│   ├── STAGE_GATES.md                   # Datos de las compuertas (delegado por AGENTS.md)
 │   └── current_state.json               # Estado activo en tiempo real
 │
 ├── tooling/                             # 🛠️ Herramientas de Auditoría y Automatización
@@ -151,7 +126,10 @@ graph TD
 │   ├── audit-security-runtime.mjs       # Escáner DAST en runtime (Headers, Cookies, CORS, 500s)
 │   ├── run-load-test.mjs                # Orquestador k6 con reportes HTML visuales y JSON
 │   ├── audit-a11y.mjs                   # Auditor automatizado de accesibilidad WCAG 2.1 AA
-│   └── validate-contracts.mjs           # Validador canónico de contratos DTO Zod
+│   ├── validate-contracts.mjs           # Validador canónico de contratos DTO Zod
+│   ├── validate-state.mjs               # Validador de current_state.json contra STAGE_GATES.md
+│   ├── check-doc-sources.mjs            # Lint de la política de fuentes de verdad (AGENTS.md)
+│   └── lib/stage-gates.mjs              # Lector de las tablas de STAGE_GATES.md
 │
 ├── multiAgents/                         # 🧠 Roles Líderes y Protocolos de Trabajo
 │   ├── 00_orchestrator/                 # PROJECT_STATUS.md y semáforo global
@@ -203,7 +181,13 @@ npm run test:load -- http://localhost:3000
 npm run audit:a11y
 # Genera: docs/qa/a11y-audit-summary.json
 
-# 6. Compuerta Rápida Combinada (Pre-Commit / CI Gate):
+# 6. Validación de la Máquina de Estados (current_state.json vs STAGE_GATES.md):
+npm run validate:state
+
+# 7. Política de Fuentes de Verdad (sin citas numeradas fuera de AGENTS.md):
+npm run check:docs
+
+# 8. Compuerta Rápida Combinada (Pre-Commit / CI Gate: check:no-any + contratos + estado + fuentes):
 npm test
 ```
 

@@ -9,7 +9,7 @@
 ---
 
 ## 1. ¿Qué es este Subrol?
-Es el especialista del Arquitecto de Software custodio de la **Regla de Oro #1 del proyecto: "PROHIBIDO tirar código sin contrato previo"**. Redacta los contratos de datos formales en TypeScript usando **Zod**, permitiendo que el Backend valide solicitudes en tiempo de ejecución y el Frontend consuma tipos inferidos en tiempo de compilación, eliminando desalineaciones y bugs en producción.
+Es el especialista del Arquitecto de Software custodio de la **regla rectora del proyecto (`AGENTS.md` §6): "PROHIBIDO tirar código sin contrato previo"**. Redacta los contratos de datos formales en TypeScript usando **Zod**, permitiendo que el Backend valide solicitudes en tiempo de ejecución y el Frontend consuma tipos inferidos en tiempo de compilación, eliminando desalineaciones y bugs en producción.
 
 ---
 

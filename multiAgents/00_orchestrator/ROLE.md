@@ -25,7 +25,7 @@
 
 ```mermaid
 stateDiagram-v2
-    [*] --> FASE_1_REQUERIMIENTOS: Inicia Proyecto / Módulo
+    [*] --> FASE_1_REQUERIMIENTOS: G0 Bootstrap completado (init:project)
     
     state FASE_1_REQUERIMIENTOS {
         PM_Discovery --> BDD_Gherkin: HUs INVEST
@@ -39,17 +39,26 @@ stateDiagram-v2
     
     FASE_2_ARQUITECTURA --> GATE_2: DDL + Contratos Zod API-First Listos
     GATE_2 --> FASE_2_ARQUITECTURA: Observaciones técnicas
-    GATE_2 --> FASE_3_CONSTRUCCION: Aprobado por Humano
+    GATE_2 --> FASE_3A_BACKEND: Aprobado por Humano
 
-    state FASE_3_CONSTRUCCION {
+    state FASE_3A_BACKEND {
         [*] --> Backend_TDD: Ciclo Red-Green-Refactor (Vitest)
-        [*] --> Frontend_TDD: Component TDD (Testing Library)
-        Backend_TDD --> Sincronizacion_Contratos: Contratos Zod compartidos
-        Frontend_TDD --> Sincronizacion_Contratos
-        Sincronizacion_Contratos --> [*]: Walkthrough Versionado Emitido
+        Backend_TDD --> Contratos_Sincronizados: Contratos Zod compartidos
+        Contratos_Sincronizados --> [*]
     }
 
-    FASE_3_CONSTRUCCION --> FASE_4_QA_VALIDACION: Código y Walkthrough listos
+    FASE_3A_BACKEND --> GATE_3A: Vitest 100% + check:no-any + build en verde
+    GATE_3A --> FASE_3B_FRONTEND: Checkpoint automatico del Orquestador (sin halt)
+
+    state FASE_3B_FRONTEND {
+        [*] --> Frontend_TDD: Component TDD (Testing Library)
+        Frontend_TDD --> Walkthrough_Emitido: Walkthrough Versionado Emitido
+        Walkthrough_Emitido --> [*]
+    }
+
+    FASE_3B_FRONTEND --> GATE_3B: Vistas y Walkthrough listos
+    GATE_3B --> FASE_3B_FRONTEND: Rechazado / Ajustes de UI
+    GATE_3B --> FASE_4_QA_VALIDACION: Aprobado por Humano
     
     state FASE_4_QA_VALIDACION {
         Q1_Q2_SDET: Tests API & Lógica (Vitest / Bruno)
@@ -68,7 +77,8 @@ stateDiagram-v2
         }
     }
     
-    FASE_4_QA_VALIDACION --> FASE_3_CONSTRUCCION: Veto QA / Ticket de Corrección
+    FASE_4_QA_VALIDACION --> FASE_3A_BACKEND: Veto QA (defecto de backend)
+    FASE_4_QA_VALIDACION --> FASE_3B_FRONTEND: Veto QA (defecto de frontend)
     FASE_4_QA_VALIDACION --> GATE_4: Suite Verde + Zero ANY + Reporte QA Emitido
     
     GATE_4 --> FASE_5_DEVOPS_RELEASE: Aprobado por Humano
@@ -104,7 +114,9 @@ stateDiagram-v2
 
 ---
 
-## 4. Definición de "Stage-Gates" (Puntos de Control Innegociables)
+## 4. Checklists del Orquestador por Compuerta
+
+> 📌 La definición canónica de cada compuerta (tipo, entregables, aprobador y valores de `current_state.json`) vive **únicamente** en [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md). Esta sección contiene solo el **checklist que el Orquestador verifica** por ID de compuerta. G0 (Bootstrap) es automático y no requiere checklist.
 
 ### 🛑 Gate 1: Validación de Requerimientos y Rito ATDD (PM -> Arquitecto)
 - **Checklist del Orquestador:**
@@ -121,12 +133,19 @@ stateDiagram-v2
   - [ ] ¿Está definida la matriz de seguridad RBAC, aislamiento multi-tenant y manejo transaccional ACID?
 - **Acción:** Solicitar firma al Director Humano.
 
-### 🛑 Gate 3: Validación de Construcción TDD (Desarrolladores -> QA Lead)
+### ⚡ G3A: Checkpoint de Backend (Backend -> Frontend)
 - **Checklist del Orquestador:**
-  - [ ] ¿Backend implementó el ciclo Red-Green-Refactor con suite Vitest pasando en verde?
+  - [ ] ¿Backend implementó el ciclo Red-Green-Refactor con suite Vitest al 100% en verde?
+  - [ ] ¿`npm run build` (`check:no-any && tsc`) pasa con 0 incidencias?
+  - [ ] ¿Los contratos Zod del backend están sincronizados con `docs/contracts/`?
+- **Acción:** Transferencia automática al Frontend Engineer, **sin halt**. Registrar la transición en `historial_transiciones`.
+
+### 🛑 Gate 3B: Validación de Frontend y UI/UX (Frontend -> QA Lead)
+- **Checklist del Orquestador:**
   - [ ] ¿Frontend implementó pruebas unitarias de componentes base y stores con `@testing-library`?
+  - [ ] ¿Se cumple el Design System (`docs/04_ui_design_system.md`) sin colores hardcodeados?
   - [ ] ¿Se emitió el Walkthrough versionado y reproducible en `walkthroughs/[XX]/[vX.Y.Z]/WALKTHROUGH.md`?
-- **Acción:** Transferencia automática a Fase 4 (Auditoría Forense de QA).
+- **Acción:** Solicitar firma al Director Humano (revisión UI/UX) antes de pasar a Fase 4 (Auditoría Forense de QA).
 
 ### 🛑 Gate 4: Validación de Calidad y Seguridad en 4 Cuadrantes (QA -> DevOps)
 - **Checklist del Orquestador:**
@@ -135,7 +154,7 @@ stateDiagram-v2
   - [ ] ¿Se ejecutó escaneo dinámico DAST (OWASP ZAP) sin vulnerabilidades críticas ni IDOR?
   - [ ] ¿Se ejecutaron pruebas de testing exploratorio y accesibilidad WCAG 2.1 AA (axe-core)?
   - [ ] ¿Se resolvieron y verificaron todos los defectos S1 (Blocker) y S2 (Critical) en el sub-bucle de incidencias?
-- **Acción:** Solicitar firma al Director Humano antes del release.
+- **Acción:** Solicitar firma Go / No-Go al Director Humano. Su aprobación autoriza el commit canónico y el merge a `main`; el paso a producción se decide en Gate 5.
 
 ### 🛑 Gate 5: Validación de Despliegue y Release (DevOps -> Operaciones)
 - **Checklist del Orquestador:**

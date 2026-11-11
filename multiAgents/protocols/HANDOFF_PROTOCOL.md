@@ -92,14 +92,16 @@ stateDiagram-v2
 
 ## 3. Matriz de Firmas de Aprobación (Stage-Gates)
 
+> 📌 Esta matriz es un **resumen**. La definición canónica de cada compuerta (tipo, entregables y condiciones) vive en [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md); ante cualquier discrepancia, prevalece ese archivo.
+
 | Gate | Fase Origen -> Destino | Aprobador Requerido | Condición de Desbloqueo |
 | :--- | :--- | :--- | :--- |
 | **Gate 1** | Requerimientos -> Arquitectura | **Director Humano** | PRD completo, HUs INVEST con BDD Gherkin y firma de *Testability* del rito ATDD (*Three Amigos*). Detención obligatoria del agente. |
 | **Gate 2** | Arquitectura -> Construcción TDD | **Director Humano** | DDL relacional normalizado 3FN, contratos de API Zod compartidos y matriz RBAC revisados. Detención obligatoria del agente. |
-| **Fase 3A**| Backend TDD -> Frontend TDD | **Orquestador** | Endpoints implementados con Kysely, suite Vitest en verde y contratos sincronizados. Pase continuo sin detención. |
+| **G3A** (checkpoint) | Backend TDD -> Frontend TDD | **Orquestador** | Endpoints implementados con Kysely, suite Vitest en verde y contratos sincronizados. Pase continuo sin detención. |
 | **Gate 3B**| Frontend TDD -> QA Cuadrantes | **Director Humano** | Componentes y vistas SPA validados con tests unitarios (`@testing-library`) y Walkthrough reproducible emitido. Detención para revisión UI/UX. |
-| **Gate 4** | QA -> Release / Despliegue | **Director Humano** | Dictamen `PASS` del QA Lead en los 4 Cuadrantes (`docs/03_qa_report.md`), 0 defectos S1/S2 abiertos y 0 violaciones en `npm run check:no-any`. Detención obligatoria. |
-| **Gate 5** | Release -> Operaciones | **Director Humano** | Seeders idempotentes, imagen Docker funcional, changelog SemVer y tag de Git listos. Firma humana para paso a producción. |
+| **Gate 4** | QA -> Release (autoriza commit y merge a `main`) | **Director Humano** | Dictamen `PASS` del QA Lead en los 4 Cuadrantes (`docs/03_qa_report.md`), 0 defectos S1/S2 abiertos y 0 violaciones en `npm run check:no-any`. Detención obligatoria. |
+| **Gate 5** | Release -> Producción | **Director Humano** | Seeders idempotentes, imagen Docker funcional, changelog SemVer y tag de Git listos. Firma humana para paso a producción. |
 | **Gate 6** | Retrospectiva -> Próximo Sprint | **Director Humano** | Plan Kaizen aprobado (`docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md`) con análisis Ishikawa, Pareto 80/20 y matriz priorizada para el siguiente ciclo. |
 
 > 📌 **Implementación y Estado Operativo:**  

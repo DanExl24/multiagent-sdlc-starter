@@ -4,7 +4,7 @@
 > **Dominio:** `{{PROJECT_DOMAIN}}`  
 > **Versión:** 1.0.0  
 > **Autor Líder:** Software Architect Lead (Fase 2)  
-> **Estado:** APROBADO (Stage-Gate 2)  
+> **Estado:** PENDIENTE DE APROBACIÓN (Stage-Gate G2)  
 > **Fecha:** 2026-10-07  
 
 ---
@@ -36,8 +36,8 @@ graph TB
 ```
 
 ### Principios Arquitecturales Clave:
-1. **Regla de Oro #1 — Cero Código Sin Contrato Previo:** Ningún endpoint se implementa sin un contrato formal en `docs/contracts/*.contract.ts`.
-2. **Regla de Oro #4 — Mandato Zero ANY Innegociable:** Se prohíbe taxativamente el uso de `any` en cualquier archivo `.ts`, `.tsx`, `.vue` o `.d.ts`.
+1. **Cero Código Sin Contrato Previo (`AGENTS.md` §6):** Ningún endpoint se implementa sin un contrato formal en `docs/contracts/*.contract.ts`.
+2. **Mandato Zero ANY Innegociable (`AGENTS.md` §6):** Se prohíbe taxativamente el uso de `any` en cualquier archivo `.ts`, `.tsx`, `.vue` o `.d.ts`.
 3. **Envelope Canónico de Respuesta:**
    ```typescript
    // Respuesta Exitosa

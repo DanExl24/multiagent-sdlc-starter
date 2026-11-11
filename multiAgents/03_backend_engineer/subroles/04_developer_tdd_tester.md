@@ -75,7 +75,7 @@ graph LR
 3. **Cobertura Exhaustiva de Casos Negativos y Límite (*Negative Testing*):**
    * **HTTP 400 / 422:** Falla en validación Zod (cadenas vacías, UUIDs inválidos, números fuera de rango).
    * **HTTP 401:** Token JWT ausente, expirado o revocado en blacklist.
-   * **HTTP 403:** Intento de mutación en entidad bloqueada (**Regla de Oro #3**) o rol sin permisos suficientes.
+   * **HTTP 403:** Intento de mutación en entidad bloqueada (ver `AGENTS.md` §6) o rol sin permisos suficientes.
    * **HTTP 404:** Recurso inexistente o perteneciente a otra organización (**Anti-IDOR**).
    * **HTTP 409:** Conflicto de unicidad o colisión de regla de negocio inmutable.
 4. **Vigilancia de Regresión Global:**

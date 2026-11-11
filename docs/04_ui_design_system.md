@@ -3,7 +3,7 @@
 > **Proyecto:** `{{PROJECT_NAME}}`  
 > **Versión:** 1.0.0  
 > **Responsable:** Frontend Lead Engineer & UI/UX Specialist (Fase 3B)  
-> **Estado:** APROBADO (Stage-Gate 3B)  
+> **Estado:** PENDIENTE DE APROBACIÓN (Stage-Gate G3B)  
 
 ---
 

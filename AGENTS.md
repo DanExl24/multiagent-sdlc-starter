@@ -7,6 +7,23 @@
 
 ---
 
+## 0. Jerarquía de Fuentes de Verdad
+
+**Este archivo es la fuente de verdad del repositorio para cualquier modelo o agente.** Ante cualquier contradicción entre documentos, prevalece `AGENTS.md`. Para no duplicar contenido, cada tema tiene un único archivo dueño:
+
+| Tema | Archivo dueño |
+| :--- | :--- |
+| Reglas de Oro (texto y numeración), catálogo de roles, protocolo de aterrizaje y precedencia entre documentos | **`AGENTS.md`** (este archivo) |
+| Compuertas: IDs, tipo (Halt / Checkpoint / Bootstrap), entregables, aprobador y valores permitidos de `current_state.json` | [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md), por delegación explícita de este manual |
+| Estado vivo del ciclo de vida | `.workflow/current_state.json` (validado contra `STAGE_GATES.md` con `npm run validate:state`) |
+| Detalle operativo de cada rol y subrol | `multiAgents/[rol]/ROLE.md` y `multiAgents/[rol]/subroles/` |
+| Protocolos de traspaso, commits, SemVer y RFC | `multiAgents/protocols/` |
+| Accesos de entrada (`README.md`, `LANDING_PROMPT.md` y archivos puente para otras herramientas) | Solo **puentes**: describen y enlazan; **nunca** numeran reglas ni compuertas |
+
+**Política de citas:** ningún documento distinto de este manual puede citar una Regla de Oro por su número (`Regla de Oro #N`). Se cita por nombre y se enlaza a la sección 6 de este archivo. Las reglas propias de un rol viven en su `ROLE.md` como reglas locales y no usan la numeración de las Reglas de Oro. `npm run check:docs` verifica esta política en CI.
+
+---
+
 ## 1. La Metodología: SDLC Multiagente Guiado por Artefactos
 
 ### 1.1. ¿Qué es esta metodología?
@@ -16,12 +33,13 @@ El trabajo se divide en **Roles Líderes Autónomos**, cada uno equipado con un 
 
 ```mermaid
 flowchart LR
-    G0["🚦 Gate 0<br/>Gobernanza"] --> G1["📋 Gate 1<br/>PRD & Regulación"]
-    G1 --> G2["🏛️ Gate 2<br/>DDL & Zod Contracts"]
-    G2 --> G3A["⚙️ Gate 3A<br/>Backend API"]
-    G3A --> G3B["🎨 Gate 3B<br/>Frontend SPA"]
-    G3B --> G4["🧪 Gate 4<br/>QA Forense (4 Pilares)"]
-    G4 --> G5["🚀 Gate 5<br/>Release & Runbooks"]
+    G0["🔧 G0<br/>Bootstrap"] --> G1["🛑 G1<br/>PRD & Regulación"]
+    G1 --> G2["🛑 G2<br/>DDL & Zod Contracts"]
+    G2 --> G3A["⚡ G3A<br/>Checkpoint Backend API"]
+    G3A --> G3B["🛑 G3B<br/>Frontend SPA (UI/UX)"]
+    G3B --> G4["🛑 G4<br/>QA Forense (4 Pilares)"]
+    G4 --> G5["🛑 G5<br/>Release & Runbooks"]
+    G5 --> G6["🛑 G6<br/>Kaizen"]
 
     style G0 fill:#0f172a,stroke:#94a3b8,color:#ffffff
     style G1 fill:#003366,stroke:#38bdf8,color:#ffffff
@@ -30,7 +48,11 @@ flowchart LR
     style G3B fill:#003366,stroke:#f87171,color:#ffffff
     style G4 fill:#003366,stroke:#a78bfa,color:#ffffff
     style G5 fill:#003366,stroke:#34d399,color:#ffffff
+    style G6 fill:#003366,stroke:#38bdf8,color:#ffffff
 ```
+
+> 🛑 = **Halt** (firma del Director Humano) · ⚡ = **Checkpoint** automático del Orquestador (sin halt) · 🔧 = **Bootstrap** (`npm run init:project`).  
+> La definición completa de cada compuerta vive **únicamente** en [`.workflow/STAGE_GATES.md`](file:///.workflow/STAGE_GATES.md). Este manual solo las cita por ID.
 
 ### 1.2. ¿Por qué es hiper-eficiente?
 1. **Elimina la alucinación y la sobrecarga:** Cada agente se concentra exclusivamente en su especialidad (Principio de Responsabilidad Única aplicado a agentes). El backend no inventa diseños; el frontend no inventa endpoints; el PM no inventa sintaxis SQL.
@@ -48,7 +70,8 @@ flowchart LR
 ├── AGENTS.md                            # 📍 Este manual rector (Lectura y aterrizaje obligatorio)
 ├── LANDING_PROMPT.md                    # 🚀 Prompt para inicializar sesiones con nuevas IAs
 ├── CHANGELOG.md                         # Historial de versiones bajo estándar Keep a Changelog
-├── README.md                            # Documentación y guía del proyecto
+├── README.md                            # Documentación y guía del proyecto (solo puente hacia este manual)
+├── CLAUDE.md · GEMINI.md                # 🔗 Puentes de una línea que importan este manual (@AGENTS.md)
 │
 ├── .workflow/                           # 🚦 Máquina de Estados y Gobernanza HITL
 │   ├── STAGE_GATES.md                   # Protocolo canónico de compuertas y altos obligatorios
@@ -158,10 +181,10 @@ Asegura despliegue en 2 minutos, seeders reproducibles, observabilidad y CI/CD.
 | :--- | :--- | :--- | :--- |
 | **01. Product Manager** | Visión del Director Humano / `PROJECT_STATUS.md` | `docs/01_prd.md`, HUs INVEST con BDD Gherkin en `docs/modules/XX/` | **Gate 1** (Firma Humana Requerida) |
 | **02. Software Architect** | PRD firmado en Gate 1 con DoR completa | DDL de tablas, Contratos Zod en `docs/contracts/XX.contract.ts`, ADRs | **Gate 2** (Firma Humana Requerida) |
-| **03. Backend Engineer** | Contrato Zod y DDL migrado en base de datos | Código en `backend/src/modules/XX/`, 0 ANYs (`check:no-any` OK), 100% Vitest PASS | **Gate 3A** (Transfiere a Frontend) |
+| **03. Backend Engineer** | Contrato Zod y DDL migrado en base de datos | Código en `backend/src/modules/XX/`, 0 ANYs (`check:no-any` OK), 100% Vitest PASS | **G3A** (Checkpoint automático: transfiere a Frontend sin halt) |
 | **04. Frontend Engineer** | Endpoints de backend en verde en Vitest | Vistas en `frontend/src/modules/XX/`, 0 ANYs (`check:no-any` OK), build OK, `WALKTHROUGH.md` | **Gate 3B** (Firma Humana de UI Requerida) |
-| **05. QA & Security** | Walkthrough versionado y código desplegado | Reporte forense RCA en `docs/qa/`, Arsenal 4 Pilares + Certificación Cero ANY en verde | **Gate 4** (Poder de Veto / Firma Humana) |
-| **06. DevOps & Release** | Certificación de QA en Gate 4 | Seeds listos, `/api/health` OK, Release SemVer persistido y sincronizado | **Gate 5** (Release Final y Despliegue) |
+| **05. QA & Security** | Walkthrough versionado y código desplegado | Reporte forense RCA en `docs/qa/`, Arsenal 4 Pilares + Certificación Cero ANY en verde | **Gate 4** (Poder de Veto / Firma Humana; autoriza commit y merge a `main`) |
+| **06. DevOps & Release** | Certificación de QA en Gate 4 | Seeds listos, `/api/health` OK, tag SemVer `vX.Y.Z`, plan Kaizen `docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md` | **Gate 5** (Release y Paso a Producción) y **Gate 6** (Kaizen) — Firma Humana |
 
 ---
 
@@ -190,7 +213,7 @@ Si eres un agente nuevo ingresando al repositorio:
 │ 1. Registra tus acciones en multiAgents/[tu_agente]/WORKLOG.md.                        │
 │ 2. Si modificaste código, actualiza CHANGELOG.md con estándar SemVer.                  │
 │ 3. Si eres Frontend o QA, actualiza el walkthrough versionado.                         │
-│ 4. Si estás en Gate 1, 2, 3B, 4 o 5, DETÉN EL USO DE HERRAMIENTAS (Halt/Yield) y       │
+│ 4. Si estás en Gate 1, 2, 3B, 4, 5 o 6, DETÉN EL USO DE HERRAMIENTAS (Halt/Yield) y    │
 │    solicita la aprobación explícita del Director Humano.                               │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -208,5 +231,5 @@ Si eres un agente nuevo ingresando al repositorio:
 7. ❌ **PROHIBIDO el uso de estilos fuera del Design System:** Todo componente visual debe apegarse estrictamente a la guía de tokens y diseño en `docs/04_ui_design_system.md`.
 8. ❌ **PROHIBIDO maquillar u ocultar bugs (Transparencia Radical en QA):** Todo defecto, error de compilación, falla en tests o fallo de linter detectado DEBE quedar explícitamente documentado en el reporte de QA (`QA_REPORT.md`), catalogado con severidad (S1 a S4) y su causa raíz.
 9. ❌ **PROHIBIDO el commit sin nomenclatura canónica:** Todo commit DEBE seguir la nomenclatura `[vX.Y.Z] tipo(scope): descripcion`. Consulta `multiAgents/protocols/GIT_COMMIT_CONVENTION.md`.
-10. ❌ **PROHIBIDO el encadenamiento no autorizado de fases (Alto Mecánico Obligatorio):** Al culminar entregables de Gate 1, Gate 2, Gate 3B o Gate 4, el agente DEBE detenerse inmediatamente (Halt/Yield), actualizar `.workflow/current_state.json` y esperar la confirmación del Director Humano.
+10. ❌ **PROHIBIDO el encadenamiento no autorizado de fases (Alto Mecánico Obligatorio):** Al culminar entregables de Gate 1, Gate 2, Gate 3B, Gate 4, Gate 5 o Gate 6, el agente DEBE detenerse inmediatamente (Halt/Yield), actualizar `.workflow/current_state.json` y esperar la confirmación del Director Humano.
 11. ❌ **PROHIBIDO el uso del tipo `any` en TypeScript (Tolerancia Cero — Regla de Oro #11):** Queda terminantemente prohibido el uso del tipo `any` (`: any`, `as any`, `<any>`) tanto en Backend como en Frontend. Todo tipo debe definirse mediante contratos Zod, DTOs explícitos o `unknown` con type narrowing. Los verificadores AST integrados en `npm run build` abortan la compilación si detectan un solo `any`. QA ejercerá Veto Inmediato (Stop-the-Line) ante cualquier presencia de `any`.

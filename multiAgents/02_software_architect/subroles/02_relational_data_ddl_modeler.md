@@ -21,7 +21,7 @@ Es el especialista del Arquitecto de Software custodio del **modelo de datos rel
 
 ---
 
-## 3. Las Reglas de Oro del Modelado de Datos
+## 3. Las Reglas Inviolables del Modelado de Datos
 
 ```mermaid
 graph LR

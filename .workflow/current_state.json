@@ -3,19 +3,19 @@
   "dominio": "{{PROJECT_DOMAIN}}",
   "version_actual": "v0.1.0",
   "fecha_actualizacion": "{{INIT_DATE}}",
-  "fase_activa": "FASE_0_GOBERNANZA",
-  "gate_activo": "GATE_0_GOBERNANZA_APPROVAL",
-  "estado": "LISTO_PARA_INICIAR",
-  "rol_en_turno": "00_orchestrator",
+  "fase_activa": "FASE_1_REQUERIMIENTOS",
+  "gate_activo": "GATE_1_PRD_APPROVAL",
+  "estado": "EN_PROCESO",
+  "rol_en_turno": "01_product_manager",
   "modulo_en_curso": null,
   "bloqueos": [],
   "historial_transiciones": [
     {
       "de": "ORIGEN",
-      "a": "FASE_0_GOBERNANZA",
+      "a": "FASE_1_REQUERIMIENTOS",
       "fecha": "{{INIT_DATE}}",
       "autor": "DanExl24",
-      "motivo": "Inicialización del repositorio bajo Starter Kit Multiagente"
+      "motivo": "G0 (Bootstrap) completado: inicialización del repositorio bajo Starter Kit Multiagente"
     }
   ]
 }

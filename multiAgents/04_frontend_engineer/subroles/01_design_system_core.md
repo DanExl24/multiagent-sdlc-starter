@@ -13,7 +13,7 @@ Es el **custodio de la identidad visual, la coherencia estética y los component
 ---
 
 ## 2. ¿Para qué fue Creado?
-Fue creado para erradicar el código visual repetitivo y prohibir los colores arbitrarios hardcodeados (**Regla de Oro #7**). Garantiza que ningún desarrollador tenga que volver a maquetar un modal, un botón, una alerta o un input desde cero, centralizando la accesibilidad, los estados visuales (hover, focus, disabled) y la responsividad en un único kit reutilizable.
+Fue creado para erradicar el código visual repetitivo y prohibir los colores arbitrarios hardcodeados (ver `AGENTS.md` §6). Garantiza que ningún desarrollador tenga que volver a maquetar un modal, un botón, una alerta o un input desde cero, centralizando la accesibilidad, los estados visuales (hover, focus, disabled) y la responsividad en un único kit reutilizable.
 
 ---
 

@@ -3,6 +3,30 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.3.0] - 2026-11-10
+
+### Changed
+- **Mapa de Stage-Gates unificado:** `.workflow/STAGE_GATES.md` es ahora la única definición de compuertas (G0 a G6) con tres tipos: 🛑 Halt, ⚡ Checkpoint (G3A) y 🔧 Bootstrap (G0). G4 (QA, autoriza commit y merge) queda separado de G5 (release y paso a producción); G6 (Kaizen) pasa a ser halt formal.
+- `AGENTS.md` (regla de oro #10 y §5 ahora incluyen G5 y G6), `README.md`, `HANDOFF_PROTOCOL.md` y `00_orchestrator/ROLE.md` (el "Gate 3" automático se divide en checkpoint G3A y Gate 3B con firma humana) alineados con el mapa canónico.
+- Estado inicial de `.workflow/current_state.json`: `FASE_1_REQUERIMIENTOS` / `GATE_1_PRD_APPROVAL` / `EN_PROCESO`; valores permitidos documentados. `GATE_4_RELEASE_APPROVAL` renombrado a `GATE_4_QA_APPROVAL`.
+- Plantillas `docs/01_prd.md`, `02_architecture.md` y `04_ui_design_system.md` ya no declaran "APROBADO" de fábrica.
+- Etapas del pipeline de integración renombradas a `CI-1`, `CI-2`, `CI-3` en el subrol CI/CD para evitar colisión con los Stage-Gates.
+
+- **`AGENTS.md` es la fuente de verdad del repositorio:** nueva sección 0 con el mapa de fuentes (tema → archivo dueño) y la política de citas. `STAGE_GATES.md` pasa a ser la fuente de los datos de compuertas por delegación explícita de `AGENTS.md`.
+- `README.md` y `LANDING_PROMPT.md` pasan a ser puentes: se eliminaron la lista de reglas de oro y el diagrama numerado del README. Las reglas que solo estaban en el README (envelope, aislamiento multi-tenant, datos reales sin mocks) ya existen como reglas locales en los `ROLE.md` y subroles de backend, arquitectura y frontend.
+- Las citas numeradas de reglas de oro en ROLE.md, subroles, `docs/02_architecture.md` y la plantilla de contrato se reemplazaron por referencias a `AGENTS.md` §6. Varias apuntaban a un número incorrecto (por ejemplo, la regla del `any` figuraba como #6 y #8; la de commits, como #10).
+
+- Encabezados de reglas locales renombrados de "Reglas de Oro" a "Reglas Inviolables" en los ROLE.md (PM, arquitectura, backend, frontend, DevOps) y en dos subroles, para que "Reglas de Oro" designe solo la lista de `AGENTS.md`.
+- `MODULE_TEMPLATE/README.md`: enlaces con ruta absoluta a una carpeta personal reemplazados por enlaces relativos.
+
+### Added
+- `CLAUDE.md` y `GEMINI.md`: puentes de una línea que importan `AGENTS.md` (`@AGENTS.md`). `check:docs` verifica que existan y que sigan siendo solo puentes.
+- `tooling/validate-state.mjs` (`npm run validate:state`): valida `current_state.json` contra las tablas de `STAGE_GATES.md` (fase/gate coherentes, estados permitidos, checkpoint sin firma humana). Lee los datos de `STAGE_GATES.md` en cada ejecución, sin copia propia. Se ejecuta en `npm test` y en el CI, reemplazando la verificación inline anterior.
+- `tooling/lib/stage-gates.mjs`: lector de las tablas de `STAGE_GATES.md` (marcadores `gates:start/end` y `estados:start/end`). Falla de forma explícita ante marcadores ausentes o filas mal formadas.
+- `tooling/check-doc-sources.mjs` (`npm run check:docs`): lint de la política de fuentes de verdad. Prohíbe citas numeradas de reglas de oro fuera de `AGENTS.md`, prohíbe numerar compuertas o reglas en README y LANDING_PROMPT, y verifica que el diagrama de `AGENTS.md` coincida con la tabla de `STAGE_GATES.md`. Se ejecuta en `npm test` y en el CI.
+
+---
+
 ## [1.2.0] - 2026-10-20
 
 ### Added

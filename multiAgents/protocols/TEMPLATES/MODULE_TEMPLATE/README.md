@@ -16,7 +16,7 @@ docs/modules/[XX_nombre_modulo]/
 ---
 
 ## Archivos de Plantilla:
-- [`01_SPEC_FUNCIONAL_TEMPLATE.md`](file:///c:/Users/alejo/Downloads/multiagent-sdlc-starter/multiAgents/protocols/TEMPLATES/MODULE_TEMPLATE/01_SPEC_FUNCIONAL_TEMPLATE.md)
-- [`02_HISTORIAS_USUARIO_TEMPLATE.md`](file:///c:/Users/alejo/Downloads/multiagent-sdlc-starter/multiAgents/protocols/TEMPLATES/MODULE_TEMPLATE/02_HISTORIAS_USUARIO_TEMPLATE.md)
-- [`03_FLUJO_Y_ESTADOS_TEMPLATE.md`](file:///c:/Users/alejo/Downloads/multiagent-sdlc-starter/multiAgents/protocols/TEMPLATES/MODULE_TEMPLATE/03_FLUJO_Y_ESTADOS_TEMPLATE.md)
-- [`04_ARQUITECTURA_Y_CODIGO_TEMPLATE.md`](file:///c:/Users/alejo/Downloads/multiagent-sdlc-starter/multiAgents/protocols/TEMPLATES/MODULE_TEMPLATE/04_ARQUITECTURA_Y_CODIGO_TEMPLATE.md)
+- [`01_SPEC_FUNCIONAL_TEMPLATE.md`](01_SPEC_FUNCIONAL_TEMPLATE.md)
+- [`02_HISTORIAS_USUARIO_TEMPLATE.md`](02_HISTORIAS_USUARIO_TEMPLATE.md)
+- [`03_FLUJO_Y_ESTADOS_TEMPLATE.md`](03_FLUJO_Y_ESTADOS_TEMPLATE.md)
+- [`04_ARQUITECTURA_Y_CODIGO_TEMPLATE.md`](04_ARQUITECTURA_Y_CODIGO_TEMPLATE.md)
