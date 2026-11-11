@@ -18,6 +18,7 @@ export const DEFAULT_CONFIG = {
     frontend: { activa: true, raiz: 'frontend', modulos: 'frontend/src/modules' },
   },
   rutas: { contratos: 'docs/contracts' },
+  perfil: { escala: 'standard', modificadores: [], adr: null },
 };
 
 const isRelativeInside = (p) => typeof p === 'string' && p.length > 0 && !path.isAbsolute(p) && !p.split(/[\\/]/).includes('..');
@@ -46,6 +47,13 @@ export function loadProjectConfig() {
   }
   if (LAYERS.every((name) => capas[name]?.activa === false)) errors.push('project.json: al menos una capa debe estar activa.');
   if (!isRelativeInside(config.rutas?.contratos)) errors.push('project.json: rutas.contratos debe ser una ruta relativa dentro del repositorio.');
+
+  // Perfil (opcional): escala, modificadores del proyecto y ADR que lo justifica.
+  config.perfil = { ...DEFAULT_CONFIG.perfil, ...(config.perfil ?? {}) };
+  const { escala, modificadores, adr } = config.perfil;
+  if (typeof escala !== 'string' || !escala) errors.push('project.json: perfil.escala debe ser el nombre de una escala (sprint, standard, enterprise...).');
+  if (!Array.isArray(modificadores) || modificadores.some((m) => typeof m !== 'string')) errors.push('project.json: perfil.modificadores debe ser una lista de nombres.');
+  if (adr !== null && !isRelativeInside(adr)) errors.push('project.json: perfil.adr debe ser null o una ruta relativa al ADR que justifica el perfil.');
   return { config: errors.length ? DEFAULT_CONFIG : config, exists: true, errors };
 }
 

@@ -15,6 +15,7 @@
 | :--- | :--- |
 | Reglas de Oro (texto y numeración), catálogo de roles, protocolo de aterrizaje y precedencia entre documentos | **`AGENTS.md`** (este archivo) |
 | Compuertas: IDs, tipo (Halt / Checkpoint / Bootstrap), entregables, aprobador y valores permitidos de `current_state.json` | [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md), por delegación explícita de este manual |
+| Perfil del proyecto: escala (`sprint`, `standard`, `enterprise`) y modificadores de riesgo, que fijan el tipo efectivo de cada compuerta y los entregables exigidos | Reglas en [`.workflow/PROFILES.md`](.workflow/PROFILES.md); datos en `.workflow/profiles/`; perfil activo en `.workflow/project.json`. Vista del plan: `npm run status -- [XX_nombre]` |
 | Estructura del proyecto: capas activas (backend, frontend) y rutas de código y contratos | `.workflow/project.json` (lo crea `npm run init:project` y lo valida `npm run validate:state`). Las rutas `backend/` y `frontend/` que citan los documentos son las predeterminadas |
 | Estado vivo del ciclo de vida | `.workflow/current_state.json` (pista de proyecto y release) y `.workflow/modules/*.json` (una pista por módulo), validados contra `STAGE_GATES.md` con `npm run validate:state`. Vista consolidada: `npm run status` |
 | Detalle operativo de cada rol y subrol | `multiAgents/[rol]/ROLE.md` y `multiAgents/[rol]/subroles/` |
@@ -53,7 +54,8 @@ flowchart LR
 ```
 
 > 🛑 = **Halt** (firma del Director Humano) · ⚡ = **Checkpoint** automático del Orquestador (sin halt) · 🔧 = **Bootstrap** (`npm run init:project`).  
-> La definición completa de cada compuerta vive **únicamente** en [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md). Este manual solo las cita por ID.
+> La definición completa de cada compuerta vive **únicamente** en [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md). Este manual solo las cita por ID.  
+> El diagrama muestra los tipos del perfil `standard`. Otros perfiles convierten algunos Halt en Checkpoint o al revés ([`.workflow/PROFILES.md`](.workflow/PROFILES.md)); G4 y G5 son Halt en cualquier perfil.
 
 ### 1.2. ¿Por qué es hiper-eficiente?
 1. **Elimina la alucinación y la sobrecarga:** Cada agente se concentra exclusivamente en su especialidad (Principio de Responsabilidad Única aplicado a agentes). El backend no inventa diseños; el frontend no inventa endpoints; el PM no inventa sintaxis SQL.
@@ -77,6 +79,8 @@ flowchart LR
 │
 ├── .workflow/                           # 🚦 Máquina de Estados y Gobernanza HITL
 │   ├── STAGE_GATES.md                   # Protocolo canónico de compuertas y altos obligatorios
+│   ├── PROFILES.md                      # Reglas de los perfiles: escala y modificadores de riesgo
+│   ├── profiles/                        # Datos de escalas (sprint, standard, enterprise) y modifiers/
 │   ├── project.json                     # Capas activas y rutas del proyecto (backend, frontend, contratos)
 │   ├── current_state.json               # Estado de la pista de proyecto (línea base) y de release
 │   └── modules/                         # Un archivo de estado por módulo (XX_nombre.json): pistas paralelas
@@ -227,8 +231,9 @@ Si eres un agente nuevo ingresando al repositorio:
 │ 2. Si hay cambios visibles, añade un fragmento en changelog.d/ (nunca edites           │
 │    CHANGELOG.md en una rama: se consolida en el release).                              │
 │ 3. Si eres Frontend o QA, actualiza el walkthrough versionado.                         │
-│ 4. Si estás en Gate 1, 2, 3B, 4, 5 o 6, DETÉN EL USO DE HERRAMIENTAS (Halt/Yield) y    │
-│    solicita la aprobación explícita del Director Humano.                               │
+│ 4. Si tu compuerta es Halt en el perfil activo (npm run status -- [XX_nombre]),        │
+│    DETÉN EL USO DE HERRAMIENTAS (Halt/Yield) y solicita la aprobación explícita del    │
+│    Director Humano. Gate 4 y Gate 5 son Halt en cualquier perfil.                      │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -245,5 +250,5 @@ Si eres un agente nuevo ingresando al repositorio:
 7. ❌ **PROHIBIDO el uso de estilos fuera del Design System:** Todo componente visual debe apegarse estrictamente a la guía de tokens y diseño en `docs/project/design-system.md`.
 8. ❌ **PROHIBIDO maquillar u ocultar bugs (Transparencia Radical en QA):** Todo defecto, error de compilación, falla en tests o fallo de linter detectado DEBE quedar explícitamente documentado en el reporte de QA (`QA_REPORT.md`), catalogado con severidad (S1 a S4) y su causa raíz.
 9. ❌ **PROHIBIDO el commit sin nomenclatura canónica:** Todo commit DEBE seguir la nomenclatura `[vX.Y.Z] tipo(scope): descripcion`. Consulta `multiAgents/protocols/GIT_COMMIT_CONVENTION.md`.
-10. ❌ **PROHIBIDO el encadenamiento no autorizado de fases (Alto Mecánico Obligatorio):** Al culminar entregables de Gate 1, Gate 2, Gate 3B, Gate 4, Gate 5 o Gate 6, el agente DEBE detenerse inmediatamente (Halt/Yield), actualizar `.workflow/current_state.json` y esperar la confirmación del Director Humano.
+10. ❌ **PROHIBIDO el encadenamiento no autorizado de fases (Alto Mecánico Obligatorio):** Al culminar los entregables de una compuerta de tipo Halt en el perfil activo (con el perfil `standard`: Gate 1, Gate 2, Gate 3B, Gate 4, Gate 5 y Gate 6; Gate 4 y Gate 5 lo son en cualquier perfil), el agente DEBE detenerse inmediatamente (Halt/Yield), actualizar el archivo de estado de su pista y esperar la confirmación del Director Humano. El tipo efectivo de cada compuerta se consulta con `npm run status -- [XX_nombre]`.
 11. ❌ **PROHIBIDO el uso del tipo `any` en TypeScript (Tolerancia Cero — Regla de Oro #11):** Queda terminantemente prohibido el uso del tipo `any` (`: any`, `as any`, `<any>`) tanto en Backend como en Frontend. Todo tipo debe definirse mediante contratos Zod, DTOs explícitos o `unknown` con type narrowing. Los verificadores AST integrados en `npm run build` abortan la compilación si detectan un solo `any`. QA ejercerá Veto Inmediato (Stop-the-Line) ante cualquier presencia de `any`.

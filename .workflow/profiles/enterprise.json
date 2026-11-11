@@ -1,0 +1,15 @@
+{
+  "escala": "enterprise",
+  "descripcion": "Proyectos largos o críticos: además del flujo completo, decisiones documentadas en ADR, matriz normativa, DAST, presupuesto de rendimiento y rollback ensayado.",
+  "tipos": {},
+  "entregables": {
+    "opcionales": [],
+    "adicionales": [
+      "matriz_normativa",
+      "adr_decisiones",
+      "dast",
+      "presupuesto_rendimiento",
+      "rollback_probado"
+    ]
+  }
+}

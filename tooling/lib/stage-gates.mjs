@@ -5,6 +5,8 @@
  *   <!-- gates:start --> ... <!-- gates:end -->      Tabla Maestra de Compuertas
  *   <!-- estados:start --> ... <!-- estados:end -->  Valores permitidos de `estado`
  *   <!-- capas:start --> ... <!-- capas:end -->      Compuertas que dependen de una capa
+ *   <!-- invariantes:start --> ... <!-- invariantes:end -->  Reglas que ningún perfil puede romper
+ *   <!-- entregables:start --> ... <!-- entregables:end -->  Catálogo de entregables con ID
  *
  * Falla con un Error explícito ante marcadores ausentes o filas mal formadas
  * (diseño intencional: un cambio de formato debe romper el CI, nunca pasar en silencio).
@@ -61,7 +63,9 @@ function parseNiveles(cell, id) {
  *   gates: Array<{id: string, tipo: 'halt'|'checkpoint'|'bootstrap', niveles: Nivel[], fase: string|null, gate: string|null}>,
  *   stateful: Array<{id: string, tipo: 'halt'|'checkpoint', niveles: Nivel[], fase: string, gate: string}>,
  *   estados: string[],
- *   capas: Map<string, string>
+ *   capas: Map<string, string>,
+ *   invariantes: Array<{ids: string[], regla: 'halt'|'al_menos_un_halt'}>,
+ *   entregables: Map<string, {id: string, gate: string, pista: Nivel, base: boolean, descripcion: string}>
  * }}
  */
 export function loadStageGates(file = STAGE_GATES_PATH) {
@@ -114,5 +118,29 @@ export function loadStageGates(file = STAGE_GATES_PATH) {
     return [id, layer];
   }));
 
-  return { gates, stateful, estados, capas };
+  // Invariantes que ningún perfil puede romper (G4/G5 halt, al menos un halt en G1+G2).
+  const REGLAS = ['halt', 'al_menos_un_halt'];
+  const invariantes = tableRows(extractBlock(markdown, 'invariantes'), 'invariantes').map((cells, i) => {
+    const ids = cells[0].replace(/\*/g, '').split('+').map((id) => id.trim());
+    const regla = backticked(cells[1] ?? '');
+    for (const id of ids) {
+      if (!gates.some((g) => g.id === id)) throw new Error(`invariantes: la fila ${i + 1} cita la compuerta "${id}", que no existe.`);
+    }
+    if (!REGLAS.includes(regla)) throw new Error(`invariantes: la fila ${i + 1} tiene una regla desconocida "${cells[1]}". Válidas: ${REGLAS.join(', ')}.`);
+    return { ids, regla };
+  });
+
+  // Catálogo de entregables con ID: los perfiles los citan para volverlos opcionales o añadirlos.
+  const entregables = new Map(tableRows(extractBlock(markdown, 'entregables'), 'entregables').map((cells, i) => {
+    const id = backticked(cells[0]);
+    const gate = (cells[1] ?? '').replace(/\*/g, '').trim();
+    const pista = (cells[2] ?? '').trim();
+    const base = /^s[ií]$/i.test((cells[3] ?? '').trim());
+    if (!id) throw new Error(`entregables: la fila ${i + 1} no declara el ID entre acentos graves.`);
+    if (!gates.some((g) => g.id === gate)) throw new Error(`entregables: "${id}" cita la compuerta "${gate}", que no existe.`);
+    if (!['proyecto', 'modulo', 'release'].includes(pista)) throw new Error(`entregables: "${id}" tiene una pista desconocida "${pista}".`);
+    return [id, { id, gate, pista, base, descripcion: (cells[4] ?? '').trim() }];
+  }));
+
+  return { gates, stateful, estados, capas, invariantes, entregables };
 }

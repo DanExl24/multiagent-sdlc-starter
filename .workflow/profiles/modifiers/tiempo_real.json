@@ -1,0 +1,13 @@
+{
+  "modificador": "tiempo_real",
+  "descripcion": "Comunicación en tiempo real (WebSocket, SSE, eventos): chat, notificaciones en vivo, colaboración.",
+  "tipos": {},
+  "entregables": {
+    "adicionales": [
+      "contrato_eventos",
+      "estrategia_reconexion",
+      "pruebas_concurrencia_eventos",
+      "carga_websocket"
+    ]
+  }
+}

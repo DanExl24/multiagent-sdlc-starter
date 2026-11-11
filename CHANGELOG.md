@@ -3,6 +3,22 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.9.0] - 2026-11-10
+
+### Added
+- **Capa de perfiles:** el proyecto declara en `.workflow/project.json` una escala (`sprint`, `standard`, `enterprise`) y modificadores de riesgo. El perfil cambia el tipo efectivo de algunas compuertas (Halt ↔ Checkpoint) y los entregables exigidos, sin crear compuertas nuevas. `sprint` deja tres firmas humanas: especificación y contrato juntos (G2), QA (G4) y release (G5).
+- Cinco modificadores (`datos_sensibles`, `pagos`, `multi_tenant`, `regulado`, `tiempo_real`), declarables para todo el proyecto o solo para un módulo. Solo añaden exigencias: un modificador puede convertir un Checkpoint en Halt y sumar entregables, nunca quitarlos.
+- `STAGE_GATES.md` incorpora la tabla de invariantes que ningún perfil puede romper (G4 y G5 siempre Halt, al menos un Halt entre G1 y G2) y el Catálogo de Entregables con ID (§7) que citan los perfiles.
+- `.workflow/PROFILES.md`: reglas de combinación y precedencia, cómo elegir o cambiar el perfil y cómo crear modificadores propios. Los datos viven en `.workflow/profiles/`.
+- `npm run status -- [XX_nombre]` y `npm run status -- proyecto`: plan efectivo con el tipo de cada compuerta y los entregables, indicando qué escala o modificador añadió cada uno.
+- `new:module` acepta `--modificadores` e `init-project` pregunta la escala y los modificadores; si el perfil no es `standard` puro, genera el ADR que lo justifica.
+
+### Changed
+- `validate:state` calcula el tipo efectivo de cada compuerta por pista (por ejemplo, rechaza esperar firma humana en un G1 que en `sprint` es Checkpoint), valida los perfiles contra el catálogo y los invariantes, y exige un ADR para todo perfil distinto de `standard` sin modificadores.
+- La regla de oro del alto mecánico (`AGENTS.md` §6), el protocolo de aterrizaje y el mandato de `STAGE_GATES.md` §6 se refieren ahora a las compuertas Halt del perfil activo; con `standard` la lista sigue siendo la misma.
+
+---
+
 ## [1.8.0] - 2026-11-10
 
 ### Added

@@ -1,0 +1,11 @@
+{
+  "modificador": "multi_tenant",
+  "descripcion": "Varios clientes u organizaciones comparten la misma instancia.",
+  "tipos": {},
+  "entregables": {
+    "adicionales": [
+      "adr_aislamiento_tenant",
+      "pruebas_fuga_tenant"
+    ]
+  }
+}

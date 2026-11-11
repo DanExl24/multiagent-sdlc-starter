@@ -1,0 +1,9 @@
+{
+  "escala": "standard",
+  "descripcion": "Perfil por defecto: el flujo completo tal como lo define la Tabla Maestra de STAGE_GATES.md.",
+  "tipos": {},
+  "entregables": {
+    "opcionales": [],
+    "adicionales": []
+  }
+}

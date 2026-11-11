@@ -9,6 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { rootDir } from './stage-gates.mjs';
 import { DEFAULT_CONFIG, activeLayers, contractsDir, layerModulesDir } from './project-config.mjs';
+import { DEFAULT_SCALE, resolvePlan } from './profiles.mjs';
 
 export const PROJECT_STATE_PATH = path.join(rootDir, '.workflow', 'current_state.json');
 export const MODULES_DIR = path.join(rootDir, '.workflow', 'modules');
@@ -23,12 +24,27 @@ export function skippedGates(table, config = DEFAULT_CONFIG) {
   return new Map([...table.capas].filter(([, layer]) => !active.has(layer)));
 }
 
-/** Compuertas con estado que pertenecen a una pista, sin las de capas inactivas. */
-export function gatesForTrack(table, track, config = DEFAULT_CONFIG) {
+/**
+ * Compuertas con estado que pertenecen a una pista, sin las de capas inactivas.
+ * Con `tipos` (plan del perfil), cada compuerta lleva su tipo efectivo en lugar del de la tabla.
+ */
+export function gatesForTrack(table, track, config = DEFAULT_CONFIG, tipos = null) {
   const skipped = skippedGates(table, config);
-  return track === 'modulo'
+  const gates = track === 'modulo'
     ? table.stateful.filter((g) => g.niveles.includes('modulo') && !skipped.has(g.id))
     : table.stateful.filter((g) => g.niveles.includes('proyecto') || g.niveles.includes('release'));
+  return tipos ? gates.map((g) => ({ ...g, tipo: tipos.get(g.id) ?? g.tipo })) : gates;
+}
+
+/** Modificadores que afectan a la pista de proyecto: los del proyecto más los de módulos aún no liberados. */
+export function projectModifiers(config, modules) {
+  const pending = modules.filter((m) => m.state && m.state.incluido_en_release == null).flatMap((m) => m.state.modificadores ?? []);
+  return [...new Set([...(config.perfil?.modificadores ?? []), ...pending])];
+}
+
+/** Modificadores de un módulo: los del proyecto más los propios. */
+export function moduleModifiers(config, state) {
+  return [...new Set([...(config.perfil?.modificadores ?? []), ...(Array.isArray(state.modificadores) ? state.modificadores : [])])];
 }
 
 /** Posición de una compuerta en el orden global de la Tabla Maestra (-1 si no existe). */
@@ -60,9 +76,9 @@ export function loadModuleStates() {
 }
 
 /** Reglas comunes a cualquier pista: campos, fase/gate de la misma fila, estados y coherencia. */
-function validateTrack(state, table, track, label, config) {
+function validateTrack(state, table, track, label, config, tipos) {
   const errors = [];
-  const allowed = gatesForTrack(table, track, config);
+  const allowed = gatesForTrack(table, track, config, tipos);
   const skipped = skippedGates(table, config);
   const required = track === 'modulo' ? [...MODULE_FIELDS, ...COMMON_FIELDS] : COMMON_FIELDS;
   for (const key of required) {
@@ -133,14 +149,28 @@ function findCycle(graph) {
  * Valida la pista de proyecto y todas las de módulo, incluidas las reglas entre pistas.
  * @returns {{errors: string[], warnings: string[]}} errores (bloquean) y avisos (no bloquean)
  */
-export function validateWorkflow(table, project, modules, config = DEFAULT_CONFIG) {
+export function validateWorkflow(table, project, modules, config = DEFAULT_CONFIG, profiles = null) {
   const errors = [];
   const warnings = [];
+  const perfil = config.perfil ?? DEFAULT_CONFIG.perfil;
+  const planOf = (modificadores) => (profiles ? resolvePlan(table, profiles, { escala: perfil.escala, modificadores }) : null);
+
+  if (profiles) {
+    errors.push(...profiles.errors);
+    const base = resolvePlan(table, profiles, { escala: perfil.escala, modificadores: perfil.modificadores });
+    errors.push(...base.errors.map((e) => `project.json: ${e}`));
+    // Un perfil distinto del predeterminado es una decisión de arquitectura: se justifica con un ADR firmado.
+    if (perfil.escala !== DEFAULT_SCALE || perfil.modificadores.length > 0) {
+      if (!perfil.adr) errors.push(`project.json: el perfil "${[perfil.escala, ...perfil.modificadores].join(' + ')}" exige un ADR en perfil.adr (ver .workflow/PROFILES.md).`);
+      else if (!fs.existsSync(path.join(rootDir, perfil.adr))) errors.push(`project.json: perfil.adr apunta a "${perfil.adr}", que no existe.`);
+    }
+  }
 
   if ('modulo_en_curso' in project) {
     errors.push('current_state.json: "modulo_en_curso" ya no se usa. Cada módulo tiene su propio archivo en .workflow/modules/ (crea uno con npm run new:module).');
   }
-  errors.push(...validateTrack(project, table, 'proyecto', 'current_state.json', config));
+  const projectPlan = planOf(projectModifiers(config, modules));
+  errors.push(...validateTrack(project, table, 'proyecto', 'current_state.json', config, projectPlan?.tipos));
 
   // Compuertas de línea base: las que se recorren en proyecto y en módulo (G1, G2).
   const baseline = table.stateful.filter((g) => g.niveles.includes('proyecto') && g.niveles.includes('modulo'));
@@ -160,7 +190,12 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
       errors.push(`${label}: "incluido_en_release" solo puede tener valor cuando el módulo está COMPLETADO (superó G4).`);
     }
     if ('depende_de' in s && !Array.isArray(s.depende_de)) errors.push(`${label}: "depende_de" debe ser un arreglo de IDs de módulo.`);
-    errors.push(...validateTrack(s, table, 'modulo', label, config));
+    if ('modificadores' in s && !(Array.isArray(s.modificadores) && s.modificadores.every((m) => typeof m === 'string'))) {
+      errors.push(`${label}: "modificadores" debe ser una lista de nombres de modificador.`);
+    }
+    const modulePlan = planOf(moduleModifiers(config, s));
+    if (modulePlan) errors.push(...modulePlan.errors.filter((e) => e.startsWith('el modificador')).map((e) => `${label}: ${e}`));
+    errors.push(...validateTrack(s, table, 'modulo', label, config, modulePlan?.tipos));
     if (errors.length === before) valid.set(mod.id, s);
   }
 

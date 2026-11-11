@@ -85,6 +85,47 @@ function resetStarterHistory({ projectSlug, projectDesc, author, date }) {
   }
 }
 
+function listProfiles(dir) {
+  return fs.existsSync(dir) ? fs.readdirSync(dir).filter((n) => n.endsWith('.json')).map((n) => n.replace(/\.json$/, '')).sort() : [];
+}
+
+/** ADR que justifica un perfil distinto de `standard` (exigido por validate:state). Devuelve su ruta relativa. */
+function writeProfileAdr({ escala, modificadores, author, date }) {
+  const adrDir = path.join(rootDir, 'docs', 'adrs');
+  fs.mkdirSync(adrDir, { recursive: true });
+  const numbers = fs.readdirSync(adrDir).map((n) => n.match(/^ADR-(\d+)/)?.[1]).filter(Boolean).map(Number);
+  const num = String(Math.max(0, ...numbers) + 1).padStart(3, '0');
+  const rel = `docs/adrs/ADR-${num}-perfil-del-proyecto.md`;
+  const perfil = [escala, ...modificadores].join(' + ');
+  fs.writeFileSync(path.join(rootDir, rel), [
+    `# 🎚️ ADR-${num}: Perfil del proyecto (${perfil})`,
+    '',
+    '> **Estado:** PROPUESTO (lo firma el Director Humano junto con la línea base del proyecto)  ',
+    `> **Fecha:** ${date}  `,
+    `> **Autores:** ${author}  `,
+    '> **Alcance:** proyecto',
+    '',
+    '---',
+    '',
+    '## 1. Contexto',
+    '[Duración prevista, tamaño del equipo, criticidad y riesgos del dominio que motivan este perfil].',
+    '',
+    '## 2. Decisión',
+    `- **Escala:** \`${escala}\`.`,
+    `- **Modificadores de todo el proyecto:** ${modificadores.length ? modificadores.map((m) => `\`${m}\``).join(', ') : 'ninguno'}.`,
+    '- El plan resultante (tipo de cada compuerta y entregables) se consulta con `npm run status -- proyecto` y `npm run status -- [XX_nombre]`.',
+    '',
+    '## 3. Consecuencias',
+    '- **Positivas:** [Qué se gana: velocidad, menos firmas, más evidencia, etc.].',
+    '- **Compromisos:** [Qué se acepta a cambio y cómo se mitiga].',
+    '',
+    '## 4. Revisión',
+    'Cambiar la escala o los modificadores del proyecto requiere un ADR nuevo firmado por el Director Humano (ver `.workflow/PROFILES.md`).',
+    '',
+  ].join('\n'));
+  return rel;
+}
+
 async function main() {
   console.log('\n================================================================');
   console.log('🤖  INICIALIZADOR DE PROYECTO MULTIAGENTE (SDLC STAGE-GATES)   ');
@@ -103,6 +144,19 @@ async function main() {
   const capas = capasText.split(',').map((c) => c.trim().toLowerCase()).filter(Boolean);
   const backendRoot = capas.includes('backend') ? await ask('8. Carpeta raíz del backend', 'backend') : 'backend';
   const frontendRoot = capas.includes('frontend') ? await ask('9. Carpeta raíz del frontend', 'frontend') : 'frontend';
+  const escalas = listProfiles(path.join(rootDir, '.workflow', 'profiles'));
+  const disponibles = listProfiles(path.join(rootDir, '.workflow', 'profiles', 'modifiers'));
+  let escala = await ask(`10. Escala del proyecto (${escalas.join(', ')}); ver .workflow/PROFILES.md`, 'standard');
+  if (!escalas.includes(escala)) {
+    console.warn(`⚠️  La escala "${escala}" no existe; se usa "standard".`);
+    escala = 'standard';
+  }
+  const modsText = await ask(`11. Modificadores de riesgo de TODO el proyecto (${disponibles.join(', ')}); vacío si ninguno`, '');
+  const modificadores = modsText.split(',').map((m) => m.trim()).filter(Boolean).filter((m) => {
+    if (disponibles.includes(m)) return true;
+    console.warn(`⚠️  El modificador "${m}" no existe y se omite.`);
+    return false;
+  });
 
   console.log('\n⚙️  Configurando archivos y artefactos de gobernanza...');
 
@@ -148,7 +202,11 @@ async function main() {
       frontend: { activa: capas.includes('frontend'), raiz: frontendRoot, modulos: `${frontendRoot}/src/modules` },
     },
     rutas: { contratos: 'docs/contracts' },
+    perfil: { escala, modificadores, adr: null },
   };
+  if (escala !== 'standard' || modificadores.length > 0) {
+    projectConfig.perfil.adr = writeProfileAdr({ escala, modificadores, author, date: replacements.INIT_DATE });
+  }
   if (!projectConfig.capas.backend.activa && !projectConfig.capas.frontend.activa) {
     console.warn('⚠️  No se declaró ninguna capa válida; se activan backend y frontend por defecto.');
     projectConfig.capas.backend.activa = true;

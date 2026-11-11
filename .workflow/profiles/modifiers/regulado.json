@@ -1,0 +1,15 @@
+{
+  "modificador": "regulado",
+  "descripcion": "Sector con normativa obligatoria y auditable. La especificación (G1) y la revisión de cumplimiento (G6) requieren firma humana en cualquier escala.",
+  "tipos": {
+    "G1": "halt",
+    "G6": "halt"
+  },
+  "entregables": {
+    "adicionales": [
+      "matriz_normativa",
+      "rtm_trazabilidad",
+      "revision_cumplimiento"
+    ]
+  }
+}

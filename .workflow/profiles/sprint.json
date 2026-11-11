@@ -1,0 +1,26 @@
+{
+  "escala": "sprint",
+  "descripcion": "Proyectos cortos (unas 2 semanas). Tres firmas humanas: especificación y contrato juntos (G2), QA (G4) y release (G5). La revisión de UI ocurre dentro de G4.",
+  "tipos": {
+    "G1": "checkpoint",
+    "G3B": "checkpoint",
+    "G6": "checkpoint"
+  },
+  "entregables": {
+    "opcionales": [
+      "atdd_spec",
+      "arquitectura_c4",
+      "api_bruno",
+      "e2e_a11y",
+      "carga_k6",
+      "runbook",
+      "plan_kaizen"
+    ],
+    "adicionales": [
+      "arquitectura_c4_reducida",
+      "e2e_smoke",
+      "runbook_minimo",
+      "retro_breve"
+    ]
+  }
+}

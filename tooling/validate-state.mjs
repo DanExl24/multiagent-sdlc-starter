@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 /**
  * Valida las pistas de trabajo contra las tablas de .workflow/STAGE_GATES.md:
- *   - .workflow/project.json        (capas activas y rutas del proyecto)
+ *   - .workflow/project.json        (capas activas, rutas y perfil del proyecto)
+ *   - .workflow/profiles/           (escalas y modificadores: tipo efectivo de cada compuerta)
  *   - .workflow/current_state.json  (proyecto y release)
  *   - .workflow/modules/*.json      (un archivo por módulo)
  * Los datos (fases, gates, tipos, niveles, capas, estados) se leen de STAGE_GATES.md en cada ejecución.
  */
 import { loadStageGates } from './lib/stage-gates.mjs';
 import { loadProjectConfig } from './lib/project-config.mjs';
+import { loadProfiles } from './lib/profiles.mjs';
 import { loadProjectState, loadModuleStates, validateWorkflow } from './lib/workflow-state.mjs';
 
 let table;
@@ -27,7 +29,8 @@ try {
 
 const { config, exists, errors: configErrors } = loadProjectConfig();
 const modules = loadModuleStates();
-const { errors, warnings } = validateWorkflow(table, project, modules, config);
+const profiles = loadProfiles(table);
+const { errors, warnings } = validateWorkflow(table, project, modules, config, profiles);
 errors.unshift(...configErrors);
 if (!exists) warnings.unshift('.workflow/project.json no existe: se usan las rutas por defecto (backend/ y frontend/).');
 
@@ -40,4 +43,4 @@ if (errors.length > 0) {
   for (const e of errors) console.error(`   - ${e}`);
   process.exit(1);
 }
-console.log(`✅ State Machine válida. Proyecto: ${project.gate_activo} (${project.estado}) | Módulos: ${modules.length}`);
+console.log(`✅ State Machine válida. Perfil: ${[config.perfil.escala, ...config.perfil.modificadores].join(' + ')} | Proyecto: ${project.gate_activo} (${project.estado}) | Módulos: ${modules.length}`);

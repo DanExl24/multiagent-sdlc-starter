@@ -120,6 +120,8 @@ stateDiagram-v2
 
 > 🔀 **Pistas paralelas.** El Orquestador es dueño de `.workflow/current_state.json` (línea base del proyecto y releases) y supervisa los archivos de `.workflow/modules/`, uno por módulo, cada uno con su responsable y su rama. Antes de cada release ejecuta `npm run status` para ver qué módulos superaron G4, y `npm run validate:state` para confirmar que ningún módulo se adelantó a la línea base ni a sus dependencias. Los checklists de G1 y G2 se aplican tanto a la línea base como a cada módulo.
 
+> 🎚️ **Perfil del proyecto.** El tipo de cada compuerta (Halt o Checkpoint) y los entregables exigidos dependen del perfil (`.workflow/PROFILES.md`). Antes de verificar una compuerta, el Orquestador consulta `npm run status -- [XX_nombre]` y usa ese plan como checklist de entregables. Un Halt convertido en Checkpoint no se firma por separado: sus entregables se presentan en el siguiente Halt.
+
 ### 🛑 Gate 1: Validación de Requerimientos y Rito ATDD (PM -> Arquitecto)
 - **Checklist del Orquestador:**
   - [ ] ¿Está cubierto el alcance acordado con historias bajo estándar INVEST?

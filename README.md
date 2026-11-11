@@ -118,6 +118,8 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 │
 ├── .workflow/                           # 🚦 Máquina de Estados y Gobernanza HITL
 │   ├── STAGE_GATES.md                   # Datos de las compuertas (delegado por AGENTS.md)
+│   ├── PROFILES.md                      # Perfiles: escala (sprint, standard, enterprise) y modificadores de riesgo
+│   ├── profiles/                        # Datos de cada escala y modificador
 │   ├── project.json                     # Capas activas y rutas del proyecto (monorepo, sin frontend, etc.)
 │   ├── current_state.json               # Estado de la pista de proyecto y release
 │   └── modules/                         # Un archivo de estado por módulo (trabajo en paralelo)
@@ -184,8 +186,9 @@ npm run audit:a11y
 # Genera: docs/qa/a11y-audit-summary.json
 
 # 6. Estado del flujo: crear un módulo, ver el semáforo y validar las pistas contra STAGE_GATES.md:
-npm run new:module -- 04_pagos --responsable "Ana" --depende-de 01_auth
+npm run new:module -- 04_pagos --responsable "Ana" --depende-de 01_auth --modificadores pagos
 npm run status
+npm run status -- 04_pagos   # Plan del módulo según el perfil: qué compuertas requieren firma y qué entregables
 npm run validate:state
 npm run release:changelog -- 0.2.0 --dry-run   # Al preparar un release: consolida changelog.d/
 

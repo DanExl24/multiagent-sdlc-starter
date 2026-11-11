@@ -1,0 +1,13 @@
+{
+  "modificador": "datos_sensibles",
+  "descripcion": "Datos personales o sensibles (salud, identidad, finanzas personales).",
+  "tipos": {},
+  "entregables": {
+    "adicionales": [
+      "modelo_amenazas",
+      "mapa_datos_personales",
+      "dast",
+      "logs_sin_pii"
+    ]
+  }
+}

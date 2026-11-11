@@ -8,6 +8,7 @@
  *   --nombre "Texto"         Nombre legible (por defecto, derivado del ID)
  *   --responsable "Texto"    Persona o agente a cargo (por defecto, user.name de Git)
  *   --depende-de a,b         IDs de módulos de los que depende
+ *   --modificadores a,b      Modificadores de riesgo propios del módulo (pagos, tiempo_real...)
  *
  * No crea el contrato Zod: lo redacta Arquitectura en G2 (AGENTS.md §6).
  */
@@ -17,6 +18,7 @@ import { execSync } from 'node:child_process';
 import { rootDir, loadStageGates } from './lib/stage-gates.mjs';
 import { MODULES_DIR, MODULE_ID_RE, gatesForTrack, loadModuleStates } from './lib/workflow-state.mjs';
 import { loadProjectConfig } from './lib/project-config.mjs';
+import { loadProfiles } from './lib/profiles.mjs';
 
 const TEMPLATE_DIR = path.join(rootDir, 'multiAgents', 'protocols', 'TEMPLATES', 'MODULE_TEMPLATE');
 
@@ -26,7 +28,7 @@ function fail(message) {
 }
 
 function parseArgs(argv) {
-  const opts = { id: null, nombre: null, responsable: null, dependeDe: [] };
+  const opts = { id: null, nombre: null, responsable: null, dependeDe: [], modificadores: [] };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     const value = () => {
@@ -36,6 +38,7 @@ function parseArgs(argv) {
     if (arg === '--nombre') opts.nombre = value();
     else if (arg === '--responsable') opts.responsable = value();
     else if (arg === '--depende-de') opts.dependeDe = value().split(',').map((d) => d.trim()).filter(Boolean);
+    else if (arg === '--modificadores') opts.modificadores = value().split(',').map((d) => d.trim()).filter(Boolean);
     else if (arg.startsWith('--')) fail(`Opción desconocida: ${arg}`);
     else if (!opts.id) opts.id = arg;
     else fail(`Argumento inesperado: ${arg}`);
@@ -52,7 +55,7 @@ function gitUserName() {
 }
 
 const opts = parseArgs(process.argv.slice(2));
-if (!opts.id) fail('Uso: npm run new:module -- XX_nombre [--nombre "Texto"] [--responsable "Texto"] [--depende-de a,b]');
+if (!opts.id) fail('Uso: npm run new:module -- XX_nombre [--nombre "Texto"] [--responsable "Texto"] [--depende-de a,b] [--modificadores a,b]');
 if (!MODULE_ID_RE.test(opts.id)) fail(`ID inválido "${opts.id}". Formato: dos dígitos, guion bajo y nombre en minúsculas (ej. 04_pagos).`);
 
 const id = opts.id;
@@ -71,7 +74,12 @@ for (const dep of opts.dependeDe) {
   if (!existing.some((m) => m.id === dep)) fail(`La dependencia "${dep}" no existe en .workflow/modules/.`);
 }
 
-const firstGate = gatesForTrack(loadStageGates(), 'modulo', loadProjectConfig().config)[0];
+const table = loadStageGates();
+const profiles = loadProfiles(table);
+for (const mod of opts.modificadores) {
+  if (!profiles.modificadores.has(mod)) fail(`El modificador "${mod}" no existe. Disponibles: ${[...profiles.modificadores.keys()].join(', ')}.`);
+}
+const firstGate = gatesForTrack(table, 'modulo', loadProjectConfig().config)[0];
 const today = new Date().toLocaleDateString('sv-SE');
 const replacements = [
   ['PLANTILLA: ', ''],
@@ -98,6 +106,7 @@ const state = {
   responsable,
   rama: `feature/${id.replace(/_/g, '-')}`,
   depende_de: opts.dependeDe,
+  modificadores: opts.modificadores,
   fase_activa: firstGate.fase,
   gate_activo: firstGate.gate,
   estado: 'EN_PROCESO',

@@ -1,35 +1,85 @@
 #!/usr/bin/env node
 /**
  * Semáforo consolidado del proyecto (npm run status).
- * Es una vista generada: lee current_state.json y .workflow/modules/*.json y no escribe nada,
- * para que el estado global nunca sea un archivo que varias personas editen a la vez.
+ *   npm run status                 Proyecto y módulos: gate, estado, responsable, rama, bloqueos.
+ *   npm run status -- 04_pagos     Plan efectivo del módulo según el perfil: tipo de cada compuerta y entregables.
+ *   npm run status -- proyecto     Plan efectivo de la línea base y del release.
+ *
+ * Es una vista generada: no escribe nada, para que el estado global nunca sea un archivo
+ * que varias personas editen a la vez.
  */
 import { loadStageGates } from './lib/stage-gates.mjs';
 import { loadProjectConfig, activeLayers } from './lib/project-config.mjs';
-import { loadProjectState, loadModuleStates, validateWorkflow } from './lib/workflow-state.mjs';
+import { loadProfiles, resolvePlan } from './lib/profiles.mjs';
+import {
+  gatesForTrack, loadModuleStates, loadProjectState, moduleModifiers, projectModifiers, validateWorkflow,
+} from './lib/workflow-state.mjs';
 
 const table = loadStageGates();
 const project = loadProjectState();
 const modules = loadModuleStates();
 const { config } = loadProjectConfig();
+const profiles = loadProfiles(table);
 const byGate = new Map(table.stateful.map((g) => [g.gate, g]));
 
 const ICON = { EN_PROCESO: '🟡', ESPERANDO_APROBACION_HUMANA: '🛑', BLOQUEADO: '🔴', COMPLETADO: '🟢' };
+const TIPO = { halt: '🛑 Halt', checkpoint: '⚡ Checkpoint' };
 const gateLabel = (s) => byGate.get(s.gate_activo)?.id ?? s.gate_activo;
 const pad = (text, width) => String(text).padEnd(width);
+const perfilLabel = (mods) => [config.perfil.escala, ...mods].join(' + ');
+
+function printPlan(title, track, mods, current) {
+  const plan = resolvePlan(table, profiles, { escala: config.perfil.escala, modificadores: mods });
+  if (plan.errors.length) {
+    console.error(`❌ ${plan.errors.join(' ')}`);
+    process.exit(1);
+  }
+  const pistas = track === 'modulo' ? ['modulo'] : ['proyecto', 'release'];
+  console.log(`\n🧭 Plan efectivo de ${title} · perfil: ${perfilLabel(mods)}\n`);
+  for (const gate of gatesForTrack(table, track, config, plan.tipos)) {
+    const marker = current === gate.gate ? '  ◀ en curso' : '';
+    console.log(`   ${pad(gate.id, 4)} ${pad(TIPO[gate.tipo], 13)}${marker}`);
+    const items = [...plan.entregables].filter(([id]) => {
+      const e = table.entregables.get(id);
+      return e.gate === gate.id && pistas.includes(e.pista);
+    });
+    for (const [id, origen] of items) {
+      const tag = origen === 'base' ? '' : `  (${origen})`;
+      console.log(`        - ${table.entregables.get(id).descripcion.replace(/`/g, '')}${tag}`);
+    }
+  }
+  const skipped = [...table.capas].filter(([, layer]) => !activeLayers(config).includes(layer));
+  if (track === 'modulo' && skipped.length) console.log(`\n   Omitidas por capa inactiva: ${skipped.map(([id, layer]) => `${id} (${layer})`).join(', ')}`);
+  console.log('\n   🛑 = el agente se detiene y espera firma humana · ⚡ = pasa automáticamente si todo está en verde\n');
+}
+
+const target = process.argv[2];
+if (target) {
+  if (target === 'proyecto') {
+    printPlan('la línea base y el release', 'proyecto', projectModifiers(config, modules), project.gate_activo);
+  } else {
+    const mod = modules.find((m) => m.id === target);
+    if (!mod?.state) {
+      console.error(`❌ El módulo "${target}" no existe en .workflow/modules/. Módulos: ${modules.map((m) => m.id).join(', ') || 'ninguno'}.`);
+      process.exit(1);
+    }
+    printPlan(`${mod.id}`, 'modulo', moduleModifiers(config, mod.state), mod.state.gate_activo);
+  }
+  process.exit(0);
+}
 
 console.log(`\n📍 Proyecto: ${project.proyecto ?? '-'} · versión ${project.version_actual ?? '-'}`);
-console.log(`   Capas activas: ${activeLayers(config).join(', ')}`);
+console.log(`   Perfil: ${perfilLabel(config.perfil.modificadores)} · capas activas: ${activeLayers(config).join(', ')}`);
 console.log(`   Pista de proyecto/release: ${ICON[project.estado] ?? '⚪'} ${gateLabel(project)} · ${project.estado} · rol en turno: ${project.rol_en_turno}`);
 
 if (modules.length === 0) {
   console.log('\n📦 Módulos: ninguno todavía. Crea el primero con: npm run new:module -- 01_nombre');
 } else {
   const rows = modules.map((m) => m.error
-    ? [m.id, '-', '❌ JSON inválido', '-', '-', '-', '-']
+    ? [m.id, '-', '❌ JSON inválido', '-', '-', '-', '-', '-']
     : [m.id, gateLabel(m.state), `${ICON[m.state.estado] ?? '⚪'} ${m.state.estado}`, m.state.rol_en_turno,
-      m.state.responsable, m.state.rama, (m.state.depende_de ?? []).join(', ') || '-']);
-  const header = ['Módulo', 'Gate', 'Estado', 'Rol en turno', 'Responsable', 'Rama', 'Depende de'];
+      m.state.responsable, m.state.rama, (m.state.depende_de ?? []).join(', ') || '-', (m.state.modificadores ?? []).join(', ') || '-']);
+  const header = ['Módulo', 'Gate', 'Estado', 'Rol en turno', 'Responsable', 'Rama', 'Depende de', 'Modificadores'];
   const widths = header.map((h, i) => Math.max(h.length, ...rows.map((r) => String(r[i]).length)));
   console.log(`\n📦 Módulos (${modules.length}):`);
   console.log(`   ${header.map((h, i) => pad(h, widths[i])).join('  ')}`);
@@ -40,9 +90,10 @@ if (modules.length === 0) {
   if (listos.length) console.log(`\n🚀 Listos para el próximo release (superaron G4): ${listos.map((m) => m.id).join(', ')}`);
   const bloqueados = modules.filter((m) => m.state?.estado === 'BLOQUEADO');
   for (const m of bloqueados) console.log(`🔴 ${m.id} bloqueado: ${m.state.bloqueos.join('; ')}`);
+  console.log('\n   Plan de un módulo (compuertas y entregables según el perfil): npm run status -- [XX_nombre]');
 }
 
-const { errors } = validateWorkflow(table, project, modules, config);
+const { errors } = validateWorkflow(table, project, modules, config, profiles);
 if (errors.length) {
   console.log(`\n⚠️  Incoherencias detectadas (${errors.length}). Ejecuta npm run validate:state para el detalle.`);
 }

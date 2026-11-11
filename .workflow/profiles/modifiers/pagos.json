@@ -1,0 +1,12 @@
+{
+  "modificador": "pagos",
+  "descripcion": "Cobros, reembolsos o movimientos de dinero.",
+  "tipos": {},
+  "entregables": {
+    "adicionales": [
+      "contrato_idempotencia",
+      "pruebas_doble_cobro",
+      "rollback_probado"
+    ]
+  }
+}

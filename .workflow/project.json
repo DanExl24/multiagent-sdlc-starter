@@ -1,9 +1,22 @@
 {
   "capas": {
-    "backend": { "activa": true, "raiz": "backend", "modulos": "backend/src/modules" },
-    "frontend": { "activa": true, "raiz": "frontend", "modulos": "frontend/src/modules" }
+    "backend": {
+      "activa": true,
+      "raiz": "backend",
+      "modulos": "backend/src/modules"
+    },
+    "frontend": {
+      "activa": true,
+      "raiz": "frontend",
+      "modulos": "frontend/src/modules"
+    }
   },
   "rutas": {
     "contratos": "docs/contracts"
+  },
+  "perfil": {
+    "escala": "standard",
+    "modificadores": [],
+    "adr": null
   }
 }
