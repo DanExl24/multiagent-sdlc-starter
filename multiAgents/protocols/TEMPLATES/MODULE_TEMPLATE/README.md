@@ -1,12 +1,13 @@
 # 📖 Manual de la Plantilla Maestra de Módulo
 
-> Este directorio define los 4 documentos oficiales que DEBE contener la carpeta de cada módulo del sistema dentro de `docs/modules/[XX_nombre_modulo]/`.
+> Este directorio define el índice y los 4 documentos oficiales que DEBE contener la carpeta de cada módulo del sistema dentro de `docs/modules/[XX_nombre_modulo]/`.
 
 ---
 
 ## Estructura de un Módulo
 ```text
 docs/modules/[XX_nombre_modulo]/
+├── README.md                    # Índice: estado, enlaces a contrato/ADRs/QA y qué leer por rol
 ├── 01_SPEC_FUNCIONAL.md        # Propósito, dependencias, actores y reglas inmutables
 ├── 02_HISTORIAS_USUARIO.md      # RF, RNF, Catálogo de HUs y criterios Given-When-Then
 ├── 03_FLUJO_Y_ESTADOS.md        # Diagramas Mermaid, máquina de estados y casos de uso
@@ -16,6 +17,7 @@ docs/modules/[XX_nombre_modulo]/
 ---
 
 ## Archivos de Plantilla:
+- [`00_README_TEMPLATE.md`](00_README_TEMPLATE.md) → se copia como `README.md`
 - [`01_SPEC_FUNCIONAL_TEMPLATE.md`](01_SPEC_FUNCIONAL_TEMPLATE.md)
 - [`02_HISTORIAS_USUARIO_TEMPLATE.md`](02_HISTORIAS_USUARIO_TEMPLATE.md)
 - [`03_FLUJO_Y_ESTADOS_TEMPLATE.md`](03_FLUJO_Y_ESTADOS_TEMPLATE.md)

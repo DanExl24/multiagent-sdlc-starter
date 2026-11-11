@@ -9,7 +9,8 @@
  *   E. Toda ruta "docs/..." mencionada en un documento existe en el repositorio. Se ignoran placeholders ([XX], vX.Y.Z), informes generados y los
  *      registros históricos (CHANGELOG.md y WORKLOG.md).
  *   F. Los enlaces Markdown son relativos al archivo (nunca "file://" ni rutas absolutas)
- *      y su destino existe. Se ignoran URLs externas, anclas, placeholders y bloques de código.
+ *      y su destino existe. Se ignoran URLs externas, anclas, placeholders y bloques de código;
+ *      en multiAgents/protocols/TEMPLATES/ solo se exige que sean relativos.
  *   C. Los IDs de compuerta del diagrama de AGENTS.md coinciden con la tabla de
  *      .workflow/STAGE_GATES.md.
  */
@@ -107,7 +108,8 @@ const EXTERNAL = /^(?:https?:|mailto:|#)/i;
 for (const file of walk(rootDir)) {
   if (path.extname(file) !== '.md') continue;
   const name = rel(file);
-  const historical = HISTORICAL.has(path.basename(file));
+  // Las plantillas enlazan a rutas que solo existen una vez copiadas a su destino.
+  const skipExistence = HISTORICAL.has(path.basename(file)) || name.startsWith('multiAgents/protocols/TEMPLATES/');
   let inFence = false;
   fs.readFileSync(file, 'utf-8').split(/\r?\n/).forEach((line, i) => {
     if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; return; }
@@ -120,7 +122,7 @@ for (const file of walk(rootDir)) {
         continue;
       }
       const clean = decodeURIComponent(target.split('#')[0]);
-      if (!clean || historical || PLACEHOLDER.test(clean)) continue;
+      if (!clean || skipExistence || PLACEHOLDER.test(clean)) continue;
       if (!fs.existsSync(path.resolve(path.dirname(file), clean))) errors.push(`${name}:${i + 1} enlaza a "${target}", que no existe.`);
     }
   });

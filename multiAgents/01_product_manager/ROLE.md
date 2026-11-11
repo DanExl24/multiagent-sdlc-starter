@@ -68,5 +68,7 @@ graph TD
 - [ ] Ficha `docs/modules/[XX]/01_ATDD_SPEC.md` firmada por los Three Amigos (PM + Arquitecto + QA).
 - [ ] Matriz In-Scope / Out-of-Scope validada con el usuario.
 - [ ] Reglas de negocio identificadas unívocamente (`RN-MOD-01`, `RN-MOD-02`, etc.).
+- [ ] Términos nuevos del módulo registrados en `docs/project/glossary.md` con su nombre técnico.
+- [ ] Índice `docs/modules/[XX]/README.md` creado desde `MODULE_TEMPLATE/00_README_TEMPLATE.md`.
 - [ ] Bitácora actualizada en `multiAgents/01_product_manager/WORKLOG.md`.
 - [ ] Firma aprobatoria del Director Humano registrada en Gate 1.

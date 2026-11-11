@@ -143,8 +143,8 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 │
 ├── docs/                                # 📚 Artefactos de Ingeniería (Fuente de la Verdad)
 │   ├── README.md                        # Índice maestro de la documentación
-│   ├── project/                         # PRD, arquitectura global, design system y matriz de versiones
-│   ├── modules/                         # Especificaciones por módulo (01_ a XX_)
+│   ├── project/                         # PRD, arquitectura, design system, matriz de versiones y glosario
+│   ├── modules/                         # Un subdirectorio por módulo, con README.md como índice
 │   ├── contracts/                       # Contratos API-First Zod (.contract.ts)
 │   ├── adrs/                            # Architectural Decision Records
 │   ├── qa/                              # Panel de QA, reportes forenses, DAST, k6 HTML/JSON y A11y

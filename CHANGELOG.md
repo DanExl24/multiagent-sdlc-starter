@@ -3,6 +3,18 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.5.0] - 2026-11-10
+
+### Added
+- `docs/project/glossary.md`: glosario del dominio (lenguaje ubicuo) con nombre técnico obligatorio, sinónimos prohibidos y registro de estados de negocio terminales. Lo personaliza `init-project`.
+- `MODULE_TEMPLATE/00_README_TEMPLATE.md`: índice de cada módulo (`docs/modules/[XX]/README.md`) con estado, enlaces al contrato, ADRs, QA y walkthroughs, y una tabla de qué leer según el rol. Hace efectivo el paso de navegación que ya describía `docs/README.md`.
+
+### Changed
+- La Definition of Ready del Product Manager exige registrar los términos nuevos en el glosario y crear el índice del módulo. `AGENTS.md` incluye ambos en los entregables del PM.
+- Regla F de `check:docs`: en `multiAgents/protocols/TEMPLATES/` solo exige enlaces relativos, porque los destinos existen una vez copiada la plantilla.
+
+---
+
 ## [1.4.1] - 2026-11-10
 
 ### Changed

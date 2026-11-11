@@ -119,8 +119,9 @@ flowchart LR
 │   │   ├── prd.md                       # Documento Rector de Requerimientos de Producto
 │   │   ├── architecture.md              # Arquitectura global y Modelo C4 (el DDL vive en cada módulo)
 │   │   ├── design-system.md             # Sistema de Diseño Visual y Paleta Oficial
-│   │   └── version-matrix.md            # Matriz Bidireccional de Versiones y Ciclo de Vida
-│   ├── modules/                         # Especificaciones funcionales y BDD por módulo
+│   │   ├── version-matrix.md            # Matriz Bidireccional de Versiones y Ciclo de Vida
+│   │   └── glossary.md                  # Lenguaje ubicuo: términos, nombres técnicos y estados
+│   ├── modules/                         # Un subdirectorio por módulo; su README.md es el índice
 │   ├── contracts/                       # Contratos de API REST tipados con Zod (.contract.ts)
 │   ├── adrs/                            # Architectural Decision Records (un archivo por decisión)
 │   ├── qa/                              # index.md (panel consolidado) y reportes forenses [XX]/[vX.Y.Z]/
@@ -146,7 +147,7 @@ Controla el flujo global, vigila que nadie se salte una compuerta, gestiona la m
 ### 3.1. 📋 `01_product_manager` — Product Manager Lead (Fase 1)
 Transforma la visión de negocio en especificaciones formales sin ambigüedad.
 - **Subroles:** Discovery (`/grill-me`), Legal/Compliance, BDD INVEST Gherkin, UAT/KPIs.
-- **Entregables:** `docs/project/prd.md`, `docs/modules/[XX]/01_SPEC_FUNCIONAL.md`, `02_HISTORIAS_USUARIO.md`.
+- **Entregables:** `docs/project/prd.md`, `docs/project/glossary.md`, `docs/modules/[XX]/README.md` (índice del módulo), `01_SPEC_FUNCIONAL.md`, `02_HISTORIAS_USUARIO.md`.
 
 ### 3.2. 🏛️ `02_software_architect` — Software Architect Lead (Fase 2)
 Traduce el PRD en arquitectura técnica, contratos Zod y esquemas de base de datos relacionales normalizados.

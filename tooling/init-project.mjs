@@ -76,6 +76,7 @@ async function main() {
     path.join(rootDir, 'docs', 'project', 'architecture.md'),
     path.join(rootDir, 'docs', 'project', 'design-system.md'),
     path.join(rootDir, 'docs', 'project', 'version-matrix.md'),
+    path.join(rootDir, 'docs', 'project', 'glossary.md'),
     path.join(rootDir, 'docs', 'qa', 'index.md'),
     path.join(rootDir, 'multiAgents', '01_product_manager', 'subroles', '02_legal_domain_compliance.md'),
   ];

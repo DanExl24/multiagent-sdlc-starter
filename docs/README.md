@@ -7,12 +7,13 @@
 1. Empieza aquí y elige el área que necesitas.
 2. Si trabajas en un módulo, abre el `README.md` de su carpeta en `modules/` y carga solo los archivos que tu rol necesita.
 3. No cargues toda la documentación a la vez: cada archivo cubre una sola responsabilidad.
+4. Ante un término de negocio dudoso, consulta [`project/glossary.md`](project/glossary.md) antes de nombrar entidades, campos o estados.
 
 ## Mapa de la documentación
 
 | Carpeta | Contenido | Naturaleza | Rol responsable |
 | :--- | :--- | :--- | :--- |
-| [`project/`](project/) | PRD, arquitectura global, design system y matriz de versiones | **Vivo**: se edita; cambia poco | Producto, Arquitectura y Frontend |
+| [`project/`](project/) | PRD, arquitectura global, design system, matriz de versiones y glosario del dominio | **Vivo**: se edita; cambia poco | Producto, Arquitectura y Frontend |
 | [`modules/`](modules/) | Todo lo específico de un módulo: especificación, historias, flujos y arquitectura | **Vivo** durante el módulo | Producto y Arquitectura |
 | [`contracts/`](contracts/) | Contratos de API tipados con Zod (`*.contract.ts`) | **Vivo**; lo consumen las herramientas | Arquitectura |
 | [`adrs/`](adrs/) | Decisiones de arquitectura, una por archivo y numeradas | **Inmutable** (se añaden, no se reescriben) | Arquitectura |
