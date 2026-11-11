@@ -21,7 +21,7 @@ El Product Manager Lead comanda 4 subroles en el directorio `multiAgents/01_prod
 | Subrol | Archivo Rector | Especialidad Principal | Habilidad / Artefacto Clave |
 | :--- | :--- | :--- | :--- |
 | **01. Discovery & Strategy** | [`01_product_discovery_strategy.md`](subroles/01_product_discovery_strategy.md) | Descubrimiento de necesidades, stakeholders, fronteras In/Out-of-Scope y priorización MoSCoW/RICE. | **Entrevista Activa al Humano (Modo `/grill-me`)**, Matriz de Alcance. |
-| **02. Legal & Domain Compliance** | [`02_legal_domain_compliance.md`](subroles/02_legal_domain_compliance.md) | Blindaje normativo del sector (leyes, regulaciones, privacidad, auditoría de compliance). | Matriz de Normativa y Compliance, Reglas de Oro Legales (`RN-DOM-XX`). |
+| **02. Legal & Domain Compliance** | [`02_legal_domain_compliance.md`](subroles/02_legal_domain_compliance.md) | Blindaje normativo del sector (leyes, regulaciones, privacidad, auditoría de compliance). | Matriz de Normativa y Compliance, Reglas Legales Innegociables (`RN-DOM-XX`). |
 | **03. Functional Requirements, ATDD & BDD** | [`03_functional_requirements_bdd.md`](subroles/03_functional_requirements_bdd.md) | Especificación ágil de Historias de Usuario INVEST, criterios BDD Gherkin, mesa ATDD (*Three Amigos*) y DoR. | Catálogo de HUs, Reglas `RN-MOD-XX`, Especificación ATDD (`01_ATDD_SPEC.md`). |
 | **04. Product Analytics & UAT** | [`04_product_analytics_uat.md`](subroles/04_product_analytics_uat.md) | Definición de KPIs de impacto, validación funcional de User Acceptance Testing (UAT) y gestión de feedback. | Métricas de Éxito en PRD, Listas de Chequeo UAT, Retroalimentación. |
 

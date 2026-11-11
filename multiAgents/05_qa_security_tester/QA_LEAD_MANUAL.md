@@ -35,7 +35,7 @@ flowchart TD
 
 ### Paso 1: Recepción del Walkthrough Versionado
 - El QA Lead toma la guía ubicada en `docs/walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md`.
-- Verifica la trazabilidad del módulo consultando `docs/project/version-matrix.md`.
+- Verifica la trazabilidad del módulo con `npm run status -- [XX_nombre]` (plan y compuertas) y el historial de su archivo `.workflow/modules/[XX_nombre].json`.
 - Si el walkthrough no existe, no está versionado o sus pasos no son reproducibles, el módulo queda automáticamente **RECHAZADO**.
 
 ### Paso 2: Análisis de Trazabilidad (Shift-Left)

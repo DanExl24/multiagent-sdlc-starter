@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Semáforo consolidado del proyecto (npm run status).
- *   npm run status                 Proyecto y módulos: gate, estado, responsable, rama, bloqueos.
+ *   npm run status                 Proyecto y módulos: gate, estado, responsable, rama, bloqueos y
+ *                                  qué módulos entró en cada release (desde incluido_en_release).
  *   npm run status -- 04_pagos     Plan efectivo del módulo según el perfil: tipo de cada compuerta y entregables.
  *   npm run status -- proyecto     Plan efectivo de la línea base y del release.
  *
@@ -88,6 +89,15 @@ if (modules.length === 0) {
 
   const listos = modules.filter((m) => m.state?.estado === 'COMPLETADO' && m.state.incluido_en_release == null);
   if (listos.length) console.log(`\n🚀 Listos para el próximo release (superaron G4): ${listos.map((m) => m.id).join(', ')}`);
+  const releases = new Map();
+  for (const m of modules) {
+    const v = m.state?.incluido_en_release;
+    if (v) releases.set(v, [...(releases.get(v) ?? []), m.id]);
+  }
+  if (releases.size) {
+    console.log('\n🏷️  Releases (versión → módulos incluidos):');
+    for (const [v, ids] of releases) console.log(`   ${v}: ${ids.join(', ')}`);
+  }
   const bloqueados = modules.filter((m) => m.state?.estado === 'BLOQUEADO');
   for (const m of bloqueados) console.log(`🔴 ${m.id} bloqueado: ${m.state.bloqueos.join('; ')}`);
   console.log('\n   Plan de un módulo (compuertas y entregables según el perfil): npm run status -- [XX_nombre]');

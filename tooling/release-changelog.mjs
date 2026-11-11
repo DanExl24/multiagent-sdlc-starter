@@ -7,6 +7,7 @@
  * - Agrupa las viñetas por sección de Keep a Changelog, en orden canónico, anteponiendo el módulo.
  * - Registra la versión en `incluido_en_release` de los módulos COMPLETADO que aún no tenían release.
  * - Borra los fragmentos consumidos.
+ * - Fija la versión en package.json y package-lock.json.
  * Con --dry-run solo muestra el resultado. Si el Director Humano rechaza G5, se revierte el commit.
  */
 import fs from 'node:fs';
@@ -14,6 +15,7 @@ import path from 'node:path';
 import { rootDir } from './lib/stage-gates.mjs';
 import { SECTIONS, loadFragments } from './lib/changelog-fragments.mjs';
 import { loadModuleStates } from './lib/workflow-state.mjs';
+import { syncPackageVersion } from './lib/package-version.mjs';
 
 const CHANGELOG = path.join(rootDir, 'CHANGELOG.md');
 const fail = (msg) => { console.error(`❌ ${msg}`); process.exit(1); };
@@ -82,4 +84,5 @@ for (const m of included) {
   fs.writeFileSync(m.file, `${JSON.stringify(state, null, 2)}\n`);
 }
 for (const f of fragments) fs.unlinkSync(f.file);
-console.log(`\n✅ CHANGELOG.md actualizado, ${fragments.length} fragmento(s) consumido(s) y ${included.length} módulo(s) marcados con v${version}.`);
+syncPackageVersion({ version });
+console.log(`\n✅ CHANGELOG.md actualizado, ${fragments.length} fragmento(s) consumido(s) y ${included.length} módulo(s) marcados con v${version}; package.json y package-lock.json en ${version}.`);

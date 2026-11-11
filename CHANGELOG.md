@@ -3,6 +3,27 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.12.0] - 2026-11-10
+
+### Added
+- `npm run check:tooling` (incluido en `npm test`): comprueba la sintaxis de todos los scripts de `tooling/`, también los que `npm test` no ejecuta (`status`, `new:module`, `release:changelog`, `init:project`).
+- `npm run status` muestra qué módulos entraron en cada release, a partir de `incluido_en_release`.
+- `check:docs` rechaza usar "Regla(s) de Oro" como nombre propio de otra regla (por ejemplo, "Regla de Oro de X" o "Reglas de Oro Legales"), salvo en las bitácoras históricas.
+
+### Changed
+- `release:changelog` fija la versión del release en `package.json` y `package-lock.json`; ya no hay que subirla a mano.
+- `init-project` alinea también el nombre y la versión de `package-lock.json` con el proyecto nuevo.
+- `check:docs` trata los fragmentos de `changelog.d/` como registro histórico, igual que `CHANGELOG.md`: pueden mencionar rutas eliminadas. Su formato lo sigue validando la regla I.
+- Renombradas las expresiones que sonaban a Reglas de Oro sin serlo: "Reglas Legales Innegociables" (subrol legal y ROLE del PM), "Principio del Tipado Compartido" (protocolo del trío técnico) y "Nomenclatura Canónica" (convención de commits). Las dos últimas enlazan a su regla en `AGENTS.md` §6.
+
+### Removed
+- `docs/project/version-matrix.md`: sus tres secciones repetían otras fuentes (estado de módulos → `npm run status`; ciclo de vida → `STAGE_GATES.md`; historial → `CHANGELOG.md` y `PROJECT_STATUS.md`) y la tabla de módulos era otro punto de conflicto entre ramas. Las referencias del manual de QA, el subrol de tablero y `init-project` se actualizaron.
+
+### Fixed
+- `package-lock.json` seguía en la versión 1.0.0 del starter.
+
+---
+
 ## [1.11.0] - 2026-11-10
 
 ### Added

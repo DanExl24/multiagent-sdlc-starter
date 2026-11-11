@@ -139,7 +139,6 @@ flowchart LR
 │   │   ├── prd.md                       # Documento Rector de Requerimientos de Producto
 │   │   ├── architecture.md              # Arquitectura global y Modelo C4 (el DDL vive en cada módulo)
 │   │   ├── design-system.md             # Sistema de Diseño Visual y Paleta Oficial
-│   │   ├── version-matrix.md            # Matriz Bidireccional de Versiones y Ciclo de Vida
 │   │   ├── glossary.md                  # Lenguaje ubicuo: términos, nombres técnicos y estados
 │   │   └── repo-structure.md            # Estructura del repositorio: qué va dónde (rol de fundación)
 │   ├── modules/                         # Un subdirectorio por módulo; su README.md es el índice

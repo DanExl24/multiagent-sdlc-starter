@@ -264,7 +264,7 @@ Ningún perfil puede romper estos invariantes:
   - Lista de módulos incluidos (todos `COMPLETADO` en G4). Al aprobarse, cada uno registra la versión en `incluido_en_release`.
   - Seeders y migraciones idempotentes, ejecutables de forma limpia.
   - Contenedores Docker que levantan sin advertencias y `/api/health` en OK.
-  - `CHANGELOG.md` consolidado con `npm run release:changelog -- X.Y.Z` (une los fragmentos de `changelog.d/` y marca `incluido_en_release` en los módulos incluidos), `docs/project/version-matrix.md` actualizado y **tag de Git** `vX.Y.Z` creado.
+  - `CHANGELOG.md` consolidado con `npm run release:changelog -- X.Y.Z` (une los fragmentos de `changelog.d/`, marca `incluido_en_release` en los módulos incluidos y fija la versión en `package.json`) y **tag de Git** `vX.Y.Z` creado.
   - Runbooks y documentación de entrega listos para firma.
 - **Acción del Agente al Terminar:**
   1. Actualizar el archivo de estado de su pista (§5) con `gate_activo: "GATE_5_RELEASE_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.

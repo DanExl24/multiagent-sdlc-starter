@@ -3,6 +3,7 @@ import readline from 'node:readline';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { syncPackageVersion } from './lib/package-version.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,7 +38,7 @@ function replaceInFile(filePath, replacements) {
 
 /**
  * El proyecto nuevo no hereda la historia del starter: su CHANGELOG, la bitácora del
- * orquestador, el historial de la matriz de versiones y los metadatos de package.json
+ * orquestador, los fragmentos pendientes y los metadatos de package.json y package-lock.json
  * empiezan en v0.1.0. La versión del starter queda registrada como origen.
  */
 function resetStarterHistory({ projectSlug, projectDesc, author, date }) {
@@ -70,15 +71,7 @@ function resetStarterHistory({ projectSlug, projectDesc, author, date }) {
     '',
   ].join('\n'));
 
-  const matrixPath = path.join(rootDir, 'docs', 'project', 'version-matrix.md');
-  if (fs.existsSync(matrixPath)) {
-    const matrix = fs.readFileSync(matrixPath, 'utf-8');
-    const marker = matrix.search(/^## 3\. Registro Histórico/m);
-    if (marker !== -1) {
-      const head = matrix.slice(0, marker);
-      fs.writeFileSync(matrixPath, `${head}## 3. Registro Histórico de Entregas por Versión\n- **v0.1.0** (${date}): ${origin}\n`);
-    }
-  }
+  syncPackageVersion({ name: projectSlug, version: '0.1.0' });
 
   for (const fragment of fs.existsSync(path.join(rootDir, 'changelog.d')) ? fs.readdirSync(path.join(rootDir, 'changelog.d')) : []) {
     if (fragment.endsWith('.md') && fragment !== 'README.md') fs.unlinkSync(path.join(rootDir, 'changelog.d', fragment));
@@ -177,7 +170,6 @@ async function main() {
     path.join(rootDir, 'docs', 'project', 'prd.md'),
     path.join(rootDir, 'docs', 'project', 'architecture.md'),
     path.join(rootDir, 'docs', 'project', 'design-system.md'),
-    path.join(rootDir, 'docs', 'project', 'version-matrix.md'),
     path.join(rootDir, 'docs', 'project', 'glossary.md'),
     path.join(rootDir, 'docs', 'project', 'repo-structure.md'),
     path.join(rootDir, 'docs', 'qa', 'index.md'),

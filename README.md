@@ -155,7 +155,7 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 │
 ├── docs/                                # 📚 Artefactos de Ingeniería (Fuente de la Verdad)
 │   ├── README.md                        # Índice maestro de la documentación
-│   ├── project/                         # PRD, arquitectura, design system, matriz de versiones y glosario
+│   ├── project/                         # PRD, arquitectura, estructura del repo, design system y glosario
 │   ├── modules/                         # Un subdirectorio por módulo, con README.md como índice
 │   ├── contracts/                       # Contratos API-First Zod (.contract.ts)
 │   ├── adrs/                            # Architectural Decision Records
@@ -199,7 +199,7 @@ npm run release:changelog -- 0.2.0 --dry-run   # Al preparar un release: consoli
 # 7. Política de Fuentes de Verdad (sin citas numeradas fuera de AGENTS.md):
 npm run check:docs
 
-# 8. Compuerta Rápida Combinada (Pre-Commit / CI Gate: check:no-any + contratos + estado + fuentes):
+# 8. Compuerta Rápida Combinada (Pre-Commit / CI Gate: sintaxis del tooling + check:no-any + contratos + estado + fuentes):
 npm test
 ```
 

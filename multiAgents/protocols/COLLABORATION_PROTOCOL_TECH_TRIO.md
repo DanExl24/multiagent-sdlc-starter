@@ -18,7 +18,7 @@ graph TD
     API -->|5. Consume con cliente Axios tipado| F
 ```
 
-### Regla de Oro del Tipado Compartido:
+### Principio del Tipado Compartido (aplica la regla del contrato previo de `AGENTS.md` §6):
 - El Arquitecto define el validador Zod:
   ```typescript
   export const createItemSchema = z.object({

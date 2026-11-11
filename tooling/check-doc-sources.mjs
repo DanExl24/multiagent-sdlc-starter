@@ -2,7 +2,9 @@
 /**
  * Verifica la política de fuentes de verdad definida en AGENTS.md (sección 0):
  *   A. Ningún documento distinto de AGENTS.md (y del CHANGELOG histórico) cita una
- *      Regla de Oro por su número ("Regla de Oro #N"). Se cita por nombre y enlace.
+ *      Regla de Oro por su número ("Regla de Oro #N"). Se cita por nombre y enlace. Tampoco
+ *      usa "Regla(s) de Oro" como nombre propio de otra regla ("Regla de Oro de X",
+ *      "Reglas de Oro Legales"); se excluyen las bitácoras históricas.
  *   B. Los documentos puente (README.md, LANDING_PROMPT.md, CLAUDE.md, GEMINI.md) no
  *      numeran compuertas ni reglas: solo describen y enlazan a AGENTS.md.
  *   D. CLAUDE.md y GEMINI.md existen y se limitan a importar AGENTS.md (línea "@AGENTS.md").
@@ -33,6 +35,10 @@ import { loadModuleStates } from './lib/workflow-state.mjs';
 const SKIP_DIRS = new Set(['node_modules', '.git']);
 const SCAN_EXT = new Set(['.md', '.ts']);
 const RULE_CITATION = /regla(?:s)?\s+de\s+oro[\s*:]*#\s*\d+/i;
+// Nombres que suenan a una Regla de Oro pero no lo son ("Regla de Oro de X", "Reglas de Oro Legales").
+const AMBIGUOUS_SINGULAR = /\bregla\s+de\s+oro\b/i;
+const AMBIGUOUS_PLURAL = /\b[Rr]eglas\s+de\s+[Oo]ro\s+(?!Inviolables\b)[A-ZÁÉÍÓÚ][a-záéíóú]+/;
+const AMBIGUOUS_RULE = { test: (line) => AMBIGUOUS_SINGULAR.test(line) || AMBIGUOUS_PLURAL.test(line) };
 const IMPORT_BRIDGES = ['CLAUDE.md', 'GEMINI.md'];
 const BRIDGES = ['README.md', 'LANDING_PROMPT.md', ...IMPORT_BRIDGES];
 const BRIDGE_NUMBERING = [
@@ -61,6 +67,7 @@ for (const file of walk(rootDir)) {
   if (name === 'AGENTS.md' || name === 'CHANGELOG.md') continue;
   fs.readFileSync(file, 'utf-8').split(/\r?\n/).forEach((line, i) => {
     if (RULE_CITATION.test(line)) errors.push(`${name}:${i + 1} cita una Regla de Oro por número. Cítala por nombre y enlaza a AGENTS.md §6.`);
+    else if (!/(^|\/)(WORKLOG\.md|worklog\/[^/]+\.md)$|^changelog\.d\//.test(name) && AMBIGUOUS_RULE.test(line)) errors.push(`${name}:${i + 1} usa "Regla(s) de Oro" como nombre propio. Las Reglas de Oro son solo las de AGENTS.md §6: renombra esta regla o cítala por su nombre en AGENTS.md.`);
   });
 }
 
@@ -102,7 +109,9 @@ const PATH_RE = /(?<![\w.-])(docs\/[A-Za-z0-9_\-./\[\]{}*<>]*)/g;
 const PLACEHOLDER = /[\[\]{}*<>]|XX|X\.Y\.Z|\.\.\./;
 const GENERATED = /^docs\/qa\/[^/]+(?:-summary\.json|\.html)$/;
 const HISTORICAL_NAMES = new Set(['CHANGELOG.md', 'WORKLOG.md']);
-const isHistorical = (file) => HISTORICAL_NAMES.has(path.basename(file)) || /[\\/]worklog[\\/][^\\/]+\.md$/.test(file);
+const isHistorical = (file) => HISTORICAL_NAMES.has(path.basename(file))
+  || /[\\/]worklog[\\/][^\\/]+\.md$/.test(file)
+  || /[\\/]changelog\.d[\\/][^\\/]+\.md$/.test(file);
 for (const file of walk(rootDir)) {
   if (isHistorical(file)) continue;
   const name = rel(file);

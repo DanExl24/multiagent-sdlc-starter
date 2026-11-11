@@ -4,7 +4,7 @@
 > **Agente Padre:** `01_product_manager` (Product Manager Lead)  
 > **Área:** Fase 1 — Análisis Normativo, Regulatorio y Legal del Dominio  
 > **Misión Principal:** Garantizar el 100% de apego a las regulaciones, leyes y estándares del sector  
-> **Artefactos Clave:** Matriz de Normativa y Compliance, Reglas de Oro Legales en `docs/project/prd.md`
+> **Artefactos Clave:** Matriz de Normativa y Compliance, Reglas Legales Innegociables (`RNG-XX`) en `docs/project/prd.md`
 
 ---
 

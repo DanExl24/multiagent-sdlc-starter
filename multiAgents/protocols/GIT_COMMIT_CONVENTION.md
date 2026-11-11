@@ -6,7 +6,7 @@
 
 ---
 
-## 1. La Regla de Oro de Nomenclatura
+## 1. Nomenclatura Canónica (regla de commits de `AGENTS.md` §6)
 
 Todo commit realizado en el repositorio DEBE seguir estricta y obligatoriamente la siguiente estructura canónica:
 

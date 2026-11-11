@@ -29,7 +29,7 @@ El formato de versión es: `MAJOR.MINOR.PATCH` (ejemplo: `v0.1.0`, `v1.0.0`).
 ### Fragmentos en ramas, consolidación en G5
 Para que varios módulos avancen en paralelo sin conflictos, **ninguna rama de trabajo edita `CHANGELOG.md`**:
 1. Cada módulo registra sus cambios en `changelog.d/[XX_nombre].md`; los cambios transversales, en `changelog.d/proyecto-[descripcion].md`. El formato está en [`changelog.d/README.md`](../../changelog.d/README.md) y lo valida `npm run check:docs`.
-2. En G5, DevOps ejecuta `npm run release:changelog -- X.Y.Z` (primero con `--dry-run`): une los fragmentos por sección, antepone el ID del módulo, borra los fragmentos y registra la versión en `incluido_en_release` de los módulos incluidos.
+2. En G5, DevOps ejecuta `npm run release:changelog -- X.Y.Z` (primero con `--dry-run`): une los fragmentos por sección, antepone el ID del módulo, borra los fragmentos, registra la versión en `incluido_en_release` de los módulos incluidos y fija esa versión en `package.json` y `package-lock.json`. Qué módulos entraron en cada versión se consulta con `npm run status`.
 3. Solo pueden entrar en un release los fragmentos de módulos que superaron G4.
 
 

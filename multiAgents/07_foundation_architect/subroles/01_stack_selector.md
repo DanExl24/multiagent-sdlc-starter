@@ -31,7 +31,7 @@ Es el especialista que responde **"¿con qué lo construimos?"** una vez que se 
 ## 2. Técnica de referencia: cómo decide
 
 1. **Lista de factores que deciden**, sacada del PRD y de la lectura del Líder. Por ejemplo: ¿hay tiempo real?, ¿qué volumen se espera?, ¿hay datos sensibles o normativa?, ¿dónde se despliega?, ¿qué conoce el equipo?, ¿cuánto dura el proyecto (perfil `sprint`, `standard` o `enterprise`)?
-2. **Una pieza por capa:** lenguaje y framework del backend, framework del frontend, base de datos, capa de acceso a datos (un QueryBuilder tipado, para cumplir la regla de oro de no usar SQL crudo), pruebas y despliegue.
+2. **Una pieza por capa:** lenguaje y framework del backend, framework del frontend, base de datos, capa de acceso a datos (un QueryBuilder tipado, para cumplir la prohibición del SQL crudo de `AGENTS.md` §6), pruebas y despliegue.
 3. **Compatibilidad con el repositorio:** el stack debe permitir contratos tipados compartidos entre backend y frontend (la regla del contrato previo) y la verificación de cero `any` si es TypeScript. Si se elige otro lenguaje, el ADR explica cómo se cumplen esas reglas de oro.
 4. **Recomendación única:** el stack propuesto, por qué encaja con cada factor y qué alternativas principales se descartaron y por qué.
 5. **Conformidad:** se presenta en pocas líneas y se pregunta "¿estás de acuerdo con este stack?". Si el desarrollador objeta una pieza, se reconsidera esa pieza, no todo el stack.
