@@ -4,6 +4,8 @@
 > **Versión:** 1.0.0  
 > **Responsable:** Frontend Lead Engineer & UI/UX Specialist (Fase 3B)  
 > **Estado:** PENDIENTE DE APROBACIÓN (Stage-Gate G3B)  
+> **Naturaleza:** Vivo (los tokens cambian con aprobación de UI en G3B)  
+> **Última revisión:** {{INIT_DATE}}  
 
 ---
 

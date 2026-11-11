@@ -1,9 +1,11 @@
 # 🧭 [XX. Nombre del Módulo] — Índice del Módulo
 
 > **Módulo:** [XX_nombre_modulo]  
-> **Responsable de este índice:** Product Manager Lead (lo crea) · cada rol actualiza su fila  
-> **Estado del módulo:** [DISCOVERY / ESPECIFICADO / CONTRATADO / EN CONSTRUCCIÓN / EN QA / LIBERADO]  
-> **Versión vigente:** [vX.Y.Z]
+> **Responsable:** Product Manager Lead (lo crea) · cada rol actualiza su fila  
+> **Estado:** [DISCOVERY / ESPECIFICADO / CONTRATADO / EN CONSTRUCCIÓN / EN QA / LIBERADO]  
+> **Versión vigente:** [vX.Y.Z]  
+> **Naturaleza:** Vivo  
+> **Última revisión:** [AAAA-MM-DD]
 
 Punto de entrada del módulo para personas y agentes. **Este archivo enlaza; no copia contenido.** Si algo se explica aquí con detalle, debe moverse a su documento dueño.
 

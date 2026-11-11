@@ -3,6 +3,9 @@
 > **Módulo:** [XX. Nombre del Módulo]  
 > **Responsable:** Software Architect Lead  
 > **Consumidores:** Backend Lead Engineer & Frontend Lead Engineer  
+> **Estado:** [BORRADOR / REVISIÓN / APROBADO]  
+> **Naturaleza:** Vivo (cambios estructurales tras G2 requieren ADR)  
+> **Última revisión:** [AAAA-MM-DD]  
 
 ---
 

@@ -3,7 +3,10 @@
 > **Proyecto:** `{{PROJECT_NAME}}`  
 > **Estándar Semántico:** SemVer 2.0.0 (`MAJOR.MINOR.PATCH`)  
 > **Convención Git:** `[vX.Y.Z] tipo(scope): descripcion`  
-> **Última Actualización:** 2026-10-07  
+> **Responsable:** DevOps Lead & Release Manager (Fase 5)  
+> **Estado:** VIGENTE  
+> **Naturaleza:** Vivo (se añade una fila por versión; las filas publicadas no se reescriben)  
+> **Última revisión:** {{INIT_DATE}}  
 
 ---
 

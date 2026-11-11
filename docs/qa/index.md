@@ -3,8 +3,9 @@
 > **Proyecto:** `{{PROJECT_NAME}}`  
 > **Versión Activa:** `v1.0.0`  
 > **Responsable:** QA Lead & Security Compliance Director (Fase 4)  
-> **Estado de Certificación:** LISTO PARA LANZAMIENTO / BASELINE CERTIFICADO  
-> **Última Auditoría:** 2026-10-07  
+> **Estado:** LISTO PARA LANZAMIENTO / BASELINE CERTIFICADO  
+> **Naturaleza:** Vivo (panel consolidado; los reportes por versión son inmutables)  
+> **Última revisión:** {{INIT_DATE}}  
 
 ---
 

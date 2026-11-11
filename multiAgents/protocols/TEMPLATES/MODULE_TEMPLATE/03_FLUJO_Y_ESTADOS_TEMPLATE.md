@@ -1,7 +1,10 @@
 # 🔄 PLANTILLA: 03_FLUJO_Y_ESTADOS — [Nombre del Módulo]
 
 > **Módulo:** [XX. Nombre del Módulo]  
-> **Responsable:** Product Manager & Software Architect  
+> **Responsable:** Product Manager Lead & Software Architect Lead  
+> **Estado:** [BORRADOR / REVISIÓN / APROBADO]  
+> **Naturaleza:** Vivo  
+> **Última revisión:** [AAAA-MM-DD]  
 
 ---
 

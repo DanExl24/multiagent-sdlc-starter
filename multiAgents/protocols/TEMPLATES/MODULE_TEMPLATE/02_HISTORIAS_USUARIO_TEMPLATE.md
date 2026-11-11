@@ -1,8 +1,11 @@
 # 📋 PLANTILLA: 02_HISTORIAS_USUARIO — [Nombre del Módulo]
 
 > **Módulo:** [XX. Nombre del Módulo]  
-> **Responsable:** Product Manager Agent  
-> **Estándar:** INVEST + BDD (Given-When-Then)
+> **Responsable:** Product Manager Lead  
+> **Estándar:** INVEST + BDD (Given-When-Then)  
+> **Estado:** [BORRADOR / REVISIÓN / APROBADO]  
+> **Naturaleza:** Vivo (cambios tras G1 requieren nueva firma)  
+> **Última revisión:** [AAAA-MM-DD]
 
 ---
 

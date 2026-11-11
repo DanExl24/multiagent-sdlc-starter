@@ -3,7 +3,9 @@
 > **Proyecto:** `{{PROJECT_NAME}}`  
 > **Dominio:** `{{PROJECT_DOMAIN}}`  
 > **Responsable:** Product Manager Lead (Fase 1), con aportes de Arquitectura  
-> **Naturaleza:** Vivo. Se amplía en cada módulo; un término no se redefine sin avisar a los roles que lo usan.
+> **Estado:** EN CONSTRUCCIÓN  
+> **Naturaleza:** Vivo. Se amplía en cada módulo; un término no se redefine sin avisar a los roles que lo usan.  
+> **Última revisión:** {{INIT_DATE}}
 
 Un término de negocio significa **lo mismo** en el PRD, en las historias, en los contratos Zod, en la base de datos y en la interfaz. Si dos personas o agentes usan palabras distintas para lo mismo, o la misma palabra para cosas distintas, el término se fija aquí antes de seguir.
 

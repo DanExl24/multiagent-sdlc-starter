@@ -26,4 +26,20 @@
 - **Lo transversal vive aparte de lo de cada módulo.** Los documentos de `project/` no acumulan detalle de módulos: las historias, el DDL y las reglas específicas viven en `modules/`.
 - **Una responsabilidad por archivo.** Si un documento empieza a crecer en temas distintos, se divide.
 - **Los módulos enlazan, no copian.** El contrato de un módulo vive en `contracts/` y sus decisiones en `adrs/`; la carpeta del módulo los referencia.
-- **Rutas verificadas.** `npm run check:docs` falla si un documento menciona una ruta de `docs/` que no existe.
+- **Rutas verificadas.** `npm run check:docs` falla si un documento menciona una ruta de `docs/` que no existe o si un enlace no es relativo.
+- **Tamaño acotado.** `check:docs` avisa cuando un documento de `docs/` supera las 400 líneas (300 en los `ROLE.md` y subroles): es la señal para dividirlo.
+
+## Encabezado estándar
+
+Los documentos de `project/`, `modules/`, el panel `qa/index.md` y las plantillas de módulo abren con un bloque de cita que incluye, como mínimo, estos campos. `check:docs` los exige.
+
+```markdown
+> **Responsable:** Rol dueño del documento (Fase N)
+> **Estado:** BORRADOR | PENDIENTE DE APROBACIÓN (Stage-Gate GN) | APROBADO | VIGENTE | ...
+> **Naturaleza:** Vivo | Inmutable (con una aclaración breve si hace falta)
+> **Última revisión:** AAAA-MM-DD
+```
+
+- **Vivo:** se edita en el sitio; cada cambio relevante actualiza "Última revisión".
+- **Inmutable:** una vez publicado no se reescribe; las correcciones se añaden como un documento o versión nueva.
+- Se pueden añadir otros campos (Proyecto, Módulo, Versión...), pero los cuatro anteriores no se renombran.

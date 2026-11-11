@@ -3,6 +3,17 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.6.0] - 2026-11-10
+
+### Added
+- **Encabezado estándar de documentos:** los documentos de `docs/project/`, `docs/modules/`, `docs/qa/index.md` y las plantillas de módulo declaran `Responsable`, `Estado`, `Naturaleza` (Vivo o Inmutable) y `Última revisión`. La convención está en `docs/README.md` y la regla G de `check:docs` la exige.
+- Regla H de `check:docs` (solo aviso): señala los documentos que superan 400 líneas en `docs/` o 300 en `ROLE.md` y subroles, para dividirlos antes de que se vuelvan monolitos.
+
+### Changed
+- Encabezados normalizados: "Autor Líder" pasa a "Responsable"; "Fecha", "Fecha de Emisión", "Última Actualización" y "Última Auditoría" pasan a "Última revisión", con `{{INIT_DATE}}` en los documentos de proyecto para que `init-project` ponga la fecha real.
+
+---
+
 ## [1.5.0] - 2026-11-10
 
 ### Added

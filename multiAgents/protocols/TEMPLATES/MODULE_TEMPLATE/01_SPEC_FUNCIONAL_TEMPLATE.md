@@ -3,7 +3,9 @@
 > **Módulo:** [XX. Nombre del Módulo]  
 > **Dominio:** [Autenticación / Core / Operaciones / Facturación / Reportes / Analytics]  
 > **Responsable:** Product Manager Lead  
-> **Estado:** [BORRADOR / REVISIÓN / APROBADO]
+> **Estado:** [BORRADOR / REVISIÓN / APROBADO]  
+> **Naturaleza:** Vivo (cambios tras G1 requieren nueva firma)  
+> **Última revisión:** [AAAA-MM-DD]
 
 ---
 

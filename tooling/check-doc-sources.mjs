@@ -11,6 +11,10 @@
  *   F. Los enlaces Markdown son relativos al archivo (nunca "file://" ni rutas absolutas)
  *      y su destino existe. Se ignoran URLs externas, anclas, placeholders y bloques de código;
  *      en multiAgents/protocols/TEMPLATES/ solo se exige que sean relativos.
+ *   G. Los documentos de docs/project/, docs/modules/, docs/qa/index.md y las plantillas de
+ *      módulo llevan el encabezado estándar: Responsable, Estado, Naturaleza y Última revisión.
+ *   H. (Aviso, no bloquea) Documentos que superan el umbral de tamaño: 400 líneas en docs/,
+ *      300 en ROLE.md y subroles.
  *   C. Los IDs de compuerta del diagrama de AGENTS.md coinciden con la tabla de
  *      .workflow/STAGE_GATES.md.
  */
@@ -128,9 +132,50 @@ for (const file of walk(rootDir)) {
   });
 }
 
+// G. Encabezado estándar en los documentos de proyecto, de módulo y sus plantillas
+const HEADER_FIELDS = ['Responsable', 'Estado', 'Naturaleza', 'Última revisión'];
+const HEADER_SCOPE = [
+  /^docs\/project\/[^/]+\.md$/,
+  /^docs\/qa\/index\.md$/,
+  /^docs\/modules\/.+\.md$/,
+  /^multiAgents\/protocols\/TEMPLATES\/MODULE_TEMPLATE\/\d\d_[^/]+_TEMPLATE\.md$/,
+];
+for (const file of walk(rootDir)) {
+  const name = rel(file);
+  if (!HEADER_SCOPE.some((re) => re.test(name))) continue;
+  const header = new Map();
+  for (const line of fs.readFileSync(file, 'utf-8').split(/\r?\n/).slice(0, 20)) {
+    const m = line.match(/^>\s*\*\*([^*:]+):\*\*\s*(.*?)\s*$/);
+    if (m) header.set(m[1].trim(), m[2]);
+  }
+  for (const field of HEADER_FIELDS) {
+    if (!header.get(field)) errors.push(`${name}: falta el campo de encabezado "> **${field}:**" (ver docs/README.md, "Encabezado estándar").`);
+  }
+  const nature = header.get('Naturaleza');
+  if (nature && !/^(Vivo|Inmutable)\b/.test(nature)) errors.push(`${name}: "Naturaleza" debe empezar por "Vivo" o "Inmutable".`);
+}
+
+// H. Tamaño: aviso (no bloquea) cuando un documento se acerca a monolito
+const SIZE_LIMITS = [
+  { re: /^docs\/.+\.md$/, max: 400 },
+  { re: /^multiAgents\/.+\/(?:ROLE\.md|subroles\/[^/]+\.md)$/, max: 300 },
+];
+const warnings = [];
+for (const file of walk(rootDir)) {
+  const name = rel(file);
+  const limit = SIZE_LIMITS.find(({ re }) => re.test(name));
+  if (!limit) continue;
+  const lines = fs.readFileSync(file, 'utf-8').split(/\r?\n/).length;
+  if (lines > limit.max) warnings.push(`${name} tiene ${lines} líneas (umbral ${limit.max}). Considera dividirlo por responsabilidad.`);
+}
+if (warnings.length > 0) {
+  console.warn('⚠️  Documentos que superan el umbral de tamaño:');
+  for (const w of warnings) console.warn(`   - ${w}`);
+}
+
 if (errors.length > 0) {
   console.error('❌ Política de fuentes de verdad incumplida (ver AGENTS.md §0):');
   for (const e of errors) console.error(`   - ${e}`);
   process.exit(1);
 }
-console.log('✅ Fuentes de verdad coherentes: sin citas numeradas fuera de AGENTS.md, puentes limpios, diagrama alineado con STAGE_GATES.md, rutas de docs/ existentes y enlaces relativos válidos.');
+console.log('✅ Fuentes de verdad coherentes: sin citas numeradas fuera de AGENTS.md, puentes limpios, diagrama alineado con STAGE_GATES.md, rutas de docs/ existentes, enlaces relativos válidos y encabezados estándar.');

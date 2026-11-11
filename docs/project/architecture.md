@@ -3,9 +3,10 @@
 > **Proyecto:** `{{PROJECT_NAME}}`  
 > **Dominio:** `{{PROJECT_DOMAIN}}`  
 > **Versión:** 1.0.0  
-> **Autor Líder:** Software Architect Lead (Fase 2)  
+> **Responsable:** Software Architect Lead (Fase 2)  
 > **Estado:** PENDIENTE DE APROBACIÓN (Stage-Gate G2)  
-> **Fecha:** 2026-10-07  
+> **Naturaleza:** Vivo (los cambios estructurales se justifican con un ADR)  
+> **Última revisión:** {{INIT_DATE}}  
 
 ---
 
