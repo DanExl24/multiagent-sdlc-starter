@@ -3,6 +3,18 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.10.0] - 2026-11-10
+
+### Added
+- **Contrato del Subrol:** los 26 subroles abren con un bloque vinculante (responsabilidad, cuándo se activa, entradas, salidas, límites y criterio de salida). Las salidas citan los IDs del Catálogo de Entregables, así que encajan con los perfiles. El resto de cada documento pasa a ser la técnica de referencia.
+- `multiAgents/protocols/SKILLS_INTEGRATION_PROTOCOL.md`: cómo usar skills externas (por ejemplo, ECC) como técnica de un subrol sin alterar el proceso. Define la precedencia (invariantes > perfil > contrato > técnica), los criterios que excluyen una skill (fases o compuertas propias, commits o merges autónomos, bucles sin alto, escritura en `.workflow/` o en `CHANGELOG.md`, equipos que reasignan roles), la lista de skills de orquestación de ECC excluidas, el uso de revisores como asesores, el registro obligatorio en la bitácora y una tabla orientativa de correspondencias.
+- Regla K de `check:docs`: todo subrol debe tener su contrato con los seis campos declarados.
+
+### Fixed
+- El subrol de modelado DDL indicaba que el DDL vive en `docs/project/architecture.md`; desde la reorganización de `docs/` vive en el `04_ARQUITECTURA_Y_CODIGO.md` de cada módulo.
+
+---
+
 ## [1.9.0] - 2026-11-10
 
 ### Added

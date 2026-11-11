@@ -7,6 +7,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Construir la red de pruebas del backend siguiendo el ciclo Red-Green-Refactor. |
+| **Se activa cuando** | Antes de cada historia o endpoint, al recibir un defecto de QA (primero el test en rojo), en cada refactor y antes de emitir el walkthrough. |
+| **Entradas** | Criterios Gherkin, contrato y reglas de negocio del módulo. |
+| **Salidas** | Suite Vitest del módulo con casos felices y negativos (400, 401, 403, 404, 409 y 422), en verde y sin regresiones (`vitest_backend`). |
+| **Límites** | No hace E2E ni pruebas de carga, no tiene poder de veto y nunca silencia ni comenta un test que falla. |
+| **Criterio de salida** | §7 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el **escudo de defensa interna del Backend**. Escribe, ejecuta y mantiene las pruebas automatizadas de integración y unitarias que validan cada endpoint, regla de negocio y consulta antes de que el código sea transferido al QA Lead.
 

@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Verificar los flujos reales en navegador y la accesibilidad. |
+| **Se activa cuando** | En el G4 de todo módulo con vista web. |
+| **Entradas** | Walkthrough, interfaz desplegada y Design System. |
+| **Salidas** | Spec E2E del módulo (`e2e_a11y`, o `e2e_smoke` si el perfil lo indica) y escaneo `npm run audit:a11y` sin violaciones críticas. |
+| **Límites** | No repara componentes ni estilos, no prueba la base de datos de forma aislada y no ejecuta pruebas de carga. |
+| **Criterio de salida** | §4 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista de QA responsable de validar la **aplicación web desde la perspectiva real del usuario final**. Utiliza **Playwright** y **Axe-core** para controlar navegadores Chromium headless, simulando logins, clics, llenado de formularios de alta densidad, apertura de modales y transiciones de ruta, asegurando que la interfaz no solo compile, sino que sea plenamente operativa y accesible bajo el estándar **WCAG 2.1/2.2 AA**.
 

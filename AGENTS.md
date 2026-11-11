@@ -20,6 +20,7 @@
 | Estado vivo del ciclo de vida | `.workflow/current_state.json` (pista de proyecto y release) y `.workflow/modules/*.json` (una pista por módulo), validados contra `STAGE_GATES.md` con `npm run validate:state`. Vista consolidada: `npm run status` |
 | Detalle operativo de cada rol y subrol | `multiAgents/[rol]/ROLE.md` y `multiAgents/[rol]/subroles/` |
 | Protocolos de traspaso, commits, SemVer y RFC | `multiAgents/protocols/` |
+| Uso de skills externas (por ejemplo, ECC): contrato vs. técnica de cada subrol, precedencia y skills prohibidas | [`multiAgents/protocols/SKILLS_INTEGRATION_PROTOCOL.md`](multiAgents/protocols/SKILLS_INTEGRATION_PROTOCOL.md). Cada subrol abre con su "Contrato del Subrol", vinculante |
 | Accesos de entrada (`README.md`, `LANDING_PROMPT.md` y archivos puente para otras herramientas) | Solo **puentes**: describen y enlazan; **nunca** numeran reglas ni compuertas |
 
 **Política de citas:** ningún documento distinto de este manual puede citar una Regla de Oro por su número (`Regla de Oro #N`). Se cita por nombre y se enlaza a la sección 6 de este archivo. Las reglas propias de un rol viven en su `ROLE.md` como reglas locales y no usan la numeración de las Reglas de Oro. `npm run check:docs` verifica esta política en CI.
@@ -123,6 +124,7 @@ flowchart LR
 │       ├── COLLABORATION_PROTOCOL_TECH_TRIO.md # Sincronización Arquitecto ↔ Backend ↔ Frontend
 │       ├── BACKEND_FRONTEND_SUBROLES_SYNC_PROTOCOL.md # Protocolo Exclusivo Subroles Backend ↔ Frontend
 │       ├── TECHNICAL_PROPOSALS_PROTOCOL.md # Protocolo de Iniciativas y Propuestas Técnicas (RFCs)
+│       ├── SKILLS_INTEGRATION_PROTOCOL.md # Uso de skills externas: contrato vs. técnica y skills prohibidas
 │       ├── GIT_COMMIT_CONVENTION.md     # Estándar canónico: [vX.Y.Z] tipo(scope): descripcion
 │       ├── SEMVER_CHANGELOG_PROTOCOL.md # Reglas de SemVer y Keep a Changelog
 │       └── TEMPLATES/                   # Plantillas para PRD, ADRs, contratos y módulos
@@ -221,7 +223,9 @@ Si eres un agente nuevo ingresando al repositorio:
 │ 3. Si hay ambigüedades, NO improvises: abre un ticket en tu bitácora.                  │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ PASO 3: EJECUCIÓN CON KIT DE SUBROLES                                                  │
-│ 1. Convoca al subrol especializado exacto para la tarea (no cargues todo a la vez).    │
+│ 1. Convoca al subrol especializado exacto para la tarea (no cargues todo a la vez)     │
+│    y cumple su "Contrato del Subrol". Si tienes skills externas, pueden aportar la     │
+│    técnica según multiAgents/protocols/SKILLS_INTEGRATION_PROTOCOL.md.                 │
 │ 2. Si detectas código repetitivo o deuda técnica, formula un RFC bajo                  │
 │    multiAgents/protocols/TECHNICAL_PROPOSALS_PROTOCOL.md.                              │
 ├────────────────────────────────────────────────────────────────────────────────────────┤

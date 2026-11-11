@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Definir la macroestructura: límites modulares, dependencias entre módulos, modelo C4 y ADRs. |
+| **Se activa cuando** | En la línea base del proyecto (G2), al crear un módulo y ante cualquier decisión estructural o tecnología nueva. |
+| **Entradas** | PRD firmado en G1, especificaciones de módulo y capas activas en `.workflow/project.json`. |
+| **Salidas** | `docs/project/architecture.md` con el C4 que exija el perfil (`arquitectura_c4` o `arquitectura_c4_reducida`), dependencias del módulo reflejadas en `depende_de` de su archivo de estado y ADRs en `docs/adrs/` (`adr_decisiones` si el perfil lo exige). |
+| **Límites** | No diseña el DDL (Subrol 02), los contratos Zod (Subrol 03) ni la matriz RBAC (Subrol 04). |
+| **Criterio de salida** | §6 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista del Arquitecto de Software responsable de la **macro-estructura y la topología del sistema**. Define los límites modulares (*Bounded Contexts* de Domain-Driven Design), asegura que los módulos del sistema no se conviertan en un espagueti monolítico y custodia la separación estricta entre el **Core Compartido** (`core/`) y los **Módulos de Negocio** (`modules/`).
 

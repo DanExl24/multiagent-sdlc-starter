@@ -7,6 +7,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Implementar las reglas de negocio y las máquinas de estado en servicios desacoplados de HTTP. |
+| **Se activa cuando** | Al crear un servicio, al definir transiciones de estado, al validar cupos o concurrencia y al proteger estados terminales. |
+| **Entradas** | Reglas `RN-[MOD]-XX`, flujo de estados del módulo y DTOs ya validados por el gateway. |
+| **Salidas** | Servicios `*.service.ts` y `*.rules.ts` con errores de dominio tipados, que el gateway traduce a 403 o 409. |
+| **Límites** | No recibe `req` ni `res`, no escribe SQL y no usa `any`. Toda entidad en estado terminal rechaza mutaciones con 409. |
+| **Criterio de salida** | §6 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el **cerebro del sistema de negocio**. Encapsula toda la inteligencia, cálculos de dominio, transiciones de estado y validaciones regulatorias que definen el comportamiento medular de la aplicación.
 

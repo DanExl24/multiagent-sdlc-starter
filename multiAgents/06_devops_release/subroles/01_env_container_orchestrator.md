@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Garantizar entornos reproducibles y la gobernanza de variables y secretos. |
+| **Se activa cuando** | Al iniciar el proyecto, al aparecer una nueva dependencia de infraestructura o variable de entorno y ante fallos de entorno. |
+| **Entradas** | Contenedores definidos en la arquitectura y variables que piden los ingenieros. |
+| **Salidas** | Manifiestos de contenedores, `.env.example` completo y `.gitignore` auditado contra filtraciones de credenciales. |
+| **Límites** | No escribe migraciones ni seeders (Subrol 02), no ejecuta las suites de pruebas y no diseña el DDL. |
+| **Criterio de salida** | §6 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista de DevOps responsable de la **infraestructura reproducible, el aislamiento de contenedores y la configuración segura de entornos**. Asegura que cualquier desarrollador, evaluador de QA o el Director Humano pueda levantar el ecosistema completo en cualquier máquina con un solo comando, con paridad absoluta entre desarrollo, pruebas y producción.
 

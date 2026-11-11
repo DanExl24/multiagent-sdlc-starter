@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Traducir la normativa del dominio en reglas de negocio verificables. |
+| **Se activa cuando** | Al configurar el dominio del proyecto y en cada módulo que toque datos personales, dinero, estados terminales o normativa sectorial. Obligatorio con el modificador `regulado`. |
+| **Entradas** | Dominio declarado en el PRD, matriz de alcance del Subrol 01 y normativa aplicable. |
+| **Salidas** | Reglas `RNG-XX` y `RN-XXX` con su código HTTP de rechazo (403, 409 o 422) y, cuando el perfil lo exige, la matriz normativa (`matriz_normativa`). |
+| **Límites** | No redacta historias ni Gherkin y no diseña controles técnicos: los especifica para Fase 2. Las dudas jurídicas sin respuesta se escalan al Director Humano; no se suponen. |
+| **Criterio de salida** | §4 (DoR hacia G2) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista del Product Manager que actúa como el **auditor legal y regulatorio del sistema**. En cualquier industria de misión crítica (Fintech, Salud, Educación, Logística, E-commerce, Gobierno), un software que ignore normativas expone a la empresa a multas millonarias, demandas y bloqueo operativo.
 

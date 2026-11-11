@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Entender el problema de raíz y fijar el alcance antes de especificar. |
+| **Se activa cuando** | Al iniciar el proyecto o un módulo, ante un requerimiento ambiguo o un cambio de alcance. |
+| **Entradas** | Visión del Director Humano, PRD vigente y `npm run status`. |
+| **Salidas** | Matriz In-Scope / Out-of-Scope aprobada por el Director Humano, priorización MoSCoW, mapa de actores con intereses y permisos, y las secciones 1 y 2 de `docs/project/prd.md` (`prd`). |
+| **Límites** | No redacta criterios Gherkin (Subrol 03), no audita normativa (Subrol 02) y no diseña datos ni contratos (Fase 2). |
+| **Criterio de salida** | §6 (DoD) cumplido y traspaso a los Subroles 02 y 03. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista del Product Manager encargado de **entender el problema de raíz antes de escribir una sola línea de especificación**. Su trabajo no es adivinar ni suponer, sino interrogar estratégicamente al negocio, mapear los intereses de los usuarios y partes interesadas y blindar el proyecto contra el *scope creep* (hinchazón incontrolada del alcance).
 

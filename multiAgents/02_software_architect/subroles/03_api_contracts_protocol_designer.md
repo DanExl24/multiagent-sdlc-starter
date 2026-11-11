@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Custodiar la regla del contrato previo: contratos Zod, rutas, envelope y códigos de error de cada módulo. |
+| **Se activa cuando** | En el G2 de cada módulo y ante cualquier cambio de API, que genera una nueva versión del contrato y vuelve a G2. |
+| **Entradas** | Historias y criterios del módulo, DDL (Subrol 02) y matriz RBAC (Subrol 04). |
+| **Salidas** | Contrato del módulo en la ruta de contratos de `.workflow/project.json` (`[XX_nombre].contract.ts`), con esquemas de request y response, envelope y códigos de error (`contrato_zod`). Con modificadores, también `contrato_idempotencia` o `contrato_eventos`. |
+| **Límites** | No implementa middlewares, clientes HTTP ni stores, y no define tablas. |
+| **Criterio de salida** | §6 (DoD) cumplido y `npm run test:contracts` en verde. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista del Arquitecto de Software custodio de la **regla rectora del proyecto (`AGENTS.md` §6): "PROHIBIDO tirar código sin contrato previo"**. Redacta los contratos de datos formales en TypeScript usando **Zod**, permitiendo que el Backend valide solicitudes en tiempo de ejecución y el Frontend consuma tipos inferidos en tiempo de compilación, eliminando desalineaciones y bugs en producción.
 

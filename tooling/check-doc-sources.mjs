@@ -19,6 +19,8 @@
  *      de un módulo, ese módulo existe en .workflow/modules/.
  *   J. Las bitácoras por módulo (multiAgents/[rol]/worklog/[XX_nombre].md) corresponden a un
  *      módulo existente.
+ *   K. Todo subrol (multiAgents/[rol]/subroles/*.md) abre con "## 0. Contrato del Subrol" y
+ *      declara Responsabilidad, Se activa cuando, Entradas, Salidas, Límites y Criterio de salida.
  *   C. Los IDs de compuerta del diagrama de AGENTS.md coinciden con la tabla de
  *      .workflow/STAGE_GATES.md.
  */
@@ -193,6 +195,25 @@ for (const file of walk(path.join(rootDir, 'multiAgents'))) {
     continue;
   }
   if (!moduleIds.has(match[1])) errors.push(`${name}: el módulo "${match[1]}" no existe en .workflow/modules/.`);
+}
+
+// K. Todo subrol abre con su contrato vinculante (ver SKILLS_INTEGRATION_PROTOCOL.md)
+const CONTRACT_FIELDS = ['Responsabilidad', 'Se activa cuando', 'Entradas', 'Salidas', 'Límites', 'Criterio de salida'];
+for (const file of walk(path.join(rootDir, 'multiAgents'))) {
+  const name = rel(file);
+  if (!/^multiAgents\/[^/]+\/subroles\/[^/]+\.md$/.test(name)) continue;
+  const text = fs.readFileSync(file, 'utf-8');
+  const start = text.search(/^## 0\. Contrato del Subrol\s*$/m);
+  if (start === -1) {
+    errors.push(`${name}: falta la sección "## 0. Contrato del Subrol" (ver multiAgents/protocols/SKILLS_INTEGRATION_PROTOCOL.md).`);
+    continue;
+  }
+  const next = text.slice(start + 1).search(/^## /m);
+  const block = next === -1 ? text.slice(start) : text.slice(start, start + 1 + next);
+  for (const field of CONTRACT_FIELDS) {
+    const row = block.match(new RegExp(`^\\|\\s*\\*\\*${field}\\*\\*\\s*\\|(.*)\\|\\s*$`, 'm'));
+    if (!row || !row[1].trim()) errors.push(`${name}: el contrato no declara "${field}".`);
+  }
 }
 
 if (warnings.length > 0) {

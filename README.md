@@ -147,7 +147,7 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 │   ├── 04_frontend_engineer/            # ROLE.md y subroles de Frontend
 │   ├── 05_qa_security_tester/           # ROLE.md y arsenal de los 4 pilares
 │   ├── 06_devops_release/               # ROLE.md y subroles de Operaciones
-│   └── protocols/                       # Handshakes, Tech Trio, Git Commit y Templates
+│   └── protocols/                       # Handshakes, Tech Trio, Git Commit, integración de skills externas y Templates
 │
 ├── docs/                                # 📚 Artefactos de Ingeniería (Fuente de la Verdad)
 │   ├── README.md                        # Índice maestro de la documentación

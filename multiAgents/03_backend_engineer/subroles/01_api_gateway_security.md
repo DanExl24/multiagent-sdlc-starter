@@ -7,6 +7,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Implementar la capa HTTP: rutas, validación Zod perimetral, autenticación, autorización y envelope. |
+| **Se activa cuando** | Al implementar un endpoint, al proteger una ruta y cuando cambia un contrato. |
+| **Entradas** | Contrato Zod aprobado en G2 y matriz RBAC del módulo. |
+| **Salidas** | Archivos `*.routes.ts` y `*.controller.ts` en la carpeta de módulos del backend (`.workflow/project.json`), con rutas protegidas (`rutas_protegidas`) y respuestas en el envelope estándar. |
+| **Límites** | Sin SQL ni reglas de dominio, sin respuestas fuera del envelope y sin `any`. |
+| **Criterio de salida** | §7 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el **guardián del perímetro de la API REST**. Es el primer componente en responder cuando una petición HTTP llega desde la red y el último en estructurar la respuesta antes de enviarla de vuelta al cliente.
 

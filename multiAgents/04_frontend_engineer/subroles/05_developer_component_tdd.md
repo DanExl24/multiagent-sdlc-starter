@@ -9,6 +9,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Probar componentes y stores antes de entregar la interfaz a QA. |
+| **Se activa cuando** | Antes de cada componente o vista (prueba primero) y al recibir defectos de interfaz. |
+| **Entradas** | Historias y criterios, contratos y Design System. |
+| **Salidas** | Pruebas unitarias de componentes y stores en verde (`tests_componentes`) y `check:no-any` sin violaciones (`no_any_frontend`). |
+| **Límites** | No sustituye las pruebas E2E de QA. Los mocks se usan solo dentro de las pruebas, nunca en la aplicación entregada. |
+| **Criterio de salida** | §5 (criterio de salida hacia QA) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista del Frontend Lead responsable del **aseguramiento de calidad interno a nivel de código y componentes**. Actúa como el primer filtro defensivo (*Shift-Left Testing*): ningún componente base, modal, vista, formulario o store de Pinia/Zustand puede ser entregado al QA Lead sin contar con una suite de pruebas unitarias que verifique su comportamiento en aislamiento.
 

@@ -7,6 +7,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Construir las pantallas de negocio, los formularios y las rutas protegidas del módulo. |
+| **Se activa cuando** | Al implementar la interfaz de un módulo, sus modales y formularios, y sus rutas con control por rol. |
+| **Entradas** | Historias y criterios del módulo, kit base (Subrol 01) y stores y servicios (Subrol 02). |
+| **Salidas** | Vistas del módulo con los estados Loading, Empty, Error y Success (`vistas_design_system`) y rutas con guardias RBAC. |
+| **Límites** | Solo usa componentes del kit base, sin URLs escritas a mano, sin colores fuera del Design System y sin `any`. |
+| **Criterio de salida** | §7 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el **constructor de la experiencia de usuario de los módulos del sistema**. Traduce las Historias de Usuario (HUs) del Product Manager en pantallas intuitivas, fluidas y profesionales con las que interactúan a diario los usuarios en sus diferentes roles.
 

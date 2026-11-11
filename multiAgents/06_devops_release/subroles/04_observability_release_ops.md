@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Asegurar la salud operacional, el respaldo y los manuales de operación. |
+| **Se activa cuando** | Al preparar cada release, ante incidencias y al incorporar servicios nuevos. |
+| **Entradas** | Arquitectura, entornos (Subrol 01) y seeders (Subrol 02). |
+| **Salidas** | Endpoint `/api/health` operativo (`docker_health`), respaldo y restauración probados, runbook (`runbook` o `runbook_minimo` según el perfil) y plan de rollback ensayado (`rollback_probado`) cuando el perfil lo exige. |
+| **Límites** | No diseña esquemas, no construye interfaz y no ejecuta pruebas de intrusión. |
+| **Criterio de salida** | §7 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista de DevOps responsable de la **salud operacional del sistema en ejecución, los procedimientos de recuperación ante desastres y la entrega formal al usuario**. Diseña los endpoints de telemetría y healthcheck, establece las políticas de copias de seguridad de la base de datos (`pg_dump`) y redacta los manuales paso a paso (Runbooks) para que el Director Humano y los operadores gestionen la plataforma con total certidumbre.
 

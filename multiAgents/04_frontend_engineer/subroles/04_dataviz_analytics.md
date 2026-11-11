@@ -7,6 +7,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Construir dashboards y gráficas que muestran datos reales del sistema. |
+| **Se activa cuando** | Al crear o actualizar dashboards por rol, gráficas o tarjetas KPI, y ante problemas de rendimiento o tamaño en las gráficas. |
+| **Entradas** | Endpoints de métricas del backend y paleta del Design System. |
+| **Salidas** | Dashboards y componentes de gráfica conectados a datos en vivo, adaptables al tamaño de pantalla y sin fugas de memoria. |
+| **Límites** | Nunca muestra datos inventados ni mocks. Toda gráfica gestiona el redimensionado y su limpieza, y usa solo colores del Design System. |
+| **Criterio de salida** | §7 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el **maestro de la visualización de datos y los tableros de control**. Es el especialista encargado de transformar millones de bytes de información relacional en gráficas interactivas, claras y elegantes que permiten a los directivos, operadores y administradores entender el estado del negocio en segundos.
 

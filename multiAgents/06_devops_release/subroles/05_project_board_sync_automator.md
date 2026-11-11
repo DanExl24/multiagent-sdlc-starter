@@ -7,6 +7,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Sincronizar las historias y los eventos de desarrollo con el tablero de issues. |
+| **Se activa cuando** | Cuando se crean o cambian historias (G1) y ante eventos de PR, tests o commits. |
+| **Entradas** | `02_HISTORIAS_USUARIO.md` de cada módulo y el estado que muestra `npm run status`. |
+| **Salidas** | Issues `[HU-XX-YY]` idempotentes, con etiquetas de módulo y compuerta, y un tablero coherente con el repositorio. |
+| **Límites** | El tablero refleja el repositorio, no al revés: no modifica la especificación ni los archivos de `.workflow/` y no aprueba compuertas. |
+| **Criterio de salida** | Cada historia tiene su issue, no hay duplicados y el tablero coincide con `npm run status`. |
+
+---
 ## 1. Misión y Propósito
 
 El **Project Board & Issue Lifecycle Automator** es el especialista de DevOps responsable de garantizar la **trazabilidad bidireccional absoluta** entre los artefactos documentales en disco y las herramientas de administración ágil de proyectos (GitHub Projects V2 y GitHub Issues).

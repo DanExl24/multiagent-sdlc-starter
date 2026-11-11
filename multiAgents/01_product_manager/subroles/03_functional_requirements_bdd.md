@@ -12,6 +12,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Convertir el descubrimiento y la normativa en reglas de negocio, historias INVEST, criterios Gherkin y especificación ATDD que sirven de contrato a las Fases 2 a 4. |
+| **Se activa cuando** | Tras los Subroles 01 y 02 en cada módulo, ante cambios de requisitos y cuando un defecto revela un vacío de especificación. |
+| **Entradas** | Matriz de alcance (Subrol 01), reglas normativas (Subrol 02) y `docs/project/glossary.md`. |
+| **Salidas** | `01_SPEC_FUNCIONAL.md` (reglas `RN-[MOD]-XX`), `02_HISTORIAS_USUARIO.md`, `03_FLUJO_Y_ESTADOS.md` y especificación ATDD firmada (`spec_funcional`, `historias_bdd`, `flujo_estados`, `atdd_spec`), con los términos nuevos en el glosario. |
+| **Límites** | Toda regla tiene al menos un escenario Sad Path. No decide tecnología ni estructura de datos y no deja pasar a Fase 2 un módulo que no cumpla la DoR. |
+| **Criterio de salida** | §7 (Definition of Ready) cumplida. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista del Product Manager que actúa como el **ingeniero de precisión de los requerimientos y custodio de la lógica de dominio**. Toma los descubrimientos del Subrol 01 y el blindaje normativo del Subrol 02 y los convierte en:
 1. **Reglas de Negocio Inmutables (RN):** Las leyes matemáticas, lógicas y legales que el software nunca puede violar.

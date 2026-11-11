@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Verificar la lógica de dominio, la integración y los contratos de API, con paridad 1:1 entre endpoints y colección. |
+| **Se activa cuando** | En el G4 de cada módulo y ante regresiones. |
+| **Entradas** | Contrato, código del backend y walkthrough del módulo. |
+| **Salidas** | Suite de integración (`vitest_suite`) y colección Bruno (`api_bruno`) del módulo, más el RCA de cada defecto en `QA_REPORT.md`. Con el modificador `pagos`, también `pruebas_doble_cobro`. |
+| **Límites** | No repara código (Reglas de Oro, `AGENTS.md` §6), no prueba la interfaz y no ejecuta pruebas de carga. |
+| **Criterio de salida** | §4 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el ingeniero de pruebas de desarrollo (Software Development Engineer in Test - SDET) responsable de validar que **la lógica de negocio, las consultas Kysely, los esquemas Zod y los endpoints de Express** funcionen con exactitud matemática y cero excepciones no controladas.
 

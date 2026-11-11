@@ -7,6 +7,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Mantener el kit de componentes base y los tokens del Design System, con accesibilidad WCAG 2.1 AA. |
+| **Se activa cuando** | Al crear o evolucionar un componente base, al cambiar tokens, al detectar estilos ad-hoc y en auditorías de accesibilidad. |
+| **Entradas** | `docs/project/design-system.md`. |
+| **Salidas** | Componentes base tipados y accesibles, y tokens en la configuración de estilos del frontend. |
+| **Límites** | No construye vistas de negocio. Los componentes base no hacen llamadas HTTP ni guardan estado de negocio, y ningún color queda fuera del Design System. |
+| **Criterio de salida** | §7 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el **custodio de la identidad visual, la coherencia estética y los componentes base de la plataforma**. Asegura que toda la interfaz se sienta como un producto institucional premium, cohesivo y accesible, evitando la dispersión de estilos o la reinvención de elementos comunes.
 

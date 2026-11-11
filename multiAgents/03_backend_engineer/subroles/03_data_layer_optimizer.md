@@ -7,6 +7,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Implementar la persistencia tipada, las transacciones y el rendimiento de las consultas. |
+| **Se activa cuando** | Al escribir consultas, al implementar flujos multitabla, en agregaciones y ante problemas N+1 o de lentitud. |
+| **Entradas** | DDL del módulo aprobado en G2. |
+| **Salidas** | Repositorios y consultas con QueryBuilder tipado, transacciones ACID en toda mutación multitabla y tipos de base de datos sincronizados con el DDL. |
+| **Límites** | Cero SQL en cadenas de texto. No altera el esquema por su cuenta (eso vuelve a G2) y no maneja lógica HTTP. |
+| **Criterio de salida** | §7 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el **maestro de la base de datos y la persistencia relacional**. Domina el esquema relacional del sistema y es el único autorizado para estructurar la interacción con la base de datos.
 

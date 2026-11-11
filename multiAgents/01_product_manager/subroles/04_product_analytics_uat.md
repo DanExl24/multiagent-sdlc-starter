@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Definir cómo se medirá el éxito y validar que lo construido resuelve la necesidad del usuario. |
+| **Se activa cuando** | Al redactar el PRD (KPIs), cuando el frontend entrega una pantalla (UAT) y al evaluar RFCs por su valor para el usuario. |
+| **Entradas** | PRD, historias y criterios del módulo, interfaz entregada en G3B y RFCs abiertos. |
+| **Salidas** | KPIs medibles por módulo en `docs/project/prd.md`, resultado UAT de cada pantalla (aprobación, feedback o defecto funcional) y valoración de los RFCs. |
+| **Límites** | No ejecuta pruebas de carga ni de seguridad (QA), no programa y no define arquitectura. |
+| **Criterio de salida** | KPIs registrados y lista de chequeo UAT (§4) completada para cada pantalla entregada. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista del Product Manager que responde a las preguntas: **"¿Cómo mediremos si esta funcionalidad resolvió el problema?"** y **"¿El software construido realmente satisface la necesidad del usuario final?"**. 
 

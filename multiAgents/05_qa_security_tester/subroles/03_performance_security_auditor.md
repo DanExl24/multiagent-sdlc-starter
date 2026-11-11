@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Auditar carga, concurrencia y seguridad dinámica. |
+| **Se activa cuando** | En módulos de alta demanda, mutación masiva o inmutabilidad, antes de autorizar el release y cuando el perfil exige pruebas de seguridad o de tiempo real. |
+| **Entradas** | Sistema desplegado, contratos y SLAs del módulo. |
+| **Salidas** | Script de carga k6 (`carga_k6`) y reportes `load-summary.json` y `dast-audit-summary.json` adjuntos al `QA_REPORT.md`, más fichas `BUG-[MOD]-[NUM]`. Según el perfil, también `dast`, `presupuesto_rendimiento`, `logs_sin_pii`, `pruebas_fuga_tenant`, `pruebas_concurrencia_eventos` y `carga_websocket`. |
+| **Límites** | No repara código ni optimiza consultas, no hace pruebas funcionales de interfaz ni pruebas unitarias. |
+| **Criterio de salida** | §5 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista de QA responsable de someter al sistema a condiciones de **estrés extremo, concurrencia masiva y auditoría dinámica de vulnerabilidades de seguridad (DAST)**. 
 - Utiliza **k6** (`npm run test:load`) para evaluar latencia, límites del pool de conexiones, degradación de memoria/CPU y cumplimiento de SLAs p95/p99. Genera automáticamente `docs/qa/load-report.html` y `docs/qa/load-summary.json`.

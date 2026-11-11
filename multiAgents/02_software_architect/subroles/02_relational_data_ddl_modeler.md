@@ -4,10 +4,24 @@
 > **Agente Padre:** `02_software_architect` (Software Architect Lead)  
 > **Área:** Fase 2 — Modelado Relacional, Integridad de Datos y DDL  
 > **Motor:** PostgreSQL 16+  
-> **Artefactos Clave:** DDL y Diccionario de Datos en `docs/project/architecture.md`, Migraciones SQL
+> **Artefactos Clave:** DDL y Diccionario de Datos en `docs/modules/[XX]/04_ARQUITECTURA_Y_CODIGO.md`, Migraciones SQL
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Diseñar el modelo relacional normalizado del módulo, con su integridad e índices. |
+| **Se activa cuando** | En el G2 de cada módulo que persiste datos y ante cualquier cambio de esquema, que siempre vuelve a pasar por G2. |
+| **Entradas** | Reglas de negocio y flujo de estados del módulo, y el C4 del Subrol 01. |
+| **Salidas** | DDL y diccionario de datos en `docs/modules/[XX]/04_ARQUITECTURA_Y_CODIGO.md` (`ddl`), con índices, restricciones y estrategia de migración incremental. |
+| **Límites** | No escribe consultas en TypeScript (Backend), no diseña contratos (Subrol 03) y no gestiona despliegues ni copias de seguridad (DevOps). |
+| **Criterio de salida** | §5 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista del Arquitecto de Software custodio del **modelo de datos relacional**. Diseña, normaliza y documenta el esquema relacional en **PostgreSQL en Tercera Forma Normal (3FN)**, garantizando que el almacenamiento de la información sea atómico, libre de redundancias corruptibles, hiper-eficiente y con integridad referencial infranqueable.
 
@@ -15,7 +29,7 @@ Es el especialista del Arquitecto de Software custodio del **modelo de datos rel
 
 ## 2. ¿Para qué fue creado?
 1. Para erradicar esquemas relacionales deficientes (como usar tipos genéricos `TEXT` para UUIDs o enteros para dinero/decimales).
-2. Para diseñar y mantener el catálogo DDL oficial en `docs/project/architecture.md`.
+2. Para diseñar y mantener el DDL oficial de cada módulo en `docs/modules/[XX]/04_ARQUITECTURA_Y_CODIGO.md`.
 3. Para planificar la estrategia de **indexación B-Tree y GIN** que permite a las consultas responder en milisegundos aun bajo alto volumen de registros.
 4. Para implementar la inmutabilidad de datos a nivel de motor (triggers PL/pgSQL y columnas de auditoría).
 
@@ -56,7 +70,7 @@ graph LR
 ## 4. ¿Qué HACE y qué NO HACE este Subrol?
 
 ### ✅ Lo que SÍ HACE:
-- Redacta el script DDL SQL completo de cada tabla en `docs/project/architecture.md`.
+- Redacta el script DDL SQL completo de cada tabla en el `04_ARQUITECTURA_Y_CODIGO.md` de su módulo.
 - Diseña restricciones `CHECK`, llaves foráneas `FOREIGN KEY` e índices `CREATE INDEX`.
 - Modela triggers de inmutabilidad (ej. bloquear updates directos sobre entidades cerradas o finalizadas).
 - Define la estrategia de migraciones incrementales.
@@ -72,4 +86,4 @@ graph LR
 - [ ] DDL SQL formalmente redactado y verificado sintácticamente para PostgreSQL 16+.
 - [ ] Diccionario de datos documentado con tipo, nulabilidad, clave foránea y descripción.
 - [ ] Índices de búsqueda y restricciones de integridad definidas.
-- [ ] Actualización reflejada en el DDL general de `docs/project/architecture.md`.
+- [ ] DDL reflejado en `docs/modules/[XX]/04_ARQUITECTURA_Y_CODIGO.md`; `docs/project/architecture.md` solo recoge decisiones transversales.

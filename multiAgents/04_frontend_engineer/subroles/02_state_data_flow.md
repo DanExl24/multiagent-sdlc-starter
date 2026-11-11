@@ -7,6 +7,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Gestionar el estado global, el cliente HTTP y los servicios tipados a partir de los contratos. |
+| **Se activa cuando** | Al crear una store o un servicio de API, al cambiar la autenticación y al sincronizar tipos con el contrato. |
+| **Entradas** | Tipos inferidos del contrato Zod y endpoints en verde tras G3A. |
+| **Salidas** | Cliente HTTP centralizado (token, envelope, manejo de 401), y stores y servicios del módulo tipados. |
+| **Límites** | No escribe componentes visuales, no deja URLs escritas a mano en las vistas y no guarda secretos en texto plano. |
+| **Criterio de salida** | §7 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el **arquitecto de los datos en memoria y la comunicación con el servidor**. Se asegura de que la información fluya limpiamente entre la API REST y las pantallas de Vue sin que las vistas tengan que ensuciarse con peticiones HTTP manuales ni lidiar con tokens quemados.
 

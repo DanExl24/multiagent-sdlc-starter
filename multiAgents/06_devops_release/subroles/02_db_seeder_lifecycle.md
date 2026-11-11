@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Mantener migraciones y datos semilla idempotentes. |
+| **Se activa cuando** | Cuando se aprueba un DDL nuevo, al preparar un release (G5) y al reiniciar entornos. |
+| **Entradas** | DDL de los módulos (`docs/modules/[XX]/04_ARQUITECTURA_Y_CODIGO.md`). |
+| **Salidas** | Scripts de migración y siembra idempotentes (`seeders`) y credenciales de prueba generadas tras cada reinicio. |
+| **Límites** | No diseña tablas, no programa la API y no ejecuta auditorías de QA. |
+| **Criterio de salida** | §6 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista de DevOps custodio del **ciclo de vida relacional y los datos maestros del sistema**. Diseña y ejecuta los scripts de migración de las tablas en PostgreSQL y los seeders realistas, permitiendo reconstruir la base de datos completa de 0 a 100 en segundos de manera totalmente idempotente.
 

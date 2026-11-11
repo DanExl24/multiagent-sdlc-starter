@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Diseñar la seguridad estructural: aislamiento entre organizaciones, sesiones, criptografía y RBAC. |
+| **Se activa cuando** | En la línea base del proyecto, en el G2 de cada módulo y siempre que haya modificadores `datos_sensibles` o `multi_tenant`. |
+| **Entradas** | Reglas normativas, C4 y contratos en borrador. |
+| **Salidas** | Matriz RBAC del módulo (`rbac`) y políticas anti-IDOR por endpoint. Según el perfil, también `modelo_amenazas`, `mapa_datos_personales` y `adr_aislamiento_tenant`. |
+| **Límites** | No ejecuta escaneos ni ataques (QA), no escribe middlewares (Backend) y no diseña el DDL (Subrol 02). |
+| **Criterio de salida** | §6 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista del Arquitecto de Software responsable de la **seguridad estructural, la criptografía y la soberanía de datos multi-inquilino (Multi-Tenant)**. Diseña las defensas que impiden que un usuario de una organización acceda a los datos de otra organización (Anti-IDOR), define la arquitectura de autenticación con tokens JWT y revocación inmediata en base de datos (JTI Blacklist) y modela la matriz de control de acceso basada en roles (RBAC).
 

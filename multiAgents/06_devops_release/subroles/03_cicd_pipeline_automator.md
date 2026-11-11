@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Automatizar la compilación, la integración continua y el versionado. |
+| **Se activa cuando** | Al cambiar el build o el CI, al preparar un release y ante commits fuera de la convención. |
+| **Entradas** | Scripts de build y test, convención de commits y fragmentos de `changelog.d/`. |
+| **Salidas** | Workflows de CI, build en verde, `CHANGELOG.md` consolidado con `npm run release:changelog` y tag SemVer (`changelog_release`). |
+| **Límites** | No escribe pruebas, no construye interfaz y no gestiona contenedores. |
+| **Criterio de salida** | §6 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista de DevOps responsable de la **cadena de montaje automatizada (CI/CD)**. Supervisa que el código generado por Backend y Frontend compile limpiamente sin errores de tipos, automatiza la ejecución de suites de pruebas en entornos limpios y asegura que ningún cambio sea liberado si rompe la integridad del software.
 

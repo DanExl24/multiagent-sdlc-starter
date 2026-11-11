@@ -8,6 +8,20 @@
 
 ---
 
+## 0. Contrato del Subrol
+
+> **Este bloque es vinculante.** Las secciones siguientes describen la **técnica de referencia** del starter: una skill externa puede reemplazarla si cumple este contrato ([`SKILLS_INTEGRATION_PROTOCOL.md`](../../protocols/SKILLS_INTEGRATION_PROTOCOL.md)). Los IDs entre acentos graves son entregables del catálogo de `.workflow/STAGE_GATES.md` §7.
+
+| Campo | Contrato |
+| :--- | :--- |
+| **Responsabilidad** | Hacer testing exploratorio heurístico y auditar la usabilidad (cuadrante Q3). |
+| **Se activa cuando** | En el G4 de módulos con interacción de usuario y tras cambios grandes de experiencia de usuario. |
+| **Entradas** | Interfaz desplegada, historias del módulo y Design System. |
+| **Salidas** | Test Charters en `tests/exploratory/` y fichas de defecto en `docs/qa/incidents/`, con evidencia reproducible. |
+| **Límites** | No corrige código y no sustituye las pruebas automatizadas. |
+| **Criterio de salida** | §5 (DoD) cumplido. |
+
+---
 ## 1. ¿Qué es este Subrol?
 Es el especialista de QA responsable de evaluar el software **más allá de los guiones y scripts preestablecidos**. Mientras que las pruebas automatizadas (SDET y Playwright) verifican que lo programado no se haya roto, el tester exploratorio investiga **lo inesperado**: simultáneamente aprende, diseña y ejecuta pruebas para descubrir fallos sutiles, inconsistencias de usabilidad y comportamientos erráticos que los tests mecánicos pasan por alto.
 
