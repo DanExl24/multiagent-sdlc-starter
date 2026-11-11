@@ -19,6 +19,7 @@ export const DEFAULT_CONFIG = {
   },
   rutas: { contratos: 'docs/contracts' },
   perfil: { escala: 'standard', modificadores: [], adr: null },
+  fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
 };
 
 const isRelativeInside = (p) => typeof p === 'string' && p.length > 0 && !path.isAbsolute(p) && !p.split(/[\\/]/).includes('..');
@@ -54,6 +55,15 @@ export function loadProjectConfig() {
   if (typeof escala !== 'string' || !escala) errors.push('project.json: perfil.escala debe ser el nombre de una escala (sprint, standard, enterprise...).');
   if (!Array.isArray(modificadores) || modificadores.some((m) => typeof m !== 'string')) errors.push('project.json: perfil.modificadores debe ser una lista de nombres.');
   if (adr !== null && !isRelativeInside(adr)) errors.push('project.json: perfil.adr debe ser null o una ruta relativa al ADR que justifica el perfil.');
+
+  // Fundación (opcional): stack y estructura definidos por 07_foundation_architect.
+  config.fundacion = { ...DEFAULT_CONFIG.fundacion, ...(config.fundacion ?? {}) };
+  const fundacion = config.fundacion;
+  if (!['PENDIENTE', 'COMPLETADA'].includes(fundacion.estado)) errors.push('project.json: fundacion.estado debe ser PENDIENTE o COMPLETADA.');
+  if (typeof fundacion.stack !== 'object' || fundacion.stack === null || Array.isArray(fundacion.stack)) errors.push('project.json: fundacion.stack debe ser un objeto (capa → tecnologías).');
+  for (const key of ['adr_stack', 'adr_estructura']) {
+    if (fundacion[key] !== null && !isRelativeInside(fundacion[key])) errors.push(`project.json: fundacion.${key} debe ser null o una ruta relativa a un ADR.`);
+  }
   return { config: errors.length ? DEFAULT_CONFIG : config, exists: true, errors };
 }
 

@@ -18,5 +18,11 @@
     "escala": "standard",
     "modificadores": [],
     "adr": null
+  },
+  "fundacion": {
+    "estado": "PENDIENTE",
+    "stack": {},
+    "adr_stack": null,
+    "adr_estructura": null
   }
 }

@@ -177,6 +177,19 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
   const lastBaseline = baseline[baseline.length - 1];
   const valid = new Map();
 
+  // Fundación: el G2 de línea base no se firma sin stack y estructura aceptados (07_foundation_architect).
+  const fundacion = config.fundacion ?? DEFAULT_CONFIG.fundacion;
+  const askingBaselineG2 = lastBaseline && project.gate_activo === lastBaseline.gate && project.estado === 'ESPERANDO_APROBACION_HUMANA';
+  if (lastBaseline && (askingBaselineG2 || hasPassed(table, project, lastBaseline))) {
+    if (fundacion.estado !== 'COMPLETADA') {
+      errors.push(`project.json: la línea base no puede superar ${lastBaseline.id} con fundacion.estado "${fundacion.estado}". El rol 07_foundation_architect debe definir antes el stack y la estructura.`);
+    }
+    for (const [key, label] of [['adr_stack', 'del stack'], ['adr_estructura', 'de la estructura']]) {
+      if (!fundacion[key]) errors.push(`project.json: falta fundacion.${key} (ADR ${label}), obligatorio para superar ${lastBaseline.id}.`);
+      else if (!fs.existsSync(path.join(rootDir, fundacion[key]))) errors.push(`project.json: fundacion.${key} apunta a "${fundacion[key]}", que no existe.`);
+    }
+  }
+
   for (const mod of modules) {
     const label = `modules/${mod.id}.json`;
     if (mod.error) { errors.push(`${label}: JSON inválido (${mod.error}).`); continue; }

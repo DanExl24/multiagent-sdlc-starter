@@ -3,6 +3,21 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.11.0] - 2026-11-10
+
+### Added
+- **Rol transversal `07_foundation_architect` (Arquitecto de Fundación):** actúa tras aprobar la idea de negocio (G1 de línea base) y antes que el Arquitecto de Software, en el orden idea → stack → estructura de carpetas. En cada paso hace una recomendación justificada, no un menú de opciones, y pide la conformidad explícita del desarrollador. Tiene dos subroles con su contrato: Stack Selector y Repo Structure Designer.
+- `docs/project/repo-structure.md`: mapa preliminar de módulos, árbol, tabla de "qué tipo de archivo va dónde" y reglas de nombres.
+- Bloque `fundacion` en `.workflow/project.json` (estado, stack por capa y ADRs de stack y estructura) y entregables `adr_stack` y `estructura_repo` en el catálogo de G2.
+- `validate:state` impide pedir la firma del G2 de línea base, o superarlo, sin la fundación completada y sus dos ADRs existentes.
+
+### Changed
+- `init-project` deja de preguntar el stack, las capas y las carpetas raíz (las preguntas de stack ni siquiera se usaban en ningún documento). Ahora solo pide nombre, descripción, dominio, autor y perfil, y deja la fundación pendiente.
+- El subrol de topología del Arquitecto ya no define los límites de carpetas: respeta la estructura aceptada por el rol de fundación y la cambia solo mediante un ADR nuevo con ese rol.
+- `AGENTS.md` (catálogo de roles, matriz de relevo y árbol), `README.md`, `docs/README.md`, `STAGE_GATES.md` (G1, G2 y pistas) y el ROLE del orquestador incorporan el rol de fundación.
+
+---
+
 ## [1.10.0] - 2026-11-10
 
 ### Added

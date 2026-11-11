@@ -137,21 +137,17 @@ async function main() {
   const projectSlug = projectName.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
   const projectDesc = await ask('2. Descripción breve', 'Aplicación empresarial construida con ingeniería multiagente');
   const projectDomain = await ask('3. Dominio de negocio (ej. Fintech, Salud, E-commerce, Educación)', 'SaaS General');
-  const backendStack = await ask('4. Stack Backend preferido', 'Express + TypeScript + Kysely + PostgreSQL');
-  const frontendStack = await ask('5. Stack Frontend preferido', 'Vue 3 + Pinia + TailwindCSS + Vite');
-  const author = await ask('6. Autor u Organización', 'Equipo de Desarrollo');
-  const capasText = await ask('7. Capas del proyecto (backend, frontend o ambas, separadas por coma)', 'backend,frontend');
-  const capas = capasText.split(',').map((c) => c.trim().toLowerCase()).filter(Boolean);
-  const backendRoot = capas.includes('backend') ? await ask('8. Carpeta raíz del backend', 'backend') : 'backend';
-  const frontendRoot = capas.includes('frontend') ? await ask('9. Carpeta raíz del frontend', 'frontend') : 'frontend';
+  const author = await ask('4. Autor u Organización', 'Equipo de Desarrollo');
+  // El stack y la estructura de carpetas NO se preguntan aquí: los define el rol de fundación
+  // (07_foundation_architect) cuando la idea de negocio ya está aprobada.
   const escalas = listProfiles(path.join(rootDir, '.workflow', 'profiles'));
   const disponibles = listProfiles(path.join(rootDir, '.workflow', 'profiles', 'modifiers'));
-  let escala = await ask(`10. Escala del proyecto (${escalas.join(', ')}); ver .workflow/PROFILES.md`, 'standard');
+  let escala = await ask(`5. Escala del proyecto (${escalas.join(', ')}); ver .workflow/PROFILES.md`, 'standard');
   if (!escalas.includes(escala)) {
     console.warn(`⚠️  La escala "${escala}" no existe; se usa "standard".`);
     escala = 'standard';
   }
-  const modsText = await ask(`11. Modificadores de riesgo de TODO el proyecto (${disponibles.join(', ')}); vacío si ninguno`, '');
+  const modsText = await ask(`6. Modificadores de riesgo de TODO el proyecto (${disponibles.join(', ')}); vacío si ninguno`, '');
   const modificadores = modsText.split(',').map((m) => m.trim()).filter(Boolean).filter((m) => {
     if (disponibles.includes(m)) return true;
     console.warn(`⚠️  El modificador "${m}" no existe y se omite.`);
@@ -165,8 +161,6 @@ async function main() {
     PROJECT_SLUG: projectSlug,
     PROJECT_DESC: projectDesc,
     PROJECT_DOMAIN: projectDomain,
-    BACKEND_STACK: backendStack,
-    FRONTEND_STACK: frontendStack,
     AUTHOR: author,
     INIT_DATE: new Date().toLocaleDateString('sv-SE'),
   };
@@ -185,6 +179,7 @@ async function main() {
     path.join(rootDir, 'docs', 'project', 'design-system.md'),
     path.join(rootDir, 'docs', 'project', 'version-matrix.md'),
     path.join(rootDir, 'docs', 'project', 'glossary.md'),
+    path.join(rootDir, 'docs', 'project', 'repo-structure.md'),
     path.join(rootDir, 'docs', 'qa', 'index.md'),
     path.join(rootDir, 'multiAgents', '01_product_manager', 'subroles', '02_legal_domain_compliance.md'),
   ];
@@ -195,22 +190,19 @@ async function main() {
 
   resetStarterHistory({ projectSlug, projectDesc, author, date: replacements.INIT_DATE });
 
-  // Estructura de carpetas del proyecto: la leen el validador y el tooling (.workflow/project.json)
+  // Configuración del proyecto (.workflow/project.json). Las capas y rutas quedan con los valores
+  // por defecto hasta que el rol de fundación defina el stack y la estructura.
   const projectConfig = {
     capas: {
-      backend: { activa: capas.includes('backend'), raiz: backendRoot, modulos: `${backendRoot}/src/modules` },
-      frontend: { activa: capas.includes('frontend'), raiz: frontendRoot, modulos: `${frontendRoot}/src/modules` },
+      backend: { activa: true, raiz: 'backend', modulos: 'backend/src/modules' },
+      frontend: { activa: true, raiz: 'frontend', modulos: 'frontend/src/modules' },
     },
     rutas: { contratos: 'docs/contracts' },
     perfil: { escala, modificadores, adr: null },
+    fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
   };
   if (escala !== 'standard' || modificadores.length > 0) {
     projectConfig.perfil.adr = writeProfileAdr({ escala, modificadores, author, date: replacements.INIT_DATE });
-  }
-  if (!projectConfig.capas.backend.activa && !projectConfig.capas.frontend.activa) {
-    console.warn('⚠️  No se declaró ninguna capa válida; se activan backend y frontend por defecto.');
-    projectConfig.capas.backend.activa = true;
-    projectConfig.capas.frontend.activa = true;
   }
   fs.writeFileSync(path.join(rootDir, '.workflow', 'project.json'), `${JSON.stringify(projectConfig, null, 2)}\n`);
 
@@ -223,7 +215,6 @@ async function main() {
     path.join(rootDir, 'docs', 'walkthroughs'),
     path.join(rootDir, '.workflow', 'modules'),
     path.join(rootDir, 'changelog.d'),
-    ...['backend', 'frontend'].filter((c) => projectConfig.capas[c].activa).map((c) => path.join(rootDir, projectConfig.capas[c].raiz)),
   ];
 
   for (const dir of dirsToEnsure) {
@@ -246,7 +237,8 @@ async function main() {
   console.log('asume el rol correspondiente y preséntate como el Agente en turno.');
   console.log('----------------------------------------------------------------\n');
   console.log('💡  Próximo paso: Inicia tu primer chat con tu IA favorita pegando el prompt anterior.');
-  console.log('📦  Cuando la línea base esté aprobada, crea cada módulo con: npm run new:module -- 01_nombre\n');
+  console.log('🏗️  Cuando el PRD esté aprobado, el rol de fundación (multiAgents/07_foundation_architect/) definirá el stack y la estructura de carpetas.');
+  console.log('📦  Con la línea base aprobada, crea cada módulo con: npm run new:module -- 01_nombre\n');
 
   rl.close();
 }

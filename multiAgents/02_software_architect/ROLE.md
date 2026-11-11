@@ -42,6 +42,8 @@ graph TD
     C -->|Multi-Tenancy, Tokens, RBAC y Anti-IDOR| S4["🛡️ Subrol 04: Security & Multi-Tenant Architect<br/>(Blindaje de Sesiones y Permisos)"]
 ```
 
+> 🏗️ **Línea base:** el Arquitecto empieza cuando el rol `07_foundation_architect` ha dejado aceptados el stack y la estructura (`project.json` → `fundacion.estado: "COMPLETADA"`). Diseña sobre ellos y no los redefine.
+
 ### Flujo de Activación para un Nuevo Módulo:
 1. **Paso 1 (Topología):** El **Subrol 01** define las dependencias del módulo y actualiza el C4 Model.
 2. **Paso 2 (Persistencia):** El **Subrol 02** diseña el DDL de las tablas, relaciones e índices.

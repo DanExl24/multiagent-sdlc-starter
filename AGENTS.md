@@ -118,6 +118,10 @@ flowchart LR
 │   │   ├── WORKLOG.md                   # Bitácora del rol para trabajo transversal
 │   │   ├── worklog/                     # Bitácoras del rol por módulo ([XX_nombre].md)
 │   │   └── subroles/                    # 🛠️ Kit de Subroles de DevOps (Env, Seeder, CI/CD, Observability)
+│   ├── 07_foundation_architect/         # Transversal: stack y estructura del repo (tras aprobar la idea)
+│   │   ├── ROLE.md                      # Manual del Arquitecto de Fundación: idea → stack → estructura
+│   │   ├── WORKLOG.md                   # Bitácora del rol
+│   │   └── subroles/                    # 🛠️ Stack Selector y Repo Structure Designer
 │   │
 │   └── protocols/                       # 🤝 Protocolos de Colaboración e Interoperabilidad
 │       ├── HANDOFF_PROTOCOL.md          # Protocolo general de traspaso entre fases
@@ -136,7 +140,8 @@ flowchart LR
 │   │   ├── architecture.md              # Arquitectura global y Modelo C4 (el DDL vive en cada módulo)
 │   │   ├── design-system.md             # Sistema de Diseño Visual y Paleta Oficial
 │   │   ├── version-matrix.md            # Matriz Bidireccional de Versiones y Ciclo de Vida
-│   │   └── glossary.md                  # Lenguaje ubicuo: términos, nombres técnicos y estados
+│   │   ├── glossary.md                  # Lenguaje ubicuo: términos, nombres técnicos y estados
+│   │   └── repo-structure.md            # Estructura del repositorio: qué va dónde (rol de fundación)
 │   ├── modules/                         # Un subdirectorio por módulo; su README.md es el índice
 │   ├── contracts/                       # Contratos de API REST tipados con Zod (.contract.ts)
 │   ├── adrs/                            # Architectural Decision Records (un archivo por decisión)
@@ -190,6 +195,11 @@ Asegura despliegue en 2 minutos, seeders reproducibles, observabilidad y CI/CD.
 - **Subroles:** Env Container, DB Seeder, CI/CD Automator, Observability, Project Board Sync.
 - **Entregables:** Dockerfiles, seeders idempotentes, workflows GitHub Actions, `/api/health`.
 
+### 3.7. 🏗️ `07_foundation_architect` — Arquitecto de Fundación (rol transversal)
+No es una fase del SDLC: actúa una vez aprobada la idea de negocio (G1 de línea base) y antes de que el Arquitecto de Software prepare la línea base de G2. Sigue el orden **idea de negocio → stack → estructura de carpetas**, con una recomendación justificada en cada paso y la conformidad explícita del desarrollador. Se reactiva al añadir una capa, cambiar una pieza del stack o adoptar el starter en un repositorio existente.
+- **Subroles:** Stack Selector, Repo Structure Designer.
+- **Entregables:** ADR del stack y ADR de la estructura (aceptados), `docs/project/repo-structure.md`, `.workflow/project.json` (capas, rutas y bloque `fundacion`) y el esqueleto de carpetas vacío.
+
 ---
 
 ## 4. Matriz de Relevo Operativo (Insumos vs. Entregables)
@@ -197,7 +207,8 @@ Asegura despliegue en 2 minutos, seeders reproducibles, observabilidad y CI/CD.
 | Agente / Rol | Insumo Obligatorio que DEBE Verificar | Entregable Obligatorio que DEBE Dejar en Disco | Compuerta (Stage-Gate) |
 | :--- | :--- | :--- | :--- |
 | **01. Product Manager** | Visión del Director Humano / `PROJECT_STATUS.md` | `docs/project/prd.md`, HUs INVEST con BDD Gherkin en `docs/modules/XX/` | **Gate 1** (Firma Humana Requerida) |
-| **02. Software Architect** | PRD firmado en Gate 1 con DoR completa | DDL de tablas, Contratos Zod en `docs/contracts/XX.contract.ts`, ADRs | **Gate 2** (Firma Humana Requerida) |
+| **07. Foundation Architect** (transversal) | PRD y glosario firmados en la línea base de Gate 1 | ADR del stack y ADR de la estructura aceptados, `docs/project/repo-structure.md`, `project.json` y esqueleto de carpetas | Se ratifica en la línea base de **Gate 2** |
+| **02. Software Architect** | PRD firmado en Gate 1 con DoR completa; en la línea base, stack y estructura aceptados por el rol de fundación | DDL de tablas, Contratos Zod en `docs/contracts/XX.contract.ts`, ADRs | **Gate 2** (Firma Humana Requerida) |
 | **03. Backend Engineer** | Contrato Zod y DDL migrado en base de datos | Código en `backend/src/modules/XX/`, 0 ANYs (`check:no-any` OK), 100% Vitest PASS | **G3A** (Checkpoint automático: transfiere a Frontend sin halt) |
 | **04. Frontend Engineer** | Endpoints de backend en verde en Vitest | Vistas en `frontend/src/modules/XX/`, 0 ANYs (`check:no-any` OK), build OK, `WALKTHROUGH.md` | **Gate 3B** (Firma Humana de UI Requerida) |
 | **05. QA & Security** | Walkthrough versionado y código desplegado | Reporte forense RCA en `docs/qa/`, Arsenal 4 Pilares + Certificación Cero ANY en verde | **Gate 4** (Poder de Veto / Firma Humana; autoriza commit y merge a `main`) |

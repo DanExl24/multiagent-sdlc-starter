@@ -84,6 +84,8 @@ graph TD
     R3 <== "API-First Zod" ==> R4
     R4 --> R5
     R5 --> R6
+    R1 -. "idea aprobada" .-> R7["07_foundation_architect<br/>Stack y estructura (transversal)"]
+    R7 -.-> R2
 ```
 
 | Rol | Directorio | Misión Principal | Subroles Incluidos |
@@ -95,6 +97,7 @@ graph TD
 | **04_frontend_engineer** | [`multiAgents/04_frontend_engineer/`](multiAgents/04_frontend_engineer/) | SPA Reactiva, Design System y DataViz | Design System Core, State Pinia/Store, Views/UX, DataViz |
 | **05_qa_security_tester** | [`multiAgents/05_qa_security_tester/`](multiAgents/05_qa_security_tester/) | Auditoría forense con poder de veto (Stop-the-Line) | SDET Contratos, E2E & A11y axe-core, Performance k6 |
 | **06_devops_release** | [`multiAgents/06_devops_release/`](multiAgents/06_devops_release/) | Contenedores, seeders idempotentes y CI/CD | Docker Ops, Seeders Lifecycle, CI/CD Automator, Observability |
+| **07_foundation_architect** | [`multiAgents/07_foundation_architect/`](multiAgents/07_foundation_architect/) | Rol transversal: tras aprobar la idea de negocio, recomienda el stack y la estructura de carpetas, con conformidad del desarrollador | Stack Selector, Repo Structure Designer |
 
 ---
 
@@ -147,6 +150,7 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 │   ├── 04_frontend_engineer/            # ROLE.md y subroles de Frontend
 │   ├── 05_qa_security_tester/           # ROLE.md y arsenal de los 4 pilares
 │   ├── 06_devops_release/               # ROLE.md y subroles de Operaciones
+│   ├── 07_foundation_architect/         # Rol transversal: stack y estructura del repositorio
 │   └── protocols/                       # Handshakes, Tech Trio, Git Commit, integración de skills externas y Templates
 │
 ├── docs/                                # 📚 Artefactos de Ingeniería (Fuente de la Verdad)

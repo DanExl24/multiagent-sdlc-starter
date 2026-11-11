@@ -16,9 +16,9 @@
 | :--- | :--- |
 | **Responsabilidad** | Definir la macroestructura: límites modulares, dependencias entre módulos, modelo C4 y ADRs. |
 | **Se activa cuando** | En la línea base del proyecto (G2), al crear un módulo y ante cualquier decisión estructural o tecnología nueva. |
-| **Entradas** | PRD firmado en G1, especificaciones de módulo y capas activas en `.workflow/project.json`. |
+| **Entradas** | PRD firmado en G1, especificaciones de módulo, ADR del stack, `docs/project/repo-structure.md` (mapa preliminar de módulos) y capas activas en `.workflow/project.json`. |
 | **Salidas** | `docs/project/architecture.md` con el C4 que exija el perfil (`arquitectura_c4` o `arquitectura_c4_reducida`), dependencias del módulo reflejadas en `depende_de` de su archivo de estado y ADRs en `docs/adrs/` (`adr_decisiones` si el perfil lo exige). |
-| **Límites** | No diseña el DDL (Subrol 02), los contratos Zod (Subrol 03) ni la matriz RBAC (Subrol 04). |
+| **Límites** | No diseña el DDL (Subrol 02), los contratos Zod (Subrol 03) ni la matriz RBAC (Subrol 04). No redefine el stack ni la estructura de carpetas: eso es del rol de fundación. |
 | **Criterio de salida** | §6 (DoD) cumplido. |
 
 ---
@@ -90,7 +90,7 @@ Cuando el equipo deba tomar una decisión técnica estructural permanente (ej. c
 
 ### ✅ Lo que SÍ HACE:
 - Diseña y actualiza los diagramas C4 en `docs/project/architecture.md`.
-- Define los límites entre `core/` y `modules/` en backend y frontend.
+- Respeta la estructura de carpetas aceptada en `docs/project/repo-structure.md` (rol de fundación) y la refina solo mediante un ADR nuevo con ese rol.
 - Redacta y clasifica los ADRs institucionales.
 - Mapea la matriz de dependencias inter-modular.
 

@@ -13,7 +13,7 @@
 
 | Carpeta | Contenido | Naturaleza | Rol responsable |
 | :--- | :--- | :--- | :--- |
-| [`project/`](project/) | PRD, arquitectura global, design system, matriz de versiones y glosario del dominio | **Vivo**: se edita; cambia poco | Producto, Arquitectura y Frontend |
+| [`project/`](project/) | PRD, arquitectura global, estructura del repositorio, design system, matriz de versiones y glosario del dominio | **Vivo**: se edita; cambia poco | Producto, Arquitectura y Frontend |
 | [`modules/`](modules/) | Todo lo específico de un módulo: especificación, historias, flujos y arquitectura | **Vivo** durante el módulo | Producto y Arquitectura |
 | [`contracts/`](contracts/) | Contratos de API tipados con Zod (`*.contract.ts`) | **Vivo**; lo consumen las herramientas | Arquitectura |
 | [`adrs/`](adrs/) | Decisiones de arquitectura, una por archivo y numeradas | **Inmutable** (se añaden, no se reescriben) | Arquitectura |

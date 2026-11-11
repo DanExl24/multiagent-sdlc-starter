@@ -52,7 +52,7 @@ El ciclo de vida se recorre en **pistas independientes**, para que varias person
 
 | Pista | Archivo de estado | Compuertas | Qué cubre |
 | :--- | :--- | :--- | :--- |
-| **Proyecto** (línea base) | `.workflow/current_state.json` | G0, G1, G2 (una sola vez, al inicio) | PRD global, glosario, arquitectura C4 y design system |
+| **Proyecto** (línea base) | `.workflow/current_state.json` | G0, G1, G2 (una sola vez, al inicio) | PRD global y glosario (G1); stack, estructura del repositorio, arquitectura C4 y design system (G2) |
 | **Módulo** | `.workflow/modules/[XX_nombre].json`, uno por módulo | G1 → G2 → G3A → G3B → G4 | Especificación, contrato, backend, UI y QA del módulo. G4 autoriza su merge a `main` |
 | **Release** | `.workflow/current_state.json` (tras la línea base) | G5 → G6 | Agrupa los módulos que superaron G4 en una versión, la despliega y la retrospecta. Se repite en cada release |
 
@@ -181,15 +181,18 @@ Ningún perfil puede romper estos invariantes:
   1. Actualizar el archivo de estado de su pista (§5) con `gate_activo: "GATE_1_PRD_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.
   2. **DETENERSE INMEDIATAMENTE (Halt).** Presentar el resumen ejecutivo al Director Humano.
   3. **NO proceder** a diseñar tablas ni contratos hasta recibir la confirmación explícita del humano.
+  4. En la línea base, tras la aprobación, el turno pasa al rol de fundación (`rol_en_turno: "07_foundation_architect"`) en `FASE_2_ARQUITECTURA`, antes que al Arquitecto de Software.
 
 ---
 
 ### 🛑 G2: Aprobación de Arquitectura Relacional y Contratos de Datos
-- **Agente Emisor:** `02_software_architect`
+- **Agente Emisor:** `02_software_architect`. En la línea base trabaja primero el rol transversal `07_foundation_architect` (stack y estructura) y después el Arquitecto.
 - **Agente Receptor:** `03_backend_engineer`
 - **Aprobador Requerido:** **Director Humano**
 - **Entregables de la línea base (pista de proyecto, una vez):**
-  - `docs/project/architecture.md`: Topología técnica (C4), estrategia de aislamiento y convenciones transversales.
+  - ADR del stack y ADR de la estructura en estado ACEPTADO, enlazados en `.workflow/project.json` → `fundacion` (rol `07_foundation_architect`). `npm run validate:state` impide pedir la firma de G2 sin ellos.
+  - `docs/project/repo-structure.md`: mapa preliminar de módulos, árbol, tabla de ubicación y reglas de nombres.
+  - `docs/project/architecture.md`: Topología técnica (C4), estrategia de aislamiento y convenciones transversales, sobre el stack y la estructura aceptados.
 - **Entregables por módulo (pista de módulo):**
   - `docs/modules/[XX_modulo]/04_ARQUITECTURA_Y_CODIGO.md`: Modelo relacional y sentencias DDL (3FN).
   - `docs/contracts/[modulo].contract.ts`: Contratos de entrada y salida tipados estrictamente con schemas de **Zod**.
@@ -347,6 +350,8 @@ Cada entregable tiene un ID que citan los perfiles de `.workflow/profiles/`. La 
 | `matriz_normativa` | G1 | modulo | No | Matriz normativa del subrol legal (`RN-DOM-XX`) |
 | `arquitectura_c4` | G2 | proyecto | Sí | `docs/project/architecture.md` con el modelo C4 completo |
 | `arquitectura_c4_reducida` | G2 | proyecto | No | Un único diagrama de contexto y contenedores en `architecture.md` |
+| `adr_stack` | G2 | proyecto | Sí | ADR del stack aceptado por el desarrollador (rol de fundación) |
+| `estructura_repo` | G2 | proyecto | Sí | `docs/project/repo-structure.md` y su ADR aceptado (rol de fundación) |
 | `ddl` | G2 | modulo | Sí | DDL relacional en `04_ARQUITECTURA_Y_CODIGO.md` |
 | `contrato_zod` | G2 | modulo | Sí | Contrato Zod del módulo en la ruta de contratos |
 | `rbac` | G2 | modulo | Sí | Matriz de permisos RBAC del módulo |
