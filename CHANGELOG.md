@@ -3,6 +3,13 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.13.1] - 2026-11-12
+
+### Fixed
+- La regla E de `check:docs` daba por inexistentes los imports de TypeScript sin extensión (por ejemplo, `from "../../docs/contracts/02_editor.contract"`). Ahora acepta la ruta si existe con `.ts`, `.js`, `.mjs` o como `index.ts`. Detectado en la prueba de campo de Digitaline.
+
+---
+
 ## [1.13.0] - 2026-11-12
 
 ### Added

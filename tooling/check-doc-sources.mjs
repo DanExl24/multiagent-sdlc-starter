@@ -119,7 +119,9 @@ for (const file of walk(rootDir)) {
     for (const match of line.matchAll(PATH_RE)) {
       const p = match[1].replace(/[.,;:]+$/, '');
       if (PLACEHOLDER.test(p) || GENERATED.test(p)) continue;
-      if (!fs.existsSync(path.join(rootDir, p))) errors.push(`${name}:${i + 1} menciona "${p}", que no existe.`);
+      // Los imports de TypeScript omiten la extensión ("docs/contracts/04_pagos.contract").
+      const exists = ['', '.ts', '.js', '.mjs', '/index.ts'].some((ext) => fs.existsSync(path.join(rootDir, p + ext)));
+      if (!exists) errors.push(`${name}:${i + 1} menciona "${p}", que no existe.`);
     }
   });
 }
