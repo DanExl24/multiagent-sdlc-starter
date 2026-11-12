@@ -135,10 +135,15 @@ async function main() {
   // (07_foundation_architect) cuando la idea de negocio ya está aprobada.
   const escalas = listProfiles(path.join(rootDir, '.workflow', 'profiles'));
   const disponibles = listProfiles(path.join(rootDir, '.workflow', 'profiles', 'modifiers'));
-  let escala = await ask(`5. Escala del proyecto (${escalas.join(', ')}); ver .workflow/PROFILES.md`, 'standard');
+  // El perfil solo queda confirmado si la persona escribe la escala; con Enter se usa standard sin confirmar,
+  // y el agente deberá confirmarlo con el Director Humano antes de superar G1 (validate:state lo exige).
+  const escalaRaw = await ask(`5. Escala del proyecto (${escalas.join(', ')}; sprint para proyectos de unas 2 semanas). Escríbela para confirmarla`, '');
+  let escala = escalaRaw || 'standard';
+  let confirmado = Boolean(escalaRaw);
   if (!escalas.includes(escala)) {
     console.warn(`⚠️  La escala "${escala}" no existe; se usa "standard".`);
     escala = 'standard';
+    confirmado = false;
   }
   const modsText = await ask(`6. Modificadores de riesgo de TODO el proyecto (${disponibles.join(', ')}); vacío si ninguno`, '');
   const modificadores = modsText.split(',').map((m) => m.trim()).filter(Boolean).filter((m) => {
@@ -190,7 +195,7 @@ async function main() {
       frontend: { activa: true, raiz: 'frontend', modulos: 'frontend/src/modules' },
     },
     rutas: { contratos: 'docs/contracts' },
-    perfil: { escala, modificadores, adr: null },
+    perfil: { escala, modificadores, adr: null, confirmado },
     fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
   };
   if (escala !== 'standard' || modificadores.length > 0) {

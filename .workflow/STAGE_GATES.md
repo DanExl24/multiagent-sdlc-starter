@@ -29,16 +29,16 @@ Existen **tres tipos** de compuerta:
 
 <!-- gates:start -->
 
-| ID | Transición | Tipo | Nivel | Aprueba | `fase_activa` | `gate_activo` |
-| :--- | :--- | :---: | :--- | :--- | :--- | :--- |
-| **G0** | Bootstrap → Requerimientos | 🔧 Bootstrap | Proyecto | Director Humano (al ejecutar `init:project`) | — *(no persiste en el JSON)* | — |
-| **G1** | Requerimientos → Arquitectura | 🛑 Halt | Proyecto · Módulo | Director Humano | `FASE_1_REQUERIMIENTOS` | `GATE_1_PRD_APPROVAL` |
-| **G2** | Arquitectura → Construcción | 🛑 Halt | Proyecto · Módulo | Director Humano | `FASE_2_ARQUITECTURA` | `GATE_2_ARCHITECTURE_APPROVAL` |
-| **G3A** | Backend → Frontend | ⚡ Checkpoint | Módulo | Orquestador | `FASE_3A_BACKEND` | `GATE_3A_BACKEND_CHECKPOINT` |
-| **G3B** | Frontend → QA | 🛑 Halt | Módulo | Director Humano | `FASE_3B_FRONTEND` | `GATE_3B_FRONTEND_UI_APPROVAL` |
-| **G4** | QA → Release (autoriza commit y merge a `main`) | 🛑 Halt | Módulo | Director Humano | `FASE_4_QA_VALIDACION` | `GATE_4_QA_APPROVAL` |
-| **G5** | Release → Producción (tag, seeders, despliegue) | 🛑 Halt | Release | Director Humano | `FASE_5_DEVOPS_RELEASE` | `GATE_5_RELEASE_APPROVAL` |
-| **G6** | Kaizen → Siguiente ciclo | 🛑 Halt | Release | Director Humano | `FASE_6_MEJORA_CONTINUA` | `GATE_6_KAIZEN_APPROVAL` |
+| ID | Transición | Tipo | Nivel | Rol en turno | Aprueba | `fase_activa` | `gate_activo` |
+| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- |
+| **G0** | Bootstrap → Requerimientos | 🔧 Bootstrap | Proyecto | — | Director Humano (al ejecutar `init:project`) | — *(no persiste en el JSON)* | — |
+| **G1** | Requerimientos → Arquitectura | 🛑 Halt | Proyecto · Módulo | `01_product_manager` | Director Humano | `FASE_1_REQUERIMIENTOS` | `GATE_1_PRD_APPROVAL` |
+| **G2** | Arquitectura → Construcción | 🛑 Halt | Proyecto · Módulo | `02_software_architect` | Director Humano | `FASE_2_ARQUITECTURA` | `GATE_2_ARCHITECTURE_APPROVAL` |
+| **G3A** | Backend → Frontend | ⚡ Checkpoint | Módulo | `03_backend_engineer` | Orquestador | `FASE_3A_BACKEND` | `GATE_3A_BACKEND_CHECKPOINT` |
+| **G3B** | Frontend → QA | 🛑 Halt | Módulo | `04_frontend_engineer` | Director Humano | `FASE_3B_FRONTEND` | `GATE_3B_FRONTEND_UI_APPROVAL` |
+| **G4** | QA → Release (autoriza el merge a `main`) | 🛑 Halt | Módulo | `05_qa_security_tester` | Director Humano | `FASE_4_QA_VALIDACION` | `GATE_4_QA_APPROVAL` |
+| **G5** | Release → Producción (tag, seeders, despliegue) | 🛑 Halt | Release | `06_devops_release` | Director Humano | `FASE_5_DEVOPS_RELEASE` | `GATE_5_RELEASE_APPROVAL` |
+| **G6** | Kaizen → Siguiente ciclo | 🛑 Halt | Release | `06_devops_release` | Director Humano | `FASE_6_MEJORA_CONTINUA` | `GATE_6_KAIZEN_APPROVAL` |
 
 <!-- gates:end -->
 
@@ -132,7 +132,7 @@ Ningún perfil puede romper estos invariantes:
 │  (QA_REPORT.md + RCA)    │
 └────────────┬─────────────┘
              │
-      🛑 G4: Certificación de Calidad y Go/No-Go (autoriza commit y merge a main)
+      🛑 G4: Certificación de Calidad y Go/No-Go (autoriza el merge a main)
              │
 ┌────────────▼─────────────┐
 │ Fase 5: DevOps & Release │
@@ -178,7 +178,7 @@ Ningún perfil puede romper estos invariantes:
   - `docs/modules/[XX_modulo]/03_FLUJO_Y_ESTADOS.md`: Diagramas de flujo y ciclo de vida en Mermaid.
   - Especificación ATDD (`ATDD_SPEC_TEMPLATE.md`) con la firma de *Testability* de QA (rito *Three Amigos*: PM + Arquitecto + QA Lead).
 - **Acción del Agente al Terminar:**
-  1. Actualizar el archivo de estado de su pista (§5) con `gate_activo: "GATE_1_PRD_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.
+  1. Ejecutar `npm run gate -- [pista] solicitar` (deja la pista en `ESPERANDO_APROBACION_HUMANA`). Tras la firma: `npm run gate -- [pista] aprobar --cita "..."`.
   2. **DETENERSE INMEDIATAMENTE (Halt).** Presentar el resumen ejecutivo al Director Humano.
   3. **NO proceder** a diseñar tablas ni contratos hasta recibir la confirmación explícita del humano.
   4. En la línea base, tras la aprobación, el turno pasa al rol de fundación (`rol_en_turno: "07_foundation_architect"`) en `FASE_2_ARQUITECTURA`, antes que al Arquitecto de Software.
@@ -198,7 +198,7 @@ Ningún perfil puede romper estos invariantes:
   - `docs/contracts/[modulo].contract.ts`: Contratos de entrada y salida tipados estrictamente con schemas de **Zod**.
   - Matriz de permisos RBAC para los roles del sistema, aislamiento multi-tenant y manejo transaccional ACID.
 - **Acción del Agente al Terminar:**
-  1. Actualizar el archivo de estado de su pista (§5) con `gate_activo: "GATE_2_ARCHITECTURE_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.
+  1. Ejecutar `npm run gate -- [pista] solicitar` (deja la pista en `ESPERANDO_APROBACION_HUMANA`). Tras la firma: `npm run gate -- [pista] aprobar --cita "..."`.
   2. **DETENERSE INMEDIATAMENTE (Halt).** Presentar el modelo DDL y los contratos para revisión humana.
   3. **NO escribir código backend ni frontend** hasta recibir la confirmación explícita del humano. Un módulo no entra en construcción mientras la línea base del proyecto no haya superado G2.
 
@@ -215,7 +215,7 @@ Ningún perfil puede romper estos invariantes:
   - Contratos Zod sincronizados entre backend y `docs/contracts/`.
   - Bitácora del backend para el módulo (`multiAgents/03_backend_engineer/worklog/[XX_modulo].md`) actualizada.
 - **Acción del Agente al Terminar:**
-  1. Registrar la transición en `historial_transiciones` y actualizar el archivo del módulo a `fase_activa: "FASE_3B_FRONTEND"`, `gate_activo: "GATE_3B_FRONTEND_UI_APPROVAL"`, `estado: "EN_PROCESO"`, `rol_en_turno: "04_frontend_engineer"`.
+  1. Registrar el paso con `npm run gate -- [XX_modulo] avanzar`, que mueve el módulo a G3B, asigna `rol_en_turno: "04_frontend_engineer"` y escribe el historial.
   2. **Transferir directamente al Frontend Engineer.** Este checkpoint **no** detiene el turno.
   3. Si alguna condición falla, el pase **no** ocurre: el backend corrige antes de transferir.
 
@@ -233,7 +233,7 @@ Ningún perfil puede romper estos invariantes:
   - `docs/walkthroughs/[XX_modulo]/[vX.Y.Z]/WALKTHROUGH.md` reproducible.
   - Compilación limpia con `npm run build` (`check:no-any && typecheck && build`) con 0 errores y **0 usos de `any`**.
 - **Acción del Agente al Terminar:**
-  1. Actualizar el archivo de estado de su pista (§5) con `gate_activo: "GATE_3B_FRONTEND_UI_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.
+  1. Ejecutar `npm run gate -- [pista] solicitar` (deja la pista en `ESPERANDO_APROBACION_HUMANA`). Tras la firma: `npm run gate -- [pista] aprobar --cita "..."`.
   2. **DETENERSE INMEDIATAMENTE (Halt).** Invitar al Director Humano a revisar y explorar el diseño visual, la usabilidad y los modales en su navegador.
   3. **NO avanzar a pruebas de QA** hasta que el Director Humano apruebe el diseño visual de la interfaz.
 
@@ -250,9 +250,9 @@ Ningún perfil puede romper estos invariantes:
   - Fragmento del módulo en `changelog.d/[XX_modulo].md` (formato Keep a Changelog), validado por `npm run check:docs`. En una rama de módulo no se edita `CHANGELOG.md`.
 - **Veto QA:** si QA rechaza, `estado: "BLOQUEADO"` con el motivo en `bloqueos`, y el flujo regresa a `FASE_3A_BACKEND` o `FASE_3B_FRONTEND` según el defecto. QA **no** corrige código de producción.
 - **Acción del Agente al Terminar:**
-  1. Actualizar el archivo de estado de su pista (§5) con `gate_activo: "GATE_4_QA_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.
+  1. Ejecutar `npm run gate -- [pista] solicitar` (deja la pista en `ESPERANDO_APROBACION_HUMANA`). Tras la firma: `npm run gate -- [pista] aprobar --cita "..."`.
   2. **DETENERSE INMEDIATAMENTE (Halt).** Presentar el veredicto final solicitando la firma Go / No-Go.
-  3. Tras la aprobación humana, persistir en Git con la nomenclatura canónica `[vX.Y.Z] tipo(scope): descripcion`, fusionar la rama del módulo en `main` y marcar el módulo `COMPLETADO`. **Esto no es un despliegue:** el paso a producción se decide en G5.
+  3. Tras la aprobación humana, registrar la firma con `npm run gate -- [XX_modulo] aprobar --cita "..."` (marca el módulo `COMPLETADO`) y fusionar la rama del módulo en `main`. Los commits en la rama ya se hicieron al cerrar cada compuerta (`GIT_COMMIT_CONVENTION.md` §1.1). **Esto no es un despliegue:** el paso a producción se decide en G5.
 
 ---
 
@@ -267,7 +267,7 @@ Ningún perfil puede romper estos invariantes:
   - `CHANGELOG.md` consolidado con `npm run release:changelog -- X.Y.Z` (une los fragmentos de `changelog.d/`, marca `incluido_en_release` en los módulos incluidos y fija la versión en `package.json`) y **tag de Git** `vX.Y.Z` creado.
   - Runbooks y documentación de entrega listos para firma.
 - **Acción del Agente al Terminar:**
-  1. Actualizar el archivo de estado de su pista (§5) con `gate_activo: "GATE_5_RELEASE_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.
+  1. Ejecutar `npm run gate -- [pista] solicitar` (deja la pista en `ESPERANDO_APROBACION_HUMANA`). Tras la firma: `npm run gate -- [pista] aprobar --cita "..."`.
   2. **DETENERSE INMEDIATAMENTE (Halt).** Solicitar la firma humana para el paso a producción.
   3. **NO desplegar** hasta recibir la confirmación explícita del humano.
 
@@ -281,7 +281,7 @@ Ningún perfil puede romper estos invariantes:
   - `docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md` con Diagrama de Ishikawa, análisis de Pareto 80/20 y matriz de priorización (dificultad, plazo, impacto), con responsables y KPIs verificables.
   - Detalle del proceso en `multiAgents/protocols/CONTINUOUS_IMPROVEMENT_PROTOCOL.md`.
 - **Acción del Agente al Terminar:**
-  1. Actualizar el archivo de estado de su pista (§5) con `gate_activo: "GATE_6_KAIZEN_APPROVAL"`, `estado: "ESPERANDO_APROBACION_HUMANA"`.
+  1. Ejecutar `npm run gate -- [pista] solicitar` (deja la pista en `ESPERANDO_APROBACION_HUMANA`). Tras la firma: `npm run gate -- [pista] aprobar --cita "..."`.
   2. **DETENERSE INMEDIATAMENTE (Halt).** Presentar el plan de mejora.
   3. Tras la aprobación humana, el Orquestador devuelve `current_state.json` a `FASE_5_DEVOPS_RELEASE` / `GATE_5_RELEASE_APPROVAL` / `EN_PROCESO` para el siguiente release, o lo marca `COMPLETADO` si el proyecto se cierra. Los módulos nuevos se crean con `npm run new:module`.
 
@@ -289,7 +289,9 @@ Ningún perfil puede romper estos invariantes:
 
 ## 5. Archivos de Estado y Valores Permitidos
 
-**Qué archivo actualizar.** Cuando una compuerta dice "actualizar el estado", se refiere al archivo de la pista en la que se trabaja (§2.1):
+**Cómo se cambia el estado.** Siempre con `npm run gate -- [pista] [acción]` (`solicitar`, `aprobar --cita "..."`, `avanzar`, `bloquear --motivo "..."`, `desbloquear`, `volver [Gx] --motivo "..."`), nunca editando los JSON a mano. El comando aplica el tipo efectivo del perfil, asigna el rol en turno de la Tabla Maestra, escribe `historial_transiciones` y rechaza cualquier transición que deje el flujo inválido.
+
+**Qué archivo cambia.** El de la pista en la que se trabaja (§2.1):
 - Línea base (G1/G2 de proyecto), G5 y G6: `.workflow/current_state.json`.
 - G1 a G4 de un módulo: `.workflow/modules/[XX_nombre].json`.
 
@@ -328,7 +330,7 @@ Además de los campos comunes, cada archivo de módulo declara `modulo` (igual a
 ## 6. Mandato Técnico para Modelos de Lenguaje (LLMs)
 
 > ⚠️ **REGLA DIRECTA AL AGENTE:**  
-> Al culminar los entregables de una compuerta que sea **🛑 Halt en el perfil activo**, **DEBES DETENER EL LLAMADO DE HERRAMIENTAS**. No encadenes la siguiente fase. Explica lo realizado, señala los aspectos visuales o arquitecturales a evaluar y espera la respuesta del usuario.  
+> Al culminar los entregables de una compuerta que sea **🛑 Halt en el perfil activo**, ejecuta `npm run gate -- [pista] solicitar` y **DEBES DETENER EL LLAMADO DE HERRAMIENTAS**. Tras la firma, regístrala con `npm run gate -- [pista] aprobar --cita "..."` y cierra la sesión (`AGENTS.md` §5.1). No encadenes la siguiente fase. Explica lo realizado, señala los aspectos visuales o arquitecturales a evaluar y espera la respuesta del usuario.  
 > Con el perfil `standard` son Halt **G1**, **G2**, **G3B**, **G4**, **G5** y **G6**, y **G3A** es un checkpoint automático. Otros perfiles cambian esa lista (§2.3); consulta la tuya con `npm run status -- [XX_nombre]` antes de seguir. **G4 y G5 son Halt en cualquier perfil.**
 
 ---
@@ -352,8 +354,8 @@ Cada entregable tiene un ID que citan los perfiles de `.workflow/profiles/`. La 
 | `arquitectura_c4_reducida` | G2 | proyecto | No | Un único diagrama de contexto y contenedores en `architecture.md` |
 | `adr_stack` | G2 | proyecto | Sí | ADR del stack aceptado por el desarrollador (rol de fundación) |
 | `estructura_repo` | G2 | proyecto | Sí | `docs/project/repo-structure.md` y su ADR aceptado (rol de fundación) |
-| `ddl` | G2 | modulo | Sí | DDL relacional en `04_ARQUITECTURA_Y_CODIGO.md` |
-| `contrato_zod` | G2 | modulo | Sí | Contrato Zod del módulo en la ruta de contratos |
+| `ddl` | G2 | modulo | Sí | DDL relacional en `04_ARQUITECTURA_Y_CODIGO.md`, con los estados como `ENUM` o `CHECK` |
+| `contrato_zod` | G2 | modulo | Sí | Contrato Zod del módulo en la ruta de contratos, con los estados como `z.enum` |
 | `rbac` | G2 | modulo | Sí | Matriz de permisos RBAC del módulo |
 | `adr_decisiones` | G2 | modulo | No | Un ADR por cada decisión estructural del módulo |
 | `modelo_amenazas` | G2 | modulo | No | Modelo de amenazas (STRIDE o equivalente) |
@@ -365,10 +367,12 @@ Cada entregable tiene un ID que citan los perfiles de `.workflow/profiles/`. La 
 | `vitest_backend` | G3A | modulo | Sí | Suite Vitest del backend al 100 % y ciclo TDD completo |
 | `no_any_backend` | G3A | modulo | Sí | `check:no-any` en verde en el backend |
 | `rutas_protegidas` | G3A | modulo | Sí | Rutas con autenticación, RBAC y aislamiento según el contrato |
+| `integracion_persistencia_backend` | G3A | modulo | Sí | Prueba de integración contra la base de datos real (sin mocks) por cada ruta que guarda o lee datos |
 | `vistas_design_system` | G3B | modulo | Sí | Vistas sobre el Design System con estados Loading, Empty, Error y Success |
 | `tests_componentes` | G3B | modulo | Sí | Pruebas de componentes y stores en verde |
 | `walkthrough` | G3B | modulo | Sí | `WALKTHROUGH.md` versionado y reproducible |
 | `no_any_frontend` | G3B | modulo | Sí | `check:no-any` en verde en el frontend |
+| `integracion_persistencia_frontend` | G3B | modulo | Sí | Si el frontend persiste datos: prueba de integración contra el almacenamiento real (sin mocks) por cada ruta de guardado o lectura |
 | `qa_report` | G4 | modulo | Sí | `QA_REPORT.md` con RCA de cada defecto |
 | `no_any_cert` | G4 | modulo | Sí | Certificación AST de cero `any` (pilar 4) |
 | `vitest_suite` | G4 | modulo | Sí | Suite automatizada al 100 % y 0 defectos S1/S2 abiertos (pilar 1) |

@@ -210,7 +210,7 @@ No es una fase del SDLC: actúa una vez aprobada la idea de negocio (G1 de líne
 | **02. Software Architect** | PRD firmado en Gate 1 con DoR completa; en la línea base, stack y estructura aceptados por el rol de fundación | DDL de tablas, Contratos Zod en `docs/contracts/XX.contract.ts`, ADRs | **Gate 2** (Firma Humana Requerida) |
 | **03. Backend Engineer** | Contrato Zod y DDL migrado en base de datos | Código en `backend/src/modules/XX/`, 0 ANYs (`check:no-any` OK), 100% Vitest PASS | **G3A** (Checkpoint automático: transfiere a Frontend sin halt) |
 | **04. Frontend Engineer** | Endpoints de backend en verde en Vitest | Vistas en `frontend/src/modules/XX/`, 0 ANYs (`check:no-any` OK), build OK, `WALKTHROUGH.md` | **Gate 3B** (Firma Humana de UI Requerida) |
-| **05. QA & Security** | Walkthrough versionado y código desplegado | Reporte forense RCA en `docs/qa/`, Arsenal 4 Pilares + Certificación Cero ANY en verde | **Gate 4** (Poder de Veto / Firma Humana; autoriza commit y merge a `main`) |
+| **05. QA & Security** | Walkthrough versionado y código desplegado | Reporte forense RCA en `docs/qa/`, Arsenal 4 Pilares + Certificación Cero ANY en verde | **Gate 4** (Poder de Veto / Firma Humana; autoriza el merge a `main`) |
 | **06. DevOps & Release** | Certificación de QA en Gate 4 | Seeds listos, `/api/health` OK, tag SemVer `vX.Y.Z`, plan Kaizen `docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md` | **Gate 5** (Release y Paso a Producción) y **Gate 6** (Kaizen) — Firma Humana |
 
 ---
@@ -233,9 +233,9 @@ Si eres un agente nuevo ingresando al repositorio:
 │ 3. Si hay ambigüedades, NO improvises: abre un ticket en tu bitácora.                  │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ PASO 3: EJECUCIÓN CON KIT DE SUBROLES                                                  │
-│ 1. Convoca al subrol especializado exacto para la tarea (no cargues todo a la vez)     │
-│    y cumple su "Contrato del Subrol". Si tienes skills externas, pueden aportar la     │
-│    técnica según multiAgents/protocols/SKILLS_INTEGRATION_PROTOCOL.md.                 │
+│ 1. Aplica el subrol exacto: lee su "Contrato del Subrol" y trabaja con él en tu        │
+│    propio turno (un subrol no es un subagente, ver §5.1). Si tienes skills             │
+│    externas, pueden aportar la técnica (SKILLS_INTEGRATION_PROTOCOL.md).               │
 │ 2. Si detectas código repetitivo o deuda técnica, formula un RFC bajo                  │
 │    multiAgents/protocols/TECHNICAL_PROPOSALS_PROTOCOL.md.                              │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
@@ -246,10 +246,19 @@ Si eres un agente nuevo ingresando al repositorio:
 │    CHANGELOG.md en una rama: se consolida en el release).                              │
 │ 3. Si eres Frontend o QA, actualiza el walkthrough versionado.                         │
 │ 4. Si tu compuerta es Halt en el perfil activo (npm run status -- [XX_nombre]),        │
-│    DETÉN EL USO DE HERRAMIENTAS (Halt/Yield) y solicita la aprobación explícita del    │
-│    Director Humano. Gate 4 y Gate 5 son Halt en cualquier perfil.                      │
+│    ejecuta npm run gate -- [pista] solicitar, DETÉN EL USO DE HERRAMIENTAS             │
+│    (Halt/Yield) y termina la sesión. Gate 4 y Gate 5 son Halt en cualquier perfil.     │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+### 5.1. Economía de contexto (obligatoria)
+
+Cada paso de una conversación larga vuelve a procesar todo lo anterior: una sesión que acumula cientos de miles de tokens agota los límites del modelo aunque el trabajo pendiente sea pequeño. Este repositorio no necesita esa memoria, porque el estado vive en disco. Por eso:
+
+1. **Una sesión por compuerta.** Al terminar los entregables de un Halt, el agente ejecuta `npm run gate -- [pista] solicitar` y se detiene. Cuando el Director Humano firma, el agente registra la firma con `npm run gate -- [pista] aprobar --cita "palabras del humano"` y **cierra la sesión**: el trabajo de la siguiente compuerta empieza en una **sesión nueva**, que aterriza con `npm run status`. Los Checkpoints no cortan la sesión.
+2. **Un subrol no es un subagente.** "Convocar un subrol" significa leer su **Contrato del Subrol** y aplicarlo en tu propio turno. Solo se lanza un subagente para trabajo realmente independiente y extenso; cada subagente vuelve a cargar la gobernanza.
+3. **Lectura mínima.** Al aterrizar se lee `npm run status` (y `npm run status -- [XX_nombre]` para el plan del módulo), el `ROLE.md` del rol en turno y el **Contrato** de los subroles que vayas a aplicar. La técnica de un subrol, las secciones de `STAGE_GATES.md` y los protocolos se consultan solo cuando hacen falta, por sección.
+4. **El estado se cambia con `npm run gate`**, nunca editando a mano `current_state.json` ni los archivos de `.workflow/modules/`. El comando valida cada transición y escribe el historial.
 
 ---
 

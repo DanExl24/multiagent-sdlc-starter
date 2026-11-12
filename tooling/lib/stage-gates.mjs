@@ -60,7 +60,7 @@ function parseNiveles(cell, id) {
 /**
  * @typedef {'proyecto'|'modulo'|'release'} Nivel
  * @returns {{
- *   gates: Array<{id: string, tipo: 'halt'|'checkpoint'|'bootstrap', niveles: Nivel[], fase: string|null, gate: string|null}>,
+ *   gates: Array<{id: string, tipo: 'halt'|'checkpoint'|'bootstrap', niveles: Nivel[], rol: string|null, fase: string|null, gate: string|null}>,
  *   stateful: Array<{id: string, tipo: 'halt'|'checkpoint', niveles: Nivel[], fase: string, gate: string}>,
  *   estados: string[],
  *   capas: Map<string, string>,
@@ -72,7 +72,7 @@ export function loadStageGates(file = STAGE_GATES_PATH) {
   const markdown = fs.readFileSync(file, 'utf-8');
 
   const gates = tableRows(extractBlock(markdown, 'gates'), 'gates').map((cells, i) => {
-    if (cells.length < 7) throw new Error(`gates: la fila ${i + 1} tiene ${cells.length} columnas (se esperaban 7).`);
+    if (cells.length < 8) throw new Error(`gates: la fila ${i + 1} tiene ${cells.length} columnas (se esperaban 8).`);
     const id = cells[0].replace(/\*/g, '').trim();
     const tipoCell = cells[2].toLowerCase();
     const tipo = tipoCell.includes('halt') ? 'halt'
@@ -82,12 +82,14 @@ export function loadStageGates(file = STAGE_GATES_PATH) {
     if (!/^G\d[AB]?$/.test(id)) throw new Error(`gates: ID de compuerta inválido "${id}".`);
     if (!tipo) throw new Error(`gates: la compuerta ${id} tiene un Tipo desconocido: "${cells[2]}".`);
     const niveles = parseNiveles(cells[3], id);
-    const fase = backticked(cells[5]);
-    const gate = backticked(cells[6]);
+    const rol = backticked(cells[4]);
+    const fase = backticked(cells[6]);
+    const gate = backticked(cells[7]);
     if (tipo !== 'bootstrap' && (!fase || !gate)) {
       throw new Error(`gates: la compuerta ${id} (${tipo}) debe declarar fase_activa y gate_activo entre acentos graves.`);
     }
-    return { id, tipo, niveles, fase, gate };
+    if (tipo !== 'bootstrap' && !rol) throw new Error(`gates: la compuerta ${id} debe declarar el rol en turno entre acentos graves.`);
+    return { id, tipo, niveles, rol, fase, gate };
   });
 
   const stateful = gates.filter((g) => g.tipo !== 'bootstrap');

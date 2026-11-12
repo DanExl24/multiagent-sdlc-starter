@@ -3,6 +3,24 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.13.0] - 2026-11-12
+
+### Added
+- **`npm run gate -- [pista] [acción]`:** cambia el estado de una pista sin editar JSON a mano (`estado`, `solicitar`, `aprobar --cita`, `avanzar`, `bloquear`, `desbloquear`, `volver`). Aplica el tipo efectivo del perfil, asigna el rol en turno, escribe el historial y deshace cualquier transición que deje el flujo inválido. Al pasar de la línea base de G2 a G5 registra que no es un salto de fases (en la prueba de campo, Codex lo había interpretado así).
+- Columna **Rol en turno** en la Tabla Maestra de `STAGE_GATES.md`, que usa `gate` para asignar el rol de cada compuerta.
+- **Economía de contexto** (`AGENTS.md` §5.1, obligatoria): una sesión por compuerta (cada Halt cierra la sesión), un subrol no es un subagente, lectura mínima al aterrizar y estado solo mediante `npm run gate`. `LANDING_PROMPT.md` y el protocolo de aterrizaje la incorporan.
+- **Confirmación del perfil:** `perfil.confirmado` en `project.json`. `validate:state` y `gate` impiden superar el G1 de línea base sin confirmarlo, y `status` lo marca como "SIN CONFIRMAR". `init-project` solo lo confirma si se escribe la escala.
+- `test:contracts` rechaza los campos `estado`, `status` o `state` declarados como `z.string()`: deben ser `z.enum` con los valores del glosario.
+- Entregables `integracion_persistencia_backend` (G3A) e `integracion_persistencia_frontend` (G3B): al menos una prueba contra la persistencia real, sin mocks, por cada ruta de guardado o lectura.
+
+### Changed
+- El Stack Selector exige elegir y justificar las librerías clave por cada necesidad del dominio, no solo lenguaje y framework, y su ADR incluye una tabla de librerías.
+- Los subroles de DDL y de contratos exigen declarar los estados como `ENUM`/`CHECK` y `z.enum`; el glosario y el catálogo lo recogen.
+- G4 autoriza el **merge** a `main`, no el primer commit: `GIT_COMMIT_CONVENTION.md` §1.1 define que se hace commit en la rama del módulo al cerrar cada compuerta y al terminar cada unidad de trabajo. Ajustados `STAGE_GATES.md`, `AGENTS.md`, `HANDOFF_PROTOCOL.md` y el ROLE del orquestador.
+- Las acciones de cada compuerta en `STAGE_GATES.md` y los pasos de `new:module` indican el comando `gate` que corresponde.
+
+---
+
 ## [1.12.0] - 2026-11-10
 
 ### Added

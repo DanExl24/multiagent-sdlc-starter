@@ -120,6 +120,8 @@ stateDiagram-v2
 
 > 🔀 **Pistas paralelas.** El Orquestador es dueño de `.workflow/current_state.json` (línea base del proyecto y releases) y supervisa los archivos de `.workflow/modules/`, uno por módulo, cada uno con su responsable y su rama. Antes de cada release ejecuta `npm run status` para ver qué módulos superaron G4, y `npm run validate:state` para confirmar que ningún módulo se adelantó a la línea base ni a sus dependencias. Los checklists de G1 y G2 se aplican tanto a la línea base como a cada módulo.
 
+> 🔁 **Transiciones y sesiones.** El estado se cambia con `npm run gate` (nunca a mano) y cada Halt cierra la sesión (`AGENTS.md` §5.1). Tras una firma, el Orquestador la registra con `npm run gate -- [pista] aprobar --cita "..."`; el rol siguiente empieza en una sesión nueva.
+
 > 🏗️ **Fundación.** Al aprobarse la línea base de G1, el Orquestador asigna el turno a `07_foundation_architect` (`rol_en_turno` en `current_state.json`, fase `FASE_2_ARQUITECTURA`). Cuando `project.json` → `fundacion.estado` es `COMPLETADA`, el turno pasa al Arquitecto de Software. `npm run validate:state` impide pedir la firma del G2 de línea base sin los ADRs de stack y estructura.
 
 > 🎚️ **Perfil del proyecto.** El tipo de cada compuerta (Halt o Checkpoint) y los entregables exigidos dependen del perfil (`.workflow/PROFILES.md`). Antes de verificar una compuerta, el Orquestador consulta `npm run status -- [XX_nombre]` y usa ese plan como checklist de entregables. Un Halt convertido en Checkpoint no se firma por separado: sus entregables se presentan en el siguiente Halt.
@@ -160,7 +162,7 @@ stateDiagram-v2
   - [ ] ¿Se ejecutó escaneo dinámico DAST (OWASP ZAP) sin vulnerabilidades críticas ni IDOR?
   - [ ] ¿Se ejecutaron pruebas de testing exploratorio y accesibilidad WCAG 2.1 AA (axe-core)?
   - [ ] ¿Se resolvieron y verificaron todos los defectos S1 (Blocker) y S2 (Critical) en el sub-bucle de incidencias?
-- **Acción:** Solicitar firma Go / No-Go al Director Humano. Su aprobación autoriza el commit canónico y el merge a `main`; el paso a producción se decide en Gate 5.
+- **Acción:** Solicitar firma Go / No-Go al Director Humano. Su aprobación autoriza el merge a `main` (los commits en la rama del módulo se hacen al cerrar cada compuerta); el paso a producción se decide en Gate 5.
 
 ### 🛑 Gate 5: Validación de Despliegue y Release (DevOps -> Operaciones)
 - **Checklist del Orquestador:**

@@ -30,7 +30,7 @@ Un término de negocio significa **lo mismo** en el PRD, en las historias, en lo
 
 ## Estados de negocio
 
-Los estados que aparecen en máquinas de estado (`03_FLUJO_Y_ESTADOS.md`) se registran aquí con su significado y si son terminales. Un estado terminal no admite transiciones de salida y se protege con HTTP 403 / 409 (ver `AGENTS.md` §6).
+Los estados que aparecen en máquinas de estado (`03_FLUJO_Y_ESTADOS.md`) se registran aquí con su significado y si son terminales. Cada conjunto de estados se declara como `z.enum([...])` en el contrato y como `ENUM` o `CHECK` en la base de datos, nunca como texto libre. Un estado terminal no admite transiciones de salida y se protege con HTTP 403 / 409 (ver `AGENTS.md` §6).
 
 | Estado | Entidad | Significado | ¿Terminal? |
 | :--- | :--- | :--- | :---: |

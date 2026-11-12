@@ -16,7 +16,7 @@
 | **Responsabilidad** | Construir la red de pruebas del backend siguiendo el ciclo Red-Green-Refactor. |
 | **Se activa cuando** | Antes de cada historia o endpoint, al recibir un defecto de QA (primero el test en rojo), en cada refactor y antes de emitir el walkthrough. |
 | **Entradas** | Criterios Gherkin, contrato y reglas de negocio del módulo. |
-| **Salidas** | Suite Vitest del módulo con casos felices y negativos (400, 401, 403, 404, 409 y 422), en verde y sin regresiones (`vitest_backend`). |
+| **Salidas** | Suite Vitest del módulo con casos felices y negativos (400, 401, 403, 404, 409 y 422), en verde y sin regresiones (`vitest_backend`), y al menos una prueba de integración contra la persistencia real (base de datos de pruebas, sin mocks) por cada ruta que guarda o lee datos (`integracion_persistencia_backend`). |
 | **Límites** | No hace E2E ni pruebas de carga, no tiene poder de veto y nunca silencia ni comenta un test que falla. |
 | **Criterio de salida** | §7 (DoD) cumplido. |
 

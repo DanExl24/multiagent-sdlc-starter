@@ -178,6 +178,13 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
   const valid = new Map();
 
   // Fundación: el G2 de línea base no se firma sin stack y estructura aceptados (07_foundation_architect).
+  // Perfil: debe confirmarlo el Director Humano antes de superar el G1 de línea base.
+  const firstBaseline = baseline[0];
+  const askingBaselineG1 = firstBaseline && project.gate_activo === firstBaseline.gate && project.estado === 'ESPERANDO_APROBACION_HUMANA';
+  if (firstBaseline && (askingBaselineG1 || hasPassed(table, project, firstBaseline)) && perfil.confirmado !== true) {
+    errors.push(`project.json: el perfil "${perfil.escala}" no está confirmado (perfil.confirmado). Pregunta al Director Humano qué escala usar (ver .workflow/PROFILES.md y npm run status -- proyecto) antes de superar ${firstBaseline.id}.`);
+  }
+
   const fundacion = config.fundacion ?? DEFAULT_CONFIG.fundacion;
   const askingBaselineG2 = lastBaseline && project.gate_activo === lastBaseline.gate && project.estado === 'ESPERANDO_APROBACION_HUMANA';
   if (lastBaseline && (askingBaselineG2 || hasPassed(table, project, lastBaseline))) {

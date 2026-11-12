@@ -17,7 +17,8 @@
   "perfil": {
     "escala": "standard",
     "modificadores": [],
-    "adr": null
+    "adr": null,
+    "confirmado": false
   },
   "fundacion": {
     "estado": "PENDIENTE",

@@ -16,7 +16,7 @@
 | **Responsabilidad** | Recomendar un único stack, justificado por la idea de negocio y sus requisitos no funcionales, y obtener la conformidad del desarrollador. |
 | **Se activa cuando** | Tras la lectura de la idea del Líder (con la línea base de G1 firmada), al añadir una capa nueva o al cambiar una pieza del stack. |
 | **Entradas** | `docs/project/prd.md`, `docs/project/glossary.md`, mapa preliminar de módulos y capas necesarias del Líder, y restricciones del desarrollador (experiencia del equipo, hosting, presupuesto). |
-| **Salidas** | ADR del stack en estado ACEPTADO (`adr_stack`), enlazado en `project.json` → `fundacion.adr_stack`, con la descripción por capa en `fundacion.stack` y las capas activas en `capas`. |
+| **Salidas** | ADR del stack en estado ACEPTADO (`adr_stack`) con las piezas por capa **y las librerías clave por cada necesidad del dominio**, cada una justificada, enlazado en `project.json` → `fundacion.adr_stack`, con la descripción por capa en `fundacion.stack` y las capas activas en `capas`. |
 | **Límites** | No presenta un menú de opciones: recomienda una y documenta las descartadas. No instala dependencias ni escribe configuración, y no diseña la estructura de carpetas (Subrol 02). |
 | **Criterio de salida** | §4 cumplido y conformidad explícita del desarrollador registrada en el ADR. |
 
@@ -32,9 +32,10 @@ Es el especialista que responde **"¿con qué lo construimos?"** una vez que se 
 
 1. **Lista de factores que deciden**, sacada del PRD y de la lectura del Líder. Por ejemplo: ¿hay tiempo real?, ¿qué volumen se espera?, ¿hay datos sensibles o normativa?, ¿dónde se despliega?, ¿qué conoce el equipo?, ¿cuánto dura el proyecto (perfil `sprint`, `standard` o `enterprise`)?
 2. **Una pieza por capa:** lenguaje y framework del backend, framework del frontend, base de datos, capa de acceso a datos (un QueryBuilder tipado, para cumplir la prohibición del SQL crudo de `AGENTS.md` §6), pruebas y despliegue.
-3. **Compatibilidad con el repositorio:** el stack debe permitir contratos tipados compartidos entre backend y frontend (la regla del contrato previo) y la verificación de cero `any` si es TypeScript. Si se elige otro lenguaje, el ADR explica cómo se cumplen esas reglas de oro.
-4. **Recomendación única:** el stack propuesto, por qué encaja con cada factor y qué alternativas principales se descartaron y por qué.
-5. **Conformidad:** se presenta en pocas líneas y se pregunta "¿estás de acuerdo con este stack?". Si el desarrollador objeta una pieza, se reconsidera esa pieza, no todo el stack.
+3. **Librerías clave por necesidad del dominio:** recorre los módulos candidatos y, para cada necesidad no trivial (por ejemplo: edición en canvas, generación de PDF, estado global, formularios y validación, fechas, gráficas, almacenamiento local, sincronización offline, internacionalización), elige una librería madura o justifica hacerlo a mano. Indica versión mayor, por qué se elige y qué alternativa se descartó. Elegir solo el lenguaje y el framework deja estas decisiones para mitad de la construcción, que es donde más caras salen.
+4. **Compatibilidad con el repositorio:** el stack debe permitir contratos tipados compartidos entre backend y frontend (la regla del contrato previo) y la verificación de cero `any` si es TypeScript. Si se elige otro lenguaje, el ADR explica cómo se cumplen esas reglas de oro.
+5. **Recomendación única:** el stack propuesto, por qué encaja con cada factor y qué alternativas principales se descartaron y por qué.
+6. **Conformidad:** se presenta en pocas líneas y se pregunta "¿estás de acuerdo con este stack?". Si el desarrollador objeta una pieza, se reconsidera esa pieza, no todo el stack.
 
 ---
 
@@ -53,15 +54,19 @@ Es el especialista que responde **"¿con qué lo construimos?"** una vez que se 
 | Capa | Elección | Por qué |
 | :--- | :--- | :--- |
 
-## 3. Alternativas descartadas
+## 3. Librerías clave
+| Necesidad | Librería (versión mayor) | Por qué | Alternativa descartada |
+| :--- | :--- | :--- | :--- |
+
+## 4. Alternativas descartadas
 - [Alternativa]: [motivo]
 
-## 4. Cumplimiento de las Reglas de Oro
+## 5. Cumplimiento de las Reglas de Oro
 - Contratos tipados compartidos: [cómo]
 - Cero `any` / tipado estricto: [cómo]
 - Sin SQL crudo: [QueryBuilder o capa elegida]
 
-## 5. Consecuencias
+## 6. Consecuencias
 - Positivas / Compromisos
 ```
 
@@ -70,6 +75,7 @@ Es el especialista que responde **"¿con qué lo construimos?"** una vez que se 
 ## 4. Definition of Done (DoD) del Subrol
 - [ ] Factores que deciden extraídos del PRD y de la lectura del Líder.
 - [ ] Una recomendación por capa, con alternativas descartadas.
+- [ ] Librerías clave elegidas para cada necesidad no trivial del dominio, justificadas.
 - [ ] Cumplimiento de las Reglas de Oro explicado para el stack elegido.
 - [ ] Conformidad del desarrollador registrada y ADR en estado ACEPTADO.
 - [ ] `project.json` actualizado: `capas`, `fundacion.stack` y `fundacion.adr_stack`.

@@ -20,6 +20,9 @@ INSTRUCCIONES DE ATERRIZAJE OBLIGATORIAS:
 5. Respeta rigurosamente las Reglas de Oro Inviolables definidas en AGENTS.md
    (contrato antes que código, Design System, tolerancia cero al tipo 'any' y alto
    obligatorio Halt/Yield en cada Stage-Gate con aprobación humana).
+6. Economía de contexto (AGENTS.md §5.1): lee solo el ROLE.md del rol en turno y el
+   Contrato de los subroles que apliques; un subrol no es un subagente; cambia el estado
+   con `npm run gate` y termina la sesión al pedir una firma humana.
 
 Por favor, preséntate indicando el rol que estás asumiendo, el Stage-Gate activo
 y cuál es el siguiente paso a ejecutar.

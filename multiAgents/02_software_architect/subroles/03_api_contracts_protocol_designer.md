@@ -18,7 +18,7 @@
 | **Se activa cuando** | En el G2 de cada módulo y ante cualquier cambio de API, que genera una nueva versión del contrato y vuelve a G2. |
 | **Entradas** | Historias y criterios del módulo, DDL (Subrol 02) y matriz RBAC (Subrol 04). |
 | **Salidas** | Contrato del módulo en la ruta de contratos de `.workflow/project.json` (`[XX_nombre].contract.ts`), con esquemas de request y response, envelope y códigos de error (`contrato_zod`). Con modificadores, también `contrato_idempotencia` o `contrato_eventos`. |
-| **Límites** | No implementa middlewares, clientes HTTP ni stores, y no define tablas. |
+| **Límites** | Todo campo de estado o categoría cerrada usa `z.enum([...])` con los valores de `docs/project/glossary.md`, nunca `z.string()` (`npm run test:contracts` lo rechaza en los campos `estado`, `status` o `state`). No implementa middlewares, clientes HTTP ni stores, y no define tablas. |
 | **Criterio de salida** | §6 (DoD) cumplido y `npm run test:contracts` en verde. |
 
 ---

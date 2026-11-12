@@ -50,7 +50,8 @@
 
 ## 3. Elegir o cambiar el perfil
 
-- **Al iniciar:** `npm run init:project` pregunta la escala y los modificadores. Si eliges algo distinto de `standard` sin modificadores, genera el ADR que justifica el perfil y lo enlaza en `perfil.adr`.
+- **Confirmación obligatoria:** el perfil debe confirmarlo el Director Humano antes de superar el G1 de línea base (`perfil.confirmado: true` en `project.json`). Si `npm run status` muestra el perfil como "SIN CONFIRMAR", el agente pregunta qué escala usar, explicando en una frase la diferencia entre `sprint` y `standard`, y registra la respuesta. `validate:state` y `npm run gate` impiden superar G1 sin esa confirmación.
+- **Al iniciar:** `npm run init:project` pregunta la escala y los modificadores. Solo queda confirmada si se escribe la escala; con Enter se usa `standard` sin confirmar. Si eliges algo distinto de `standard` sin modificadores, genera el ADR que justifica el perfil y lo enlaza en `perfil.adr`.
 - **Durante el proyecto:** cambiar la escala o los modificadores del proyecto es una decisión de arquitectura. Requiere un ADR nuevo (`docs/adrs/`) firmado por el Director Humano, y actualizar `perfil` en `project.json` (incluido `perfil.adr`). El cambio rige **desde la siguiente compuerta** de cada pista: lo ya firmado no se reabre.
 - **Modificadores de un módulo:** se deciden en la especificación del módulo y quedan firmados con su G1 o G2. No requieren ADR propio.
 - `npm run validate:state` exige que todo perfil distinto de `standard` sin modificadores tenga su ADR, y que escalas y modificadores existan.

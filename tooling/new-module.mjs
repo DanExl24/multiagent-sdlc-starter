@@ -125,6 +125,6 @@ console.log(`✅ Módulo ${id} (${nombre}) creado:`);
 for (const file of created) console.log(`   - ${file}`);
 console.log(`\nSiguientes pasos:`);
 console.log(`   1. git switch -c ${state.rama}`);
-console.log(`   2. El Product Manager completa 01 a 03 y lleva el módulo a ${firstGate.id}.`);
+console.log(`   2. El Product Manager completa 01 a 03; al terminar: npm run gate -- ${id} solicitar (y commit en la rama).`);
 console.log(`   3. Cada rol registra su bitácora en multiAgents/[rol]/worklog/${id}.md y los cambios en changelog.d/${id}.md (nunca en CHANGELOG.md).`);
-console.log(`   4. npm run validate:state && npm run status`);
+console.log(`   4. Plan del módulo según el perfil: npm run status -- ${id}. Cada firma humana cierra la sesión (AGENTS.md §5.1).`);

@@ -79,6 +79,19 @@ for (const file of contractFiles) {
       });
       console.log(`  ❌ [FAIL] Línea ${lineNum}: Prohibido 'any' en contratos.`);
     }
+
+    // Los estados de negocio son un conjunto cerrado: z.enum con los valores del glosario, nunca texto libre.
+    if (/(?:^|[\s{,])['"]?(estado|status|state)['"]?\s*:\s*z\.string\(/i.test(line)) {
+      failCount++;
+      findings.push({
+        file,
+        line: lineNum,
+        rule: 'STATE-AS-ENUM',
+        status: 'FAIL',
+        details: `Estado declarado como texto libre: ${line.trim()}. Usa z.enum([...]) con los estados del glosario.`,
+      });
+      console.log(`  ❌ [FAIL] Línea ${lineNum}: el estado debe ser z.enum([...]) con los valores del glosario, no z.string().`);
+    }
   });
 
   if (!hasZodImport) {

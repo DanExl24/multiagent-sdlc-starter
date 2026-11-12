@@ -18,7 +18,7 @@
 | **Se activa cuando** | En el G2 de cada módulo que persiste datos y ante cualquier cambio de esquema, que siempre vuelve a pasar por G2. |
 | **Entradas** | Reglas de negocio y flujo de estados del módulo, y el C4 del Subrol 01. |
 | **Salidas** | DDL y diccionario de datos en `docs/modules/[XX]/04_ARQUITECTURA_Y_CODIGO.md` (`ddl`), con índices, restricciones y estrategia de migración incremental. |
-| **Límites** | No escribe consultas en TypeScript (Backend), no diseña contratos (Subrol 03) y no gestiona despliegues ni copias de seguridad (DevOps). |
+| **Límites** | Todo estado o categoría cerrada del glosario se declara como `ENUM` o `CHECK (... IN (...))`, nunca como texto libre (`VARCHAR`/`TEXT`). No escribe consultas en TypeScript (Backend), no diseña contratos (Subrol 03) y no gestiona despliegues ni copias de seguridad (DevOps). |
 | **Criterio de salida** | §5 (DoD) cumplido. |
 
 ---

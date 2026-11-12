@@ -18,7 +18,7 @@ export const DEFAULT_CONFIG = {
     frontend: { activa: true, raiz: 'frontend', modulos: 'frontend/src/modules' },
   },
   rutas: { contratos: 'docs/contracts' },
-  perfil: { escala: 'standard', modificadores: [], adr: null },
+  perfil: { escala: 'standard', modificadores: [], adr: null, confirmado: false },
   fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
 };
 
@@ -51,7 +51,8 @@ export function loadProjectConfig() {
 
   // Perfil (opcional): escala, modificadores del proyecto y ADR que lo justifica.
   config.perfil = { ...DEFAULT_CONFIG.perfil, ...(config.perfil ?? {}) };
-  const { escala, modificadores, adr } = config.perfil;
+  const { escala, modificadores, adr, confirmado } = config.perfil;
+  if (typeof confirmado !== 'boolean') errors.push('project.json: perfil.confirmado debe ser true o false.');
   if (typeof escala !== 'string' || !escala) errors.push('project.json: perfil.escala debe ser el nombre de una escala (sprint, standard, enterprise...).');
   if (!Array.isArray(modificadores) || modificadores.some((m) => typeof m !== 'string')) errors.push('project.json: perfil.modificadores debe ser una lista de nombres.');
   if (adr !== null && !isRelativeInside(adr)) errors.push('project.json: perfil.adr debe ser null o una ruta relativa al ADR que justifica el perfil.');

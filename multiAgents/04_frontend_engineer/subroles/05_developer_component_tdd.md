@@ -18,7 +18,7 @@
 | **Responsabilidad** | Probar componentes y stores antes de entregar la interfaz a QA. |
 | **Se activa cuando** | Antes de cada componente o vista (prueba primero) y al recibir defectos de interfaz. |
 | **Entradas** | Historias y criterios, contratos y Design System. |
-| **Salidas** | Pruebas unitarias de componentes y stores en verde (`tests_componentes`) y `check:no-any` sin violaciones (`no_any_frontend`). |
+| **Salidas** | Pruebas unitarias de componentes y stores en verde (`tests_componentes`), `check:no-any` sin violaciones (`no_any_frontend`) y, si el frontend persiste datos (almacenamiento local, archivos, IndexedDB), al menos una prueba de integración contra ese almacenamiento real, sin mocks, por cada ruta de guardado o lectura (`integracion_persistencia_frontend`). |
 | **Límites** | No sustituye las pruebas E2E de QA. Los mocks se usan solo dentro de las pruebas, nunca en la aplicación entregada. |
 | **Criterio de salida** | §5 (criterio de salida hacia QA) cumplido. |
 

@@ -192,6 +192,7 @@ npm run audit:a11y
 # 6. Estado del flujo: crear un módulo, ver el semáforo y validar las pistas contra STAGE_GATES.md:
 npm run new:module -- 04_pagos --responsable "Ana" --depende-de 01_auth --modificadores pagos
 npm run status
+npm run gate -- 04_pagos solicitar   # Cambia el estado de una pista (solicitar, aprobar, avanzar, bloquear, volver)
 npm run status -- 04_pagos   # Plan del módulo según el perfil: qué compuertas requieren firma y qué entregables
 npm run validate:state
 npm run release:changelog -- 0.2.0 --dry-run   # Al preparar un release: consolida changelog.d/
