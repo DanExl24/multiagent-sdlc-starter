@@ -11,7 +11,7 @@
 ## 0. Lo que el Director Humano debe revisar antes de firmar
 
 ### 0.1. Requisitos aprobados no cumplidos
-Obligatoria. Si no hay ninguno, escribe "Ninguno". Todo requisito aprobado incumplido es S2 como mínimo y bloquea G4, salvo que el Director Humano cambie el requisito de forma explícita.
+Obligatoria (`npm run gate` no solicita G4 sin las secciones 0.1 y 0.2). Si no hay ninguno, escribe "Ninguno". Todo requisito aprobado incumplido es S2 como mínimo y bloquea G4, salvo que el Director Humano cambie el requisito de forma explícita.
 
 | Requisito (RF/RNF) | Valor exigido | Valor medido | Severidad | Decisión |
 | :--- | :--- | :--- | :---: | :--- |

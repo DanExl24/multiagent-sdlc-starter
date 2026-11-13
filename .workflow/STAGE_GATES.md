@@ -267,7 +267,7 @@ Los defectos **S3 y S4** van al backlog del siguiente módulo o a un release de 
 - **Agente Receptor:** `06_devops_release`
 - **Aprobador Requerido:** **Director Humano**
 - **Entregables Obligatorios:**
-  - `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md`: Auditoría forense con análisis RCA de cualquier defecto encontrado.
+  - `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md`: Auditoría forense con análisis RCA de cualquier defecto encontrado. Su **sección 0** (requisitos aprobados no cumplidos y limitaciones de entorno con evidencia) es obligatoria aunque esté vacía: `npm run gate -- [XX_modulo] solicitar` no pide la firma de G4 sin ella.
   - Suite de pruebas automatizadas 100% en verde y 0 defectos S1/S2 abiertos.
   - **Certificación AST de Cero ANY:** Verificación de `npm run check:no-any` en `backend/` y `frontend/` con 0 incidencias. Si se detecta un solo `any`, el QA Lead aplica **Veto Inmediato (Stop-the-Line)**.
   - Fragmento del módulo en `changelog.d/[XX_modulo].md` (formato Keep a Changelog), validado por `npm run check:docs`. En una rama de módulo no se edita `CHANGELOG.md`.
@@ -319,7 +319,7 @@ Los defectos **S3 y S4** van al backlog del siguiente módulo o a un release de 
 - Línea base (G1/G2 de proyecto), G5 y G6: `.workflow/current_state.json`.
 - G1 a G4 de un módulo: `.workflow/modules/[XX_nombre].json`.
 
-Además de los campos comunes, cada archivo de módulo declara `modulo` (igual al nombre del archivo), `nombre`, `responsable`, `rama`, `depende_de` (IDs de otros módulos) e `incluido_en_release` (`null` hasta que un release lo incluye).
+Además de los campos comunes, cada archivo de módulo declara `modulo` (igual al nombre del archivo), `nombre`, `responsable`, `rama`, `depende_de` (IDs de otros módulos), `origen` (opcional: el plan Kaizen del que sale un módulo de mantenimiento) e `incluido_en_release` (`null` hasta que un release lo incluye).
 
 **`fase_activa` y `gate_activo`** toman siempre sus valores de la **Tabla Maestra** (§2), ambos de la misma fila, y la compuerta debe pertenecer a la pista del archivo (columna Nivel).
 

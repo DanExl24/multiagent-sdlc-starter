@@ -65,6 +65,7 @@ if (target) {
       console.error(`❌ El módulo "${target}" no existe en .workflow/modules/. Módulos: ${modules.map((m) => m.id).join(', ') || 'ninguno'}.`);
       process.exit(1);
     }
+    if (mod.state.origen) console.log(`\n🧰 Módulo de mantenimiento · origen: ${mod.state.origen}`);
     printPlan(`${mod.id}`, 'modulo', moduleModifiers(config, mod.state), mod.state.gate_activo);
   }
   process.exit(0);
@@ -100,6 +101,9 @@ if (modules.length === 0) {
   console.log(`   ${header.map((h, i) => pad(h, widths[i])).join('  ')}`);
   console.log(`   ${widths.map((w) => '─'.repeat(w)).join('  ')}`);
   for (const r of rows) console.log(`   ${r.map((c, i) => pad(c, widths[i])).join('  ')}`);
+
+  const mantenimiento = modules.filter((m) => m.state?.origen);
+  if (mantenimiento.length) console.log(`\n🧰 Mantenimiento: ${mantenimiento.map((m) => `${m.id} ← ${m.state.origen}`).join(' · ')}`);
 
   const listos = modules.filter((m) => m.state?.estado === 'COMPLETADO' && m.state.incluido_en_release == null);
   if (listos.length) console.log(`\n🚀 Listos para el próximo release (superaron G4): ${listos.map((m) => m.id).join(', ')}`);

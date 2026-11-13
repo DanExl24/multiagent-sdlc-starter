@@ -15,6 +15,7 @@
  *
  * En la pista de proyecto, `aprobar` en G6 abre el siguiente release (vuelve a G5); con --cerrar marca COMPLETADO.
  * `solicitar` exige que no haya cambios sin commit, y cada transición hace commit de su archivo de estado.
+ * En G4 de un módulo, `solicitar` exige además la sección 0 del QA_REPORT (requisitos no cumplidos y limitaciones).
  * El push a remoto nunca lo hace el comando: requiere autorización explícita del Director Humano.
  *
  * Cada cambio se valida con las mismas reglas que `npm run validate:state`; si algo no cuadra,
@@ -108,6 +109,31 @@ function commitStateFile(relFile, message) {
   }
 }
 
+// G4: el QA_REPORT más reciente del módulo debe traer la sección 0 de la plantilla
+// (QA_REPORT_TEMPLATE.md), que el Director Humano revisa antes de firmar.
+function qaReportGaps(moduleId) {
+  const dir = path.join(rootDir, 'docs', 'qa', moduleId);
+  const reports = [];
+  const walk = (d) => {
+    if (!fs.existsSync(d)) return;
+    for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+      const p = path.join(d, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name === 'QA_REPORT.md') reports.push(p);
+    }
+  };
+  walk(dir);
+  if (!reports.length) return { report: null, gaps: [`No existe docs/qa/${moduleId}/[vX.Y.Z]/QA_REPORT.md.`] };
+  const ver = (p) => (path.relative(dir, p).match(/v?(\d+)\.(\d+)\.(\d+)/) ?? [0, 0, 0, 0]).slice(1).map(Number);
+  reports.sort((a, b) => { const x = ver(a); const y = ver(b); for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return y[i] - x[i]; return 0; });
+  const text = fs.readFileSync(reports[0], 'utf-8');
+  const gaps = [];
+  if (!/requisitos aprobados no cumplidos/i.test(text)) gaps.push('Falta la sección 0.1 "Requisitos aprobados no cumplidos" (escribe "Ninguno" si no hay).');
+  if (!/limitaciones de entorno/i.test(text)) gaps.push('Falta la sección 0.2 "Limitaciones de entorno" (con evidencia de cada prueba no ejecutada, o "Ninguna").');
+  if (/\[RNF-XX-NN\]/.test(text)) gaps.push('La sección 0.1 conserva la fila de ejemplo de la plantilla ([RNF-XX-NN]).');
+  return { report: path.relative(rootDir, reports[0]).split(path.sep).join('/'), gaps };
+}
+
 function requireText(key, label) {
   if (typeof opts[key] !== 'string' || !opts[key].trim()) fail(`"${accion}" exige ${label} (--${key} "...").`);
   return opts[key].trim();
@@ -133,6 +159,10 @@ switch (accion) {
     const pendientes = uncommittedChanges();
     if (pendientes.length) {
       fail(`Hay cambios sin commit. Haz commit de los entregables de ${current.id} en la rama antes de pedir la firma (GIT_COMMIT_CONVENTION.md §1.1):\n   ${pendientes.slice(0, 10).join('\n   ')}${pendientes.length > 10 ? `\n   … y ${pendientes.length - 10} más` : ''}`);
+    }
+    if (!isProject && current.id === 'G4') {
+      const { report, gaps } = qaReportGaps(pista);
+      if (gaps.length) fail(`El reporte de QA no está listo para la firma de G4 (QA_REPORT_TEMPLATE.md, sección 0)${report ? ` en ${report}` : ''}:\n   ${gaps.join('\n   ')}`);
     }
     record({ estado: 'ESPERANDO_APROBACION_HUMANA', motivo: opts.nota || `Entregables de ${current.id} listos; se solicita la firma del Director Humano.` });
     sessionEnd = true;

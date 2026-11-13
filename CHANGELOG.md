@@ -3,6 +3,17 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.16.0] - 2026-11-13
+
+### Added
+- **`npm run gate` exige la sección 0 del reporte de QA en G4:** `solicitar` no pide la firma si el `QA_REPORT.md` más reciente del módulo no tiene las secciones "Requisitos aprobados no cumplidos" y "Limitaciones de entorno", o conserva la fila de ejemplo de la plantilla. Detectado en Digitaline: el módulo de mantenimiento omitió esa sección aunque la plantilla ya la traía.
+- **`npm run new:module -- XX_nombre --origen docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md`:** marca un módulo de mantenimiento con el plan Kaizen del que sale. `npm run status` lo muestra y `validate:state` comprueba que el plan exista.
+
+### Changed
+- `CONTINUOUS_IMPROVEMENT_PROTOCOL.md` (paso 6), `STAGE_GATES.md` (G4 y campos del módulo) y `QA_REPORT_TEMPLATE.md` documentan lo anterior. El módulo de mantenimiento conserva las plantillas completas: en la prueba de campo, flujos y estados aportaron contenido real.
+
+---
+
 ## [1.15.0] - 2026-11-13
 
 ### Added

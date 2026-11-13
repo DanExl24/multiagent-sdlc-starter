@@ -9,6 +9,7 @@
  *   --responsable "Texto"    Persona o agente a cargo (por defecto, user.name de Git)
  *   --depende-de a,b         IDs de módulos de los que depende
  *   --modificadores a,b      Modificadores de riesgo propios del módulo (pagos, tiempo_real...)
+ *   --origen ruta            Plan Kaizen del que sale un módulo de mantenimiento (docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md)
  *
  * No crea el contrato Zod: lo redacta Arquitectura en G2 (AGENTS.md §6).
  */
@@ -28,7 +29,7 @@ function fail(message) {
 }
 
 function parseArgs(argv) {
-  const opts = { id: null, nombre: null, responsable: null, dependeDe: [], modificadores: [] };
+  const opts = { id: null, nombre: null, responsable: null, dependeDe: [], modificadores: [], origen: null };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     const value = () => {
@@ -39,6 +40,7 @@ function parseArgs(argv) {
     else if (arg === '--responsable') opts.responsable = value();
     else if (arg === '--depende-de') opts.dependeDe = value().split(',').map((d) => d.trim()).filter(Boolean);
     else if (arg === '--modificadores') opts.modificadores = value().split(',').map((d) => d.trim()).filter(Boolean);
+    else if (arg === '--origen') opts.origen = value().trim().replace(/\\/g, '/');
     else if (arg.startsWith('--')) fail(`Opción desconocida: ${arg}`);
     else if (!opts.id) opts.id = arg;
     else fail(`Argumento inesperado: ${arg}`);
@@ -55,7 +57,7 @@ function gitUserName() {
 }
 
 const opts = parseArgs(process.argv.slice(2));
-if (!opts.id) fail('Uso: npm run new:module -- XX_nombre [--nombre "Texto"] [--responsable "Texto"] [--depende-de a,b] [--modificadores a,b]');
+if (!opts.id) fail('Uso: npm run new:module -- XX_nombre [--nombre "Texto"] [--responsable "Texto"] [--depende-de a,b] [--modificadores a,b] [--origen docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md]');
 if (!MODULE_ID_RE.test(opts.id)) fail(`ID inválido "${opts.id}". Formato: dos dígitos, guion bajo y nombre en minúsculas (ej. 04_pagos).`);
 
 const id = opts.id;
@@ -76,6 +78,7 @@ for (const dep of opts.dependeDe) {
 
 const table = loadStageGates();
 const profiles = loadProfiles(table);
+if (opts.origen && !fs.existsSync(path.join(rootDir, opts.origen))) fail(`El plan de origen "${opts.origen}" no existe. Debe ser la ruta (desde la raíz) del plan Kaizen, por ejemplo docs/quality/IMPROVEMENT_PLAN_v0.3.0.md.`);
 for (const mod of opts.modificadores) {
   if (!profiles.modificadores.has(mod)) fail(`El modificador "${mod}" no existe. Disponibles: ${[...profiles.modificadores.keys()].join(', ')}.`);
 }
@@ -107,6 +110,7 @@ const state = {
   rama: `feature/${id.replace(/_/g, '-')}`,
   depende_de: opts.dependeDe,
   modificadores: opts.modificadores,
+  origen: opts.origen,
   fase_activa: firstGate.fase,
   gate_activo: firstGate.gate,
   estado: 'EN_PROCESO',
@@ -123,6 +127,7 @@ created.push(`.workflow/modules/${id}.json`);
 
 console.log(`✅ Módulo ${id} (${nombre}) creado:`);
 for (const file of created) console.log(`   - ${file}`);
+if (state.origen) console.log(`   Módulo de mantenimiento: sus historias son las acciones de ${state.origen} (CONTINUOUS_IMPROVEMENT_PROTOCOL.md, paso 6).`);
 console.log(`\nSiguientes pasos:`);
 console.log(`   1. git switch -c ${state.rama}`);
 console.log(`   2. El Product Manager completa 01 a 03; al terminar: npm run gate -- ${id} solicitar (y commit en la rama).`);

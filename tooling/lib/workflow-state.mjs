@@ -210,6 +210,10 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
       errors.push(`${label}: "incluido_en_release" solo puede tener valor cuando el módulo está COMPLETADO (superó G4).`);
     }
     if ('depende_de' in s && !Array.isArray(s.depende_de)) errors.push(`${label}: "depende_de" debe ser un arreglo de IDs de módulo.`);
+    if (s.origen != null) {
+      if (typeof s.origen !== 'string' || !s.origen.trim()) errors.push(`${label}: "origen" debe ser la ruta del plan Kaizen de origen o null.`);
+      else if (!fs.existsSync(path.join(rootDir, s.origen))) warnings.push(`${label}: el plan de origen "${s.origen}" no existe.`);
+    }
     if ('releases_previos' in s && !(Array.isArray(s.releases_previos) && s.releases_previos.every((v) => typeof v === 'string'))) {
       errors.push(`${label}: "releases_previos" debe ser una lista de versiones.`);
     }
