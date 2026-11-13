@@ -7,7 +7,7 @@
  * - Agrupa las viñetas por sección de Keep a Changelog, en orden canónico, anteponiendo el módulo.
  * - Registra la versión en `incluido_en_release` de los módulos COMPLETADO que aún no tenían release.
  * - Borra los fragmentos consumidos.
- * - Fija la versión en package.json y package-lock.json.
+ * - Fija la versión en package.json, package-lock.json y version_actual de current_state.json.
  * Con --dry-run solo muestra el resultado. Si el Director Humano rechaza G5, se revierte el commit.
  */
 import fs from 'node:fs';
@@ -85,4 +85,14 @@ for (const m of included) {
 }
 for (const f of fragments) fs.unlinkSync(f.file);
 syncPackageVersion({ version });
-console.log(`\n✅ CHANGELOG.md actualizado, ${fragments.length} fragmento(s) consumido(s) y ${included.length} módulo(s) marcados con v${version}; package.json y package-lock.json en ${version}.`);
+// La pista de proyecto refleja la versión del release preparado.
+const statePath = path.join(rootDir, '.workflow', 'current_state.json');
+if (fs.existsSync(statePath)) {
+  const rawState = fs.readFileSync(statePath, 'utf-8');
+  const projectState = JSON.parse(rawState);
+  projectState.version_actual = `v${version}`;
+  if ('fecha_actualizacion' in projectState) projectState.fecha_actualizacion = today;
+  const outState = `${JSON.stringify(projectState, null, 2)}\n`;
+  fs.writeFileSync(statePath, rawState.includes('\r\n') ? outState.replace(/\n/g, '\r\n') : outState);
+}
+console.log(`\n✅ CHANGELOG.md actualizado, ${fragments.length} fragmento(s) consumido(s) y ${included.length} módulo(s) marcados con v${version}; package.json, package-lock.json y version_actual en ${version}.`);

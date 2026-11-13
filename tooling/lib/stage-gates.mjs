@@ -65,7 +65,7 @@ function parseNiveles(cell, id) {
  *   estados: string[],
  *   capas: Map<string, string>,
  *   invariantes: Array<{ids: string[], regla: 'halt'|'al_menos_un_halt'}>,
- *   entregables: Map<string, {id: string, gate: string, pista: Nivel, base: boolean, descripcion: string}>
+ *   entregables: Map<string, {id: string, gate: string, pista: Nivel, capa: string|null, base: boolean, descripcion: string}>
  * }}
  */
 export function loadStageGates(file = STAGE_GATES_PATH) {
@@ -137,11 +137,13 @@ export function loadStageGates(file = STAGE_GATES_PATH) {
     const id = backticked(cells[0]);
     const gate = (cells[1] ?? '').replace(/\*/g, '').trim();
     const pista = (cells[2] ?? '').trim();
-    const base = /^s[ií]$/i.test((cells[3] ?? '').trim());
+    const capa = backticked(cells[3] ?? '');
+    const base = /^s[ií]$/i.test((cells[4] ?? '').trim());
     if (!id) throw new Error(`entregables: la fila ${i + 1} no declara el ID entre acentos graves.`);
     if (!gates.some((g) => g.id === gate)) throw new Error(`entregables: "${id}" cita la compuerta "${gate}", que no existe.`);
     if (!['proyecto', 'modulo', 'release'].includes(pista)) throw new Error(`entregables: "${id}" tiene una pista desconocida "${pista}".`);
-    return [id, { id, gate, pista, base, descripcion: (cells[4] ?? '').trim() }];
+    if (capa && !['backend', 'frontend'].includes(capa)) throw new Error(`entregables: "${id}" tiene una capa desconocida "${capa}".`);
+    return [id, { id, gate, pista, capa, base, descripcion: (cells[5] ?? '').trim() }];
   }));
 
   return { gates, stateful, estados, capas, invariantes, entregables };

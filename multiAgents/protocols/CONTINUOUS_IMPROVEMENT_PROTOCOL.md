@@ -79,6 +79,7 @@ El DevOps Lead consolida el informe utilizando [`protocols/TEMPLATES/CONTINUOUS_
 - Agente líder responsable (Backend Lead, Frontend Lead, Architect o DevOps).
 - Tiempos de inicio y fin dentro del siguiente sprint.
 - **KPI cuantitativo de éxito** (ej. *"0 incidencias por timezone en el siguiente reporte de QA"*).
+- **Alcance:** `futuro` (se aplica en los módulos siguientes) o `reabrir [XX_nombre] desde [Gx]` (corrige un módulo ya cerrado). Es obligatorio `reabrir` ante defectos S1/S2 o violaciones de las Reglas de Oro en módulos ya liberados (`.workflow/STAGE_GATES.md` §2.4); lo demás va a `futuro`. Las acciones `reabrir` se ejecutan antes de empezar el siguiente módulo.
 
 ---
 

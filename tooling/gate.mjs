@@ -11,7 +11,11 @@
  *   npm run gate -- <pista> volver <G3A|G3B|...> --motivo "..."  Regresa a una compuerta anterior (veto de QA)
  *
  * <pista> es "proyecto" o el ID de un módulo (04_pagos). Opciones comunes: --autor "nombre".
+ *   npm run gate -- <modulo> reabrir --desde <Gx> --motivo "..." --cita "..."  Rehace un módulo ya COMPLETADO
+ *
  * En la pista de proyecto, `aprobar` en G6 abre el siguiente release (vuelve a G5); con --cerrar marca COMPLETADO.
+ * `solicitar` exige que no haya cambios sin commit, y cada transición hace commit de su archivo de estado.
+ * El push a remoto nunca lo hace el comando: requiere autorización explícita del Director Humano.
  *
  * Cada cambio se valida con las mismas reglas que `npm run validate:state`; si algo no cuadra,
  * el archivo queda como estaba y se explica por qué.
@@ -79,6 +83,31 @@ function record({ to = current, estado, motivo, extra = {} }) {
   if ('fecha_actualizacion' in state) state.fecha_actualizacion = today;
 }
 
+function git(args) {
+  return execSync(`git ${args}`, { cwd: rootDir, encoding: 'utf-8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+}
+
+const isGitRepo = (() => { try { return git('rev-parse --is-inside-work-tree') === 'true'; } catch { return false; } })();
+
+/** Cambios sin commit, salvo archivos sueltos sin seguimiento en la raíz (notas personales, PDFs). */
+function uncommittedChanges() {
+  if (!isGitRepo) return [];
+  return git('status --porcelain').split(/\r?\n/).filter(Boolean)
+    .filter((line) => !(line.startsWith('??') && !line.slice(3).replace(/^"|"$/g, '').includes('/')));
+}
+
+function commitStateFile(relFile, message) {
+  if (!isGitRepo) return null;
+  try {
+    git(`add -- "${relFile}"`);
+    git(`commit -q -m "${message.replace(/"/g, '\\"')}" -- "${relFile}"`);
+    return git('log -1 --format=%h');
+  } catch (err) {
+    console.warn(`⚠️  No se pudo hacer commit de la transición (${err.message.split('\n')[0]}). Hazlo a mano: git commit -- ${relFile}`);
+    return null;
+  }
+}
+
 function requireText(key, label) {
   if (typeof opts[key] !== 'string' || !opts[key].trim()) fail(`"${accion}" exige ${label} (--${key} "...").`);
   return opts[key].trim();
@@ -93,7 +122,7 @@ switch (accion) {
       EN_PROCESO: current.tipo === 'halt' ? 'solicitar, bloquear' : 'avanzar, bloquear',
       ESPERANDO_APROBACION_HUMANA: 'aprobar --cita "...", bloquear, volver',
       BLOQUEADO: 'desbloquear, volver',
-      COMPLETADO: isProject ? '—' : '— (módulo fusionado; lo incluye el próximo release)',
+      COMPLETADO: isProject ? '—' : 'reabrir --desde Gx --motivo "..." --cita "..." (solo ante inconsistencias graves; STAGE_GATES.md §2.4)',
     };
     console.log(`Acciones posibles: ${acciones[state.estado] ?? '—'}\n`);
     process.exit(0);
@@ -101,6 +130,10 @@ switch (accion) {
   case 'solicitar': {
     if (state.estado !== 'EN_PROCESO') fail(`Solo se pide firma desde EN_PROCESO (estado actual: ${state.estado}).`);
     if (current.tipo !== 'halt') fail(`${current.id} es un Checkpoint en el perfil activo: no se pide firma, se usa "avanzar" cuando todo está en verde.`);
+    const pendientes = uncommittedChanges();
+    if (pendientes.length) {
+      fail(`Hay cambios sin commit. Haz commit de los entregables de ${current.id} en la rama antes de pedir la firma (GIT_COMMIT_CONVENTION.md §1.1):\n   ${pendientes.slice(0, 10).join('\n   ')}${pendientes.length > 10 ? `\n   … y ${pendientes.length - 10} más` : ''}`);
+    }
     record({ estado: 'ESPERANDO_APROBACION_HUMANA', motivo: opts.nota || `Entregables de ${current.id} listos; se solicita la firma del Director Humano.` });
     sessionEnd = true;
     break;
@@ -154,6 +187,24 @@ switch (accion) {
     record({ to: target, estado: 'EN_PROCESO', motivo });
     break;
   }
+  case 'reabrir': {
+    // Rehacer un módulo ya cerrado cuando aparecen inconsistencias graves (STAGE_GATES.md §2.4).
+    if (isProject) fail('Solo se reabren módulos. La pista de proyecto avanza por releases.');
+    if (state.estado !== 'COMPLETADO') fail(`Solo se reabre un módulo COMPLETADO (estado actual: ${state.estado}). Para retroceder dentro del ciclo usa "volver".`);
+    const target = track.find((g) => g.id === opts.desde);
+    if (!target) fail(`Indica desde qué compuerta se rehace (${track.map((g) => g.id).join(', ')}): npm run gate -- ${pista} reabrir --desde G3B --motivo "..." --cita "..."`);
+    const motivo = requireText('motivo', 'el motivo de la reapertura (hallazgo, severidad y origen)');
+    const cita = requireText('cita', 'la autorización del Director Humano');
+    if (state.incluido_en_release) {
+      state.releases_previos = [...(state.releases_previos ?? []), state.incluido_en_release];
+      state.incluido_en_release = null;
+    }
+    state.bloqueos = [];
+    next = target;
+    record({ to: target, estado: 'EN_PROCESO', motivo: `Reapertura desde ${target.id}: ${motivo}`, extra: { cita } });
+    if (target === current) state.rol_en_turno = rolFor(target);
+    break;
+  }
   default:
     fail(`Acción desconocida "${accion}".`);
 }
@@ -168,6 +219,19 @@ if (check.errors.length) {
 
 const now = track.find((g) => g.gate === state.gate_activo);
 console.log(`✅ ${pista}: ${now.id} ${TIPO[now.tipo]} · ${state.estado} · rol en turno: ${state.rol_en_turno}`);
+
+// La transición queda en Git: commit solo del archivo de estado (los entregables ya se commitearon antes).
+const version = loadProjectState().version_actual ?? 'v0.0.0';
+const relFile = path.relative(rootDir, file).split(path.sep).join('/');
+const committed = commitStateFile(relFile, `[${version.startsWith('v') ? version : `v${version}`}] chore(workflow): ${pista} ${accion} ${current.id}${now.id !== current.id ? ` -> ${now.id}` : ''}`);
+if (committed) console.log(`📝 Commit de la transición: ${committed}`);
+
+if (accion === 'aprobar' && !isProject && state.estado === 'COMPLETADO') {
+  console.log(`🔀 Pendiente: fusionar ${state.rama} en main (G4 lo autoriza). El push a remoto requiere la autorización explícita del Director Humano.`);
+}
+if (accion === 'aprobar' && isProject && current.niveles.includes('release') && current === track.find((g) => g.niveles.includes('release'))) {
+  console.log('🚀 Pendiente: publicar main y el tag del release (git push origin main --tags) cuando el Director Humano lo autorice explícitamente.');
+}
 if (sessionEnd) {
   console.log('🛑 Fin de sesión: espera la firma del Director Humano. Tras la firma, registra "aprobar" y continúa en una sesión nueva (empieza con npm run status).');
 } else if (next) {

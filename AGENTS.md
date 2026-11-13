@@ -257,8 +257,8 @@ Cada paso de una conversación larga vuelve a procesar todo lo anterior: una ses
 
 1. **Una sesión por compuerta.** Al terminar los entregables de un Halt, el agente ejecuta `npm run gate -- [pista] solicitar` y se detiene. Cuando el Director Humano firma, el agente registra la firma con `npm run gate -- [pista] aprobar --cita "palabras del humano"` y **cierra la sesión**: el trabajo de la siguiente compuerta empieza en una **sesión nueva**, que aterriza con `npm run status`. Los Checkpoints no cortan la sesión.
 2. **Un subrol no es un subagente.** "Convocar un subrol" significa leer su **Contrato del Subrol** y aplicarlo en tu propio turno. Solo se lanza un subagente para trabajo realmente independiente y extenso; cada subagente vuelve a cargar la gobernanza.
-3. **Lectura mínima.** Al aterrizar se lee `npm run status` (y `npm run status -- [XX_nombre]` para el plan del módulo), el `ROLE.md` del rol en turno y el **Contrato** de los subroles que vayas a aplicar. La técnica de un subrol, las secciones de `STAGE_GATES.md` y los protocolos se consultan solo cuando hacen falta, por sección.
-4. **El estado se cambia con `npm run gate`**, nunca editando a mano `current_state.json` ni los archivos de `.workflow/modules/`. El comando valida cada transición y escribe el historial.
+3. **Lectura mínima.** Al aterrizar se lee `npm run status` (y `npm run status -- [XX_nombre]` para el plan del módulo), el `ROLE.md` del rol en turno y el **Contrato** de los subroles que vayas a aplicar. La técnica de un subrol, las secciones de `STAGE_GATES.md` y los protocolos se consultan solo cuando hacen falta, por sección. Los reportes generados (JSON de pruebas, logs) se leen por su resumen o filtrando fallos, nunca enteros.
+4. **El estado se cambia con `npm run gate`**, nunca editando a mano `current_state.json` ni los archivos de `.workflow/modules/`. El comando valida cada transición, escribe el historial y hace commit del archivo de estado. `solicitar` exige que los entregables ya estén en un commit. El push a remoto nunca es automático: requiere la autorización explícita del Director Humano, y `npm run status` avisa de los commits sin publicar.
 
 ---
 

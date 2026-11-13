@@ -3,6 +3,22 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.14.0] - 2026-11-12
+
+### Added
+- **Commits garantizados por `npm run gate`:** `solicitar` se niega si hay cambios sin commit (salvo archivos sueltos sin seguimiento en la raíz) y cada transición hace commit de su propio archivo de estado. Tras aprobar G4 y G5 recuerda el merge y el push pendientes; el push nunca es automático.
+- `npm run status` muestra la rama, los cambios sin commit y los commits sin publicar.
+- **Reapertura de módulos ya cerrados:** `npm run gate -- [XX_nombre] reabrir --desde [Gx] --motivo "..." --cita "..."`. `STAGE_GATES.md` §2.4 define cuándo es obligatoria (S1/S2 o violación de las Reglas de Oro en un módulo liberado), desde qué compuerta y qué rol retoma según el origen. La versión liberada pasa a `releases_previos`, y `validate:state` avisa a los módulos que dependen del reabierto.
+- Columna **Capa** en el Catálogo de Entregables: lo que solo aplica con backend (Bruno, k6, DAST, seeders, `/api/health`…) desaparece del plan cuando esa capa está inactiva. Nuevos entregables `rendimiento_cliente` (frontend) y `auditoria_dependencias` (siempre).
+- Reglas del rol de QA: leer resúmenes de los reportes generados, reutilizar scripts de `tests/` y registrar toda prueba intermitente como defecto con su ficha.
+
+### Changed
+- El plan Kaizen clasifica cada acción con un **alcance**: `futuro` o `reabrir [XX_nombre] desde [Gx]`.
+- `release:changelog` actualiza también `version_actual` en `current_state.json`.
+- `AGENTS.md` §5.1 y `GIT_COMMIT_CONVENTION.md` documentan los commits automáticos y que el push requiere autorización explícita.
+
+---
+
 ## [1.13.1] - 2026-11-12
 
 ### Fixed

@@ -73,12 +73,12 @@ Distribución de los defectos cerrados durante el ciclo para identificar el 20% 
 
 ## 5. Matriz de Priorización de Acciones (Dificultad vs Plazo vs Impacto)
 
-| N.º | Acción de Mejora Propuesta | Dificultad | Plazo | Impacto | Categorización Estratégica |
-| :---: | :--- | :---: | :---: | :---: | :--- |
-| **1** | Crear helper institucional `dateUtils.ts` tipado | Poca | Inmediato | Mucho | ⚡ **Quick Win (Prioridad 1)** |
-| **2** | Script de reset idempotente en Docker para E2E | Poca | Corto | Mucho | ⚡ **Quick Win (Prioridad 1)** |
-| **3** | Migrar formularios complejos a composables reactivos | Bastante | Medio | Bastante | 🏛️ **Proyecto Estratégico (P2)** |
-| **4** | Refactorizar capa de persistencia completa | Mucha | Largo | Poco | 🛑 **Descartado / Pospuesto** |
+| N.º | Acción de Mejora Propuesta | Dificultad | Plazo | Impacto | Categorización Estratégica | Alcance |
+| :---: | :--- | :---: | :---: | :---: | :--- | :--- |
+| **1** | Crear helper institucional `dateUtils.ts` tipado | Poca | Inmediato | Mucho | ⚡ **Quick Win (Prioridad 1)** | `reabrir 02_[modulo] desde G3A` |
+| **2** | Script de reset idempotente en Docker para E2E | Poca | Corto | Mucho | ⚡ **Quick Win (Prioridad 1)** | `futuro` |
+| **3** | Migrar formularios complejos a composables reactivos | Bastante | Medio | Bastante | 🏛️ **Proyecto Estratégico (P2)** | `futuro` |
+| **4** | Refactorizar capa de persistencia completa | Mucha | Largo | Poco | 🛑 **Descartado / Pospuesto** | — |
 
 ---
 

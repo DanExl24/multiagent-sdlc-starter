@@ -122,6 +122,8 @@ stateDiagram-v2
 
 > 🔁 **Transiciones y sesiones.** El estado se cambia con `npm run gate` (nunca a mano) y cada Halt cierra la sesión (`AGENTS.md` §5.1). Tras una firma, el Orquestador la registra con `npm run gate -- [pista] aprobar --cita "..."`; el rol siguiente empieza en una sesión nueva.
 
+> ♻️ **Reapertura de módulos.** Si el Kaizen o QA detectan un defecto S1/S2 o una violación de las Reglas de Oro en un módulo ya cerrado, el Orquestador propone al Director Humano reabrirlo desde la compuerta de origen (`.workflow/STAGE_GATES.md` §2.4) antes de empezar el siguiente módulo, y lo registra con `npm run gate -- [XX_nombre] reabrir`.
+
 > 🏗️ **Fundación.** Al aprobarse la línea base de G1, el Orquestador asigna el turno a `07_foundation_architect` (`rol_en_turno` en `current_state.json`, fase `FASE_2_ARQUITECTURA`). Cuando `project.json` → `fundacion.estado` es `COMPLETADA`, el turno pasa al Arquitecto de Software. `npm run validate:state` impide pedir la firma del G2 de línea base sin los ADRs de stack y estructura.
 
 > 🎚️ **Perfil del proyecto.** El tipo de cada compuerta (Halt o Checkpoint) y los entregables exigidos dependen del perfil (`.workflow/PROFILES.md`). Antes de verificar una compuerta, el Orquestador consulta `npm run status -- [XX_nombre]` y usa ese plan como checklist de entregables. Un Halt convertido en Checkpoint no se firma por separado: sus entregables se presentan en el siguiente Halt.

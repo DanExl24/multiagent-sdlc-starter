@@ -210,6 +210,9 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
       errors.push(`${label}: "incluido_en_release" solo puede tener valor cuando el módulo está COMPLETADO (superó G4).`);
     }
     if ('depende_de' in s && !Array.isArray(s.depende_de)) errors.push(`${label}: "depende_de" debe ser un arreglo de IDs de módulo.`);
+    if ('releases_previos' in s && !(Array.isArray(s.releases_previos) && s.releases_previos.every((v) => typeof v === 'string'))) {
+      errors.push(`${label}: "releases_previos" debe ser una lista de versiones.`);
+    }
     if ('modificadores' in s && !(Array.isArray(s.modificadores) && s.modificadores.every((m) => typeof m === 'string'))) {
       errors.push(`${label}: "modificadores" debe ser una lista de nombres de modificador.`);
     }
@@ -253,7 +256,9 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
         errors.push(`${label}: no puede construirse (superó ${lastBaseline.id}) mientras su dependencia "${dep}" no tenga su contrato aprobado en ${lastBaseline.id}.`);
       }
       if (s.estado === 'COMPLETADO' && depState.estado !== 'COMPLETADO') {
-        errors.push(`${label}: no puede fusionarse a main (COMPLETADO) antes que su dependencia "${dep}".`);
+        const reabierta = (depState.historial_transiciones ?? []).some((h) => h.accion === 'reabrir');
+        if (reabierta) warnings.push(`${label}: su dependencia "${dep}" se reabrió; revisa si la corrección obliga a reabrir también este módulo (STAGE_GATES.md §2.4).`);
+        else errors.push(`${label}: no puede fusionarse a main (COMPLETADO) antes que su dependencia "${dep}".`);
       }
     }
   }

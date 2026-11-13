@@ -9,7 +9,8 @@
  * Es una vista generada: no escribe nada, para que el estado global nunca sea un archivo
  * que varias personas editen a la vez.
  */
-import { loadStageGates } from './lib/stage-gates.mjs';
+import { execSync } from 'node:child_process';
+import { loadStageGates, rootDir } from './lib/stage-gates.mjs';
 import { loadProjectConfig, activeLayers } from './lib/project-config.mjs';
 import { loadProfiles, resolvePlan } from './lib/profiles.mjs';
 import {
@@ -30,7 +31,7 @@ const pad = (text, width) => String(text).padEnd(width);
 const perfilLabel = (mods) => [config.perfil.escala, ...mods].join(' + ');
 
 function printPlan(title, track, mods, current) {
-  const plan = resolvePlan(table, profiles, { escala: config.perfil.escala, modificadores: mods });
+  const plan = resolvePlan(table, profiles, { escala: config.perfil.escala, modificadores: mods, capas: activeLayers(config) });
   if (plan.errors.length) {
     console.error(`❌ ${plan.errors.join(' ')}`);
     process.exit(1);
@@ -72,6 +73,19 @@ if (target) {
 console.log(`\n📍 Proyecto: ${project.proyecto ?? '-'} · versión ${project.version_actual ?? '-'}`);
 console.log(`   Perfil: ${perfilLabel(config.perfil.modificadores)}${config.perfil.confirmado ? '' : ' (⚠️ SIN CONFIRMAR: pregúntalo al Director Humano antes de G1)'} · capas activas: ${activeLayers(config).join(', ')}`);
 console.log(`   Pista de proyecto/release: ${ICON[project.estado] ?? '⚪'} ${gateLabel(project)} · ${project.estado} · rol en turno: ${project.rol_en_turno}`);
+
+// Git: cambios sin commit y commits sin publicar (los agentes tienden a olvidarlos).
+try {
+  const run = (args) => execSync(`git ${args}`, { cwd: rootDir, encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  const rama = run('rev-parse --abbrev-ref HEAD');
+  const sucios = run('status --porcelain').split(/\r?\n/).filter((l) => l && !(l.startsWith('??') && !l.slice(3).replace(/^"|"$/g, '').includes('/'))).length;
+  let publicar = '';
+  try {
+    const [ahead] = run('rev-list --left-right --count HEAD...@{u}').split(/\s+/);
+    publicar = Number(ahead) > 0 ? ` · ⚠️ ${ahead} commit(s) sin publicar (el push requiere autorización del Director Humano)` : ' · sincronizada con remoto';
+  } catch { publicar = ' · sin rama remota'; }
+  console.log(`   Git: rama ${rama}${sucios ? ` · ⚠️ ${sucios} cambio(s) sin commit` : ' · sin cambios pendientes'}${publicar}`);
+} catch { /* no es un repositorio Git */ }
 
 if (modules.length === 0) {
   console.log('\n📦 Módulos: ninguno todavía. Crea el primero con: npm run new:module -- 01_nombre');

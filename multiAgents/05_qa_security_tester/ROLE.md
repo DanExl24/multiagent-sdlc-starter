@@ -134,6 +134,13 @@ El QA Lead no reporta bugs mediante comentarios informales. Todo defecto detecta
 | **Pilar 3: k6 & OWASP ZAP** | **Q4** | `tests/load/k6_*.js`, Reporte DAST | Módulos con concurrencia / API | Incumplimiento de SLA p95 o alertas OWASP Altas/Críticas. |
 | **Pilar 4: Test Charters UX** | **Q3** | `tests/exploratory/CHARTER-*.md` | Flujos de usuario complejos | Inconsistencias graves de UX o bloqueos en navegación. |
 
+> **Pilares según las capas activas.** Las herramientas de los pilares 1 y 3 que actúan sobre HTTP (Bruno, k6, DAST) solo se exigen si la capa `backend` está activa. En un proyecto sin backend, el plan del módulo (`npm run status -- [XX_nombre]`) ya las sustituye por pruebas contra el repositorio local, `rendimiento_cliente` y `auditoria_dependencias`: no hace falta justificarlo como excepción.
+
+### Reglas Inviolables del Rol (economía y transparencia)
+1. **Leer resúmenes, no reportes completos.** Los resultados generados (JSON de Playwright, k6, logs) se consultan por su resumen o filtrando fallos; nunca se leen enteros.
+2. **Reutilizar antes de crear.** Antes de escribir un script de QA, busca uno en `tests/`. Si creas uno nuevo, hazlo parametrizable por módulo para que el siguiente lo reutilice.
+3. **Una prueba intermitente es un defecto.** Se registra con su ficha (`BUG-[MOD]-[NUM]`, S3 como mínimo) y causa raíz pendiente; no basta con anotarla. G4 no se solicita con una prueba intermitente sin ficha.
+
 ---
 
 ## 7. Estructura de Entregables del QA Lead (Checklist de Salida Gate 4)

@@ -30,6 +30,8 @@ El commit no espera a G4. Cada módulo trabaja en su rama (`rama` en `.workflow/
 - **Al cerrar cada compuerta del módulo**, justo después de `npm run gate -- [XX_nombre] solicitar` o de `avanzar`, para que lo entregado en esa compuerta quede guardado aunque la sesión se corte.
 - **Al terminar una unidad de trabajo coherente** dentro de una compuerta larga (por ejemplo, una historia de usuario implementada con sus pruebas en verde).
 
+`npm run gate` lo hace cumplir: `solicitar` se niega si hay cambios sin commit (salvo archivos sueltos sin seguimiento en la raíz, como notas personales) y cada transición hace commit de su propio archivo de estado.
+
 **G4 autoriza el merge de la rama a `main`**, no el primer commit. Lo que nunca se hace sin firma humana es fusionar a `main` (G4), publicar en producción o etiquetar un release (G5). Hacer push de la rama del módulo es una acción hacia el exterior: se hace cuando el Director Humano lo autoriza.
 
 **Versión del prefijo:** en la rama de un módulo se usa la versión del próximo release previsto (plan de releases de `multiAgents/00_orchestrator/PROJECT_STATUS.md`), o la `version_actual` de `current_state.json` si aún no hay plan.

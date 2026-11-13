@@ -93,11 +93,11 @@ export function loadProfiles(table) {
 }
 
 /**
- * Plan efectivo para una combinación de escala y modificadores.
+ * Plan efectivo para una combinación de escala y modificadores (y, si se indican, las capas activas).
  * @returns {{tipos: Map<string, string>, entregables: Map<string, string>, errors: string[]}}
  *   tipos: compuerta → halt|checkpoint; entregables: ID obligatorio → origen (base, escala o modificador)
  */
-export function resolvePlan(table, profiles, { escala = DEFAULT_SCALE, modificadores = [] } = {}) {
+export function resolvePlan(table, profiles, { escala = DEFAULT_SCALE, modificadores = [], capas = null } = {}) {
   const errors = [];
   const scale = profiles.escalas.get(escala);
   if (!scale) errors.push(`la escala "${escala}" no existe en .workflow/profiles/.`);
@@ -118,6 +118,13 @@ export function resolvePlan(table, profiles, { escala = DEFAULT_SCALE, modificad
     for (const id of mod.entregables?.adicionales ?? []) {
       // Precedencia: si la escala lo hizo opcional, el modificador lo vuelve obligatorio.
       entregables.set(id, entregables.get(id) === 'base' ? 'base' : name);
+    }
+  }
+  // Los entregables de una capa inactiva no aplican (por ejemplo, k6 o Bruno sin backend).
+  if (capas) {
+    for (const id of [...entregables.keys()]) {
+      const capa = table.entregables.get(id)?.capa;
+      if (capa && !capas.includes(capa)) entregables.delete(id);
     }
   }
   return { tipos, entregables, errors };
