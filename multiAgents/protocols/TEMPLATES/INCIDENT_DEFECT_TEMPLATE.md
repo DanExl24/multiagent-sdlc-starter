@@ -15,7 +15,7 @@
 | **3** | **Reportado Por** | [QA Lead & Security Director / Subrol SDET / E2E Specialist] |
 | **4** | **Asignado A** | [Backend Lead Engineer / Frontend Lead Engineer] |
 | **5** | **Fecha y Hora de Creación** | AAAA-MM-DD HH:MM:SS (Zona Horaria) |
-| **6** | **Nivel de Severidad** | `[S1 - Blocker / S2 - Critical / S3 - Major / S4 - Minor]` |
+| **6** | **Nivel de Severidad** | `[S1 - Blocker / S2 - Critical / S3 - Major / S4 - Minor]`. Incumplir un requisito aprobado (RF o RNF) es S2 como mínimo. |
 | **7** | **Aplicación y Versión** | [Backend API / Frontend SPA / Módulo] — Versión `vX.Y.Z` (Commit / Branch) |
 | **8** | **Descripción del Defecto** | [Explicación detallada del comportamiento anómalo detectado] |
 | **9** | **Método de Reproducción** | Pasos exactos, secuenciales y reproducibles (ver Sección 2) |

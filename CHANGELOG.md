@@ -3,6 +3,19 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.15.0] - 2026-11-13
+
+### Added
+- **Requisito aprobado incumplido = S2 como mínimo:** QA no puede aceptarlo como "riesgo residual"; veta y devuelve el módulo con `npm run gate -- [XX_nombre] volver`, salvo que el Director Humano cambie el requisito de forma explícita. Detectado en Digitaline: un RNF de ≤ 32 ms medido en 595 ms pasó G4 como S3.
+- **Limitaciones de entorno con evidencia:** una prueba solo se omite si el reporte muestra el comando que demuestra que el entorno no está disponible (por ejemplo, `adb devices`). Con Android u otra plataforma móvil en el stack, la verificación en dispositivo físico es obligatoria en G4.
+- `QA_REPORT_TEMPLATE.md` abre con una sección obligatoria para el Director Humano: requisitos aprobados no cumplidos y limitaciones de entorno con su evidencia.
+- **Módulo de mantenimiento:** si no hay un módulo siguiente previsto, las acciones de alcance `futuro` del Kaizen se ejecutan en un módulo creado con `npm run new:module -- XX_mejoras_vX_Y`, que recorre G1 a G4 (paso 6 de `CONTINUOUS_IMPROVEMENT_PROTOCOL.md`). Nunca en la sesión de G6.
+
+### Changed
+- Condiciones de veto de G4 y acción de G6 en `STAGE_GATES.md`, plantilla de incidencias y ROLE del orquestador alineados con lo anterior.
+
+---
+
 ## [1.14.0] - 2026-11-12
 
 ### Added

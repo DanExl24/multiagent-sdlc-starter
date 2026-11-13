@@ -140,6 +140,8 @@ El QA Lead no reporta bugs mediante comentarios informales. Todo defecto detecta
 1. **Leer resúmenes, no reportes completos.** Los resultados generados (JSON de Playwright, k6, logs) se consultan por su resumen o filtrando fallos; nunca se leen enteros.
 2. **Reutilizar antes de crear.** Antes de escribir un script de QA, busca uno en `tests/`. Si creas uno nuevo, hazlo parametrizable por módulo para que el siguiente lo reutilice.
 3. **Una prueba intermitente es un defecto.** Se registra con su ficha (`BUG-[MOD]-[NUM]`, S3 como mínimo) y causa raíz pendiente; no basta con anotarla. G4 no se solicita con una prueba intermitente sin ficha.
+4. **Un requisito aprobado incumplido es S2 como mínimo.** Si un RF o RNF aprobado en G1 no se cumple (por ejemplo, un tiempo de respuesta medido por encima del exigido), el defecto es S2 o más grave aunque el impacto parezca menor, y no puede aceptarse como "riesgo residual". QA veta y devuelve el módulo con `npm run gate -- [XX_nombre] volver G3A|G3B --motivo "..."`. La única alternativa es que el Director Humano cambie el requisito de forma explícita: el PM actualiza `01_SPEC_FUNCIONAL.md` citando esa aprobación, y entonces el defecto se reevalúa.
+5. **Una limitación de entorno exige evidencia.** No se declara una prueba como "no ejecutada por limitación" sin comprobar antes que el entorno no está disponible, con el comando y su salida en el reporte (por ejemplo, `adb devices` para Android). Si el stack de `.workflow/project.json` (`fundacion.stack`) incluye Android u otra plataforma móvil, la verificación en dispositivo físico es obligatoria en G4.
 
 ---
 

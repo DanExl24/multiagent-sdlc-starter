@@ -81,6 +81,12 @@ El DevOps Lead consolida el informe utilizando [`protocols/TEMPLATES/CONTINUOUS_
 - **KPI cuantitativo de éxito** (ej. *"0 incidencias por timezone en el siguiente reporte de QA"*).
 - **Alcance:** `futuro` (se aplica en los módulos siguientes) o `reabrir [XX_nombre] desde [Gx]` (corrige un módulo ya cerrado). Es obligatorio `reabrir` ante defectos S1/S2 o violaciones de las Reglas de Oro en módulos ya liberados (`.workflow/STAGE_GATES.md` §2.4); lo demás va a `futuro`. Las acciones `reabrir` se ejecutan antes de empezar el siguiente módulo.
 
+### Paso 6: Ejecución de las acciones (nunca en la sesión de G6)
+- **Alcance `reabrir`:** sesión nueva con el rol de origen y `npm run gate -- [XX_nombre] reabrir` (`.workflow/STAGE_GATES.md` §2.4).
+- **Alcance `futuro` con un módulo siguiente previsto:** el PM las incorpora como historias o tareas obligatorias en el G1 de ese módulo.
+- **Alcance `futuro` sin módulo siguiente previsto:** el PM crea un **módulo de mantenimiento** con `npm run new:module -- XX_mejoras_vX_Y --depende-de [módulos afectados]`. Sus historias son las acciones del plan, cada una con su criterio de aceptación y el KPI del plan, y recorre G1 a G4 como cualquier módulo antes de entrar en el siguiente release.
+- Si una acción `futuro` corrige un requisito aprobado que se incumple, es S2 y obliga a reabrir el módulo (§2.4). Excepcionalmente, si el código a corregir pertenece a otro módulo, se puede tratar en el módulo de mantenimiento, siempre que su criterio de aceptación sea cumplir ese requisito, verificado en el entorno real.
+
 ---
 
 ## 3. Criterio de Salida y Aprobación (Stage-Gate 6)

@@ -8,6 +8,24 @@
 
 ---
 
+## 0. Lo que el Director Humano debe revisar antes de firmar
+
+### 0.1. Requisitos aprobados no cumplidos
+Obligatoria. Si no hay ninguno, escribe "Ninguno". Todo requisito aprobado incumplido es S2 como mínimo y bloquea G4, salvo que el Director Humano cambie el requisito de forma explícita.
+
+| Requisito (RF/RNF) | Valor exigido | Valor medido | Severidad | Decisión |
+| :--- | :--- | :--- | :---: | :--- |
+| [RNF-XX-NN] | [≤ 32 ms] | [p95 = 595 ms] | S2 | [Veto: vuelve a G3B / Requisito cambiado por el Director el AAAA-MM-DD] |
+
+### 0.2. Limitaciones de entorno
+Obligatoria. Cada prueba no ejecutada necesita evidencia de que el entorno no estaba disponible; sin evidencia, la prueba debe ejecutarse.
+
+| Prueba no ejecutada | Motivo | Evidencia (comando y salida) |
+| :--- | :--- | :--- |
+| [Ninguna] | | |
+
+---
+
 ## 1. Resumen Ejecutivo de la Evaluación
 - **Total Casos de Prueba Ejecutados:** [X]
 - **Casos Exitosos (Pass):** [X]

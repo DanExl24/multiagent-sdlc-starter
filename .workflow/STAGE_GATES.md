@@ -271,7 +271,7 @@ Los defectos **S3 y S4** van al backlog del siguiente módulo o a un release de 
   - Suite de pruebas automatizadas 100% en verde y 0 defectos S1/S2 abiertos.
   - **Certificación AST de Cero ANY:** Verificación de `npm run check:no-any` en `backend/` y `frontend/` con 0 incidencias. Si se detecta un solo `any`, el QA Lead aplica **Veto Inmediato (Stop-the-Line)**.
   - Fragmento del módulo en `changelog.d/[XX_modulo].md` (formato Keep a Changelog), validado por `npm run check:docs`. En una rama de módulo no se edita `CHANGELOG.md`.
-- **Veto QA:** si QA rechaza, `estado: "BLOQUEADO"` con el motivo en `bloqueos`, y el flujo regresa a `FASE_3A_BACKEND` o `FASE_3B_FRONTEND` según el defecto. QA **no** corrige código de producción.
+- **Veto QA:** si QA rechaza, `estado: "BLOQUEADO"` con el motivo en `bloqueos`, y el flujo regresa a `FASE_3A_BACKEND` o `FASE_3B_FRONTEND` según el defecto. QA **no** corrige código de producción. Son motivo de veto: cualquier defecto S1 o S2 abierto, y en particular **todo requisito aprobado en G1 que no se cumple** (S2 como mínimo, nunca "riesgo residual"), y las pruebas omitidas por una supuesta limitación de entorno sin evidencia.
 - **Acción del Agente al Terminar:**
   1. Ejecutar `npm run gate -- [pista] solicitar` (deja la pista en `ESPERANDO_APROBACION_HUMANA`). Tras la firma: `npm run gate -- [pista] aprobar --cita "..."`.
   2. **DETENERSE INMEDIATAMENTE (Halt).** Presentar el veredicto final solicitando la firma Go / No-Go.
@@ -307,6 +307,7 @@ Los defectos **S3 y S4** van al backlog del siguiente módulo o a un release de 
   1. Ejecutar `npm run gate -- [pista] solicitar` (deja la pista en `ESPERANDO_APROBACION_HUMANA`). Tras la firma: `npm run gate -- [pista] aprobar --cita "..."`.
   2. **DETENERSE INMEDIATAMENTE (Halt).** Presentar el plan de mejora.
   3. Tras la aprobación humana, el Orquestador devuelve `current_state.json` a `FASE_5_DEVOPS_RELEASE` / `GATE_5_RELEASE_APPROVAL` / `EN_PROCESO` para el siguiente release, o lo marca `COMPLETADO` si el proyecto se cierra. Los módulos nuevos se crean con `npm run new:module`.
+  4. Las acciones del plan no se ejecutan en esta sesión. Las de alcance `futuro` las incorpora el PM al G1 del siguiente módulo o, si no hay uno previsto, a un **módulo de mantenimiento** (`CONTINUOUS_IMPROVEMENT_PROTOCOL.md`); las de alcance `reabrir` siguen §2.4.
 
 ---
 
