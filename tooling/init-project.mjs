@@ -73,6 +73,12 @@ function resetStarterHistory({ projectSlug, projectDesc, author, date }) {
 
   syncPackageVersion({ name: projectSlug, version: '0.1.0' });
 
+  // La pista de proyecto también arranca en v0.1.0, sea cual sea la versión del starter.
+  const statePath = path.join(rootDir, '.workflow', 'current_state.json');
+  const projectState = JSON.parse(fs.readFileSync(statePath, 'utf-8'));
+  projectState.version_actual = 'v0.1.0';
+  fs.writeFileSync(statePath, `${JSON.stringify(projectState, null, 2)}\n`);
+
   for (const fragment of fs.existsSync(path.join(rootDir, 'changelog.d')) ? fs.readdirSync(path.join(rootDir, 'changelog.d')) : []) {
     if (fragment.endsWith('.md') && fragment !== 'README.md') fs.unlinkSync(path.join(rootDir, 'changelog.d', fragment));
   }
