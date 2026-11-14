@@ -3,6 +3,19 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.19.0] - 2026-11-14
+
+### Added
+- **Perfil `spike`** (`.workflow/profiles/spike.json`, `PROFILES.md` §5): prototipos de una tarde que nunca llegan a producción. El Director Humano firma la línea base y, en cada módulo, la especificación (G1) y el diseño (G2); G3A, G3B y G4 pasan como Checkpoint con verificaciones ejecutables obligatorias. Se aligeran la documentación y el reporte formal de QA; el contrato previo, las pruebas y la prohibición de `any` siguen vigentes.
+- **Invariante `halt_si_produccion`** para G4: sigue siendo Halt en todo perfil que llegue a producción; solo una escala con `"produccion": false` puede volverlo Checkpoint, y entonces exige verificaciones que sustituyan la firma. G5 sigue siendo Halt en cualquier perfil.
+- **Promoción de un spike:** `npm run gate` no abre un release con `spike`, ni mientras quede un módulo cerrado sin la firma de G4. Para publicar, se cambia la escala con un ADR y cada módulo se reabre desde G4. `npm run status` lista esos módulos aparte.
+- Seis pruebas nuevas en `test:tooling` para estos casos.
+
+### Fixed
+- `npm run gate -- proyecto avanzar` en una última compuerta que es Checkpoint (G6 en `sprint`) fallaba con "es la última compuerta de la pista"; ahora abre el siguiente release, o cierra el proyecto con `--cerrar`. Un módulo cuya G4 es Checkpoint se cierra con `avanzar`.
+
+---
+
 ## [1.18.0] - 2026-11-14
 
 ### Added

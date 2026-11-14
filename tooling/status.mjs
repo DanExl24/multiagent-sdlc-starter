@@ -108,8 +108,11 @@ if (modules.length === 0) {
   const mantenimiento = modules.filter((m) => m.state?.origen);
   if (mantenimiento.length) console.log(`\n🧰 Mantenimiento: ${mantenimiento.map((m) => `${m.id} ← ${m.state.origen}`).join(' · ')}`);
 
-  const listos = modules.filter((m) => m.state?.estado === 'COMPLETADO' && m.state.incluido_en_release == null);
+  const cerrados = modules.filter((m) => m.state?.estado === 'COMPLETADO' && m.state.incluido_en_release == null);
+  const sinFirma = cerrados.filter((m) => m.state.historial_transiciones?.at(-1)?.accion === 'avanzar');
+  const listos = cerrados.filter((m) => !sinFirma.includes(m));
   if (listos.length) console.log(`\n🚀 Listos para el próximo release (superaron G4): ${listos.map((m) => m.id).join(', ')}`);
+  if (sinFirma.length) console.log(`\n🧪 Cerrados sin firma de G4 (spike): ${sinFirma.map((m) => m.id).join(', ')}. No entran en un release sin reabrirse desde G4 (PROFILES.md §5).`);
   const releases = new Map();
   for (const m of modules) {
     const v = m.state?.incluido_en_release;

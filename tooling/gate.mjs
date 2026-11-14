@@ -178,9 +178,14 @@ function preflight() {
   }
   const comandos = config.verificaciones?.[current.id] ?? [];
   const capa = table.capas.get(current.id);
+  // Una compuerta que normalmente exige firma y aquí pasa como Checkpoint (perfil sin producción): las verificaciones sustituyen a la firma.
+  const sinFirma = current.tipo === 'checkpoint' && table.invariantes.some((inv) => inv.regla === 'halt_si_produccion' && inv.ids.includes(current.id));
   if (!comandos.length) {
     if (capa) {
       fail(`${current.id} construye la capa ${capa} y exige verificaciones ejecutables en .workflow/project.json, por ejemplo:\n   "verificaciones": { "${current.id}": ["npm test --prefix ${config.capas[capa].raiz}", "npm run check:no-any"] }\nLas define el rol de fundación junto con el stack (o el rol en turno, si faltan). Sin ellas, "${accion}" no puede comprobar que todo está en verde.`);
+    }
+    if (sinFirma) {
+      fail(`${current.id} pasa sin firma humana en el perfil "${config.perfil.escala}", así que exige verificaciones ejecutables que la sustituyan en .workflow/project.json, por ejemplo:\n   "verificaciones": { "${current.id}": ["npm test", "npm run build", "npm run check:no-any"] }`);
     }
     return [];
   }
@@ -192,6 +197,24 @@ function preflight() {
     fail(`La verificación "${fallo.comando}" falló, así que ${current.id} no puede ${accion === 'avanzar' ? 'avanzar' : 'solicitarse'}. Últimas líneas:\n${fallo.salida.split('\n').map((l) => `   ${l}`).join('\n')}`);
   }
   return resultados.map(({ comando, resultado, segundos }) => ({ comando, resultado, segundos }));
+}
+
+/**
+ * Primera compuerta de release (G5): un perfil sin producción no la abre, y ningún módulo cerrado
+ * sin la firma de G4 (spike) entra en un release sin reabrirse desde G4.
+ */
+function releaseGuard() {
+  if (!isProject || current !== track.find((g) => g.niveles.includes('release'))) return;
+  const reabrir = 'npm run gate -- [XX_nombre] reabrir --desde G4 --motivo "promoción del spike" --cita "..."';
+  if (!plan.produccion) {
+    fail(`El perfil "${config.perfil.escala}" no llega a producción: no hay release. Para publicar, el Director Humano cambia la escala con un ADR nuevo (PROFILES.md §3) y cada módulo se reabre desde G4 para que QA lo certifique:\n   ${reabrir}`);
+  }
+  const sinFirma = modules
+    .filter((m) => m.state?.estado === 'COMPLETADO' && m.state.incluido_en_release == null && m.state.historial_transiciones?.at(-1)?.accion === 'avanzar')
+    .map((m) => m.id);
+  if (sinFirma.length) {
+    fail(`Estos módulos se cerraron sin la firma de G4 (perfil sin producción) y no pueden entrar en un release: ${sinFirma.join(', ')}. Reábrelos desde G4:\n   ${reabrir}`);
+  }
 }
 
 function requireText(key, label) {
@@ -217,6 +240,7 @@ switch (accion) {
     const resolicitud = state.estado === 'ESPERANDO_APROBACION_HUMANA';
     if (state.estado !== 'EN_PROCESO' && !resolicitud) fail(`Solo se pide firma desde EN_PROCESO (estado actual: ${state.estado}).`);
     if (current.tipo !== 'halt') fail(`${current.id} es un Checkpoint en el perfil activo: no se pide firma, se usa "avanzar" cuando todo está en verde.`);
+    releaseGuard();
     const pendientes = uncommittedChanges();
     if (pendientes.length) {
       fail(`Hay cambios sin commit. Haz commit de los entregables de ${current.id} en la rama antes de pedir la firma (GIT_COMMIT_CONVENTION.md §1.1):\n   ${pendientes.slice(0, 10).join('\n   ')}${pendientes.length > 10 ? `\n   … y ${pendientes.length - 10} más` : ''}`);
@@ -274,15 +298,25 @@ switch (accion) {
   case 'avanzar': {
     if (state.estado !== 'EN_PROCESO') fail(`Solo se avanza desde EN_PROCESO (estado actual: ${state.estado}).`);
     if (current.tipo !== 'checkpoint') fail(`${current.id} es un Halt en el perfil activo: requiere "solicitar" y la firma humana ("aprobar").`);
-    next = track[idx + 1];
-    if (!next) fail(`${current.id} es la última compuerta de la pista.`);
+    releaseGuard();
     const evidencias = preflight();
-    record({
-      to: next,
-      estado: 'EN_PROCESO',
-      motivo: opts.nota || `Checkpoint ${current.id} superado: verificación previa en verde.`,
-      extra: evidencias.length ? { verificaciones: evidencias } : {},
-    });
+    const extra = evidencias.length ? { verificaciones: evidencias } : {};
+    next = track[idx + 1];
+    if (next) {
+      record({ to: next, estado: 'EN_PROCESO', motivo: opts.nota || `Checkpoint ${current.id} superado: verificación previa en verde.`, extra });
+    } else if (isProject && !opts.cerrar) {
+      // Última compuerta del release como Checkpoint (por ejemplo, G6 en sprint): comienza el siguiente release.
+      next = track.find((g) => g.niveles.includes('release'));
+      record({ to: next, estado: 'EN_PROCESO', motivo: opts.nota || `Checkpoint ${current.id} superado: comienza el siguiente release.`, extra });
+    } else {
+      record({
+        estado: 'COMPLETADO',
+        motivo: opts.nota || (isProject
+          ? `Checkpoint ${current.id} superado: proyecto cerrado.`
+          : `Checkpoint ${current.id} superado sin firma humana (perfil ${config.perfil.escala}): módulo listo para fusionar a main. No entra en un release sin reabrirse desde G4.`),
+        extra,
+      });
+    }
     break;
   }
   case 'bloquear': {
@@ -346,8 +380,8 @@ const committed = commitStateFile(relFile, `[${version.startsWith('v') ? version
 console.log(`✅ ${pista}: ${now.id} ${TIPO[now.tipo]} · ${state.estado} · rol en turno: ${state.rol_en_turno}`);
 if (committed) console.log(`📝 Commit de la transición: ${committed}`);
 
-if (accion === 'aprobar' && !isProject && state.estado === 'COMPLETADO') {
-  console.log(`🔀 Pendiente: fusionar ${state.rama} en main (G4 lo autoriza). El push a remoto requiere la autorización explícita del Director Humano.`);
+if ((accion === 'aprobar' || accion === 'avanzar') && !isProject && state.estado === 'COMPLETADO') {
+  console.log(`🔀 Pendiente: fusionar ${state.rama} en main (${accion === 'avanzar' ? 'G4 superado con verificaciones; sin firma humana, el módulo no entra en un release' : 'G4 lo autoriza'}). El push a remoto requiere la autorización explícita del Director Humano.`);
 }
 if (accion === 'aprobar' && isProject && current.niveles.includes('release') && current === track.find((g) => g.niveles.includes('release'))) {
   console.log('🚀 Pendiente: publicar main y el tag del release (git push origin main --tags) cuando el Director Humano lo autorice explícitamente.');

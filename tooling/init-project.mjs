@@ -143,7 +143,7 @@ async function main() {
   const disponibles = listProfiles(path.join(rootDir, '.workflow', 'profiles', 'modifiers'));
   // El perfil solo queda confirmado si la persona escribe la escala; con Enter se usa standard sin confirmar,
   // y el agente deberá confirmarlo con el Director Humano antes de superar G1 (validate:state lo exige).
-  const escalaRaw = await ask(`5. Escala del proyecto (${escalas.join(', ')}; sprint para proyectos de unas 2 semanas). Escríbela para confirmarla`, '');
+  const escalaRaw = await ask(`5. Escala del proyecto (${escalas.join(', ')}; spike para un prototipo de una tarde que no va a producción; sprint para proyectos de unas 2 semanas). Escríbela para confirmarla`, '');
   let escala = escalaRaw || 'standard';
   let confirmado = Boolean(escalaRaw);
   if (!escalas.includes(escala)) {

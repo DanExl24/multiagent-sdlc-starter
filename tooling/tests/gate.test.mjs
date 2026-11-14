@@ -38,7 +38,7 @@ function moduleState(gateId, estado = 'EN_PROCESO') {
 }
 
 /** Repositorio temporal: línea base cerrada, solo backend activo y el módulo 01_demo en la compuerta indicada. */
-function fixture({ moduleGate = 'G3A', verificaciones = {} } = {}) {
+function fixture({ moduleGate = 'G3A', moduleEstado = 'EN_PROCESO', moduleHistorial = [], verificaciones = {}, escala = 'standard', projectGate = 'G5', extraProfiles = {} } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sdlc-gate-'));
   roots.push(root);
   fs.cpSync(path.join(STARTER, 'tooling'), path.join(root, 'tooling'), { recursive: true, filter: (src) => !src.includes(`${path.sep}tests`) });
@@ -51,17 +51,18 @@ function fixture({ moduleGate = 'G3A', verificaciones = {} } = {}) {
       frontend: { activa: false, raiz: 'frontend', modulos: 'frontend/src/modules' },
     },
     rutas: { contratos: 'docs/contracts' },
-    perfil: { escala: 'standard', modificadores: [], adr: null, confirmado: true },
+    perfil: { escala, modificadores: [], adr: escala === 'standard' ? null : 'docs/adrs/ADR-000.md', confirmado: true },
     fundacion: { estado: 'COMPLETADA', stack: { backend: ['node'] }, adr_stack: 'docs/adrs/ADR-001.md', adr_estructura: 'docs/adrs/ADR-002.md' },
     verificaciones,
   });
-  const g5 = gate('G5');
+  for (const [name, data] of Object.entries(extraProfiles)) write(root, `.workflow/profiles/${name}.json`, data);
+  const pg = gate(projectGate);
   write(root, '.workflow/current_state.json', {
     proyecto: 'Fixture', dominio: 'Pruebas', version_actual: 'v0.1.0',
-    fase_activa: g5.fase, gate_activo: g5.gate, estado: 'EN_PROCESO', rol_en_turno: g5.rol, bloqueos: [], historial_transiciones: [],
+    fase_activa: pg.fase, gate_activo: pg.gate, estado: 'EN_PROCESO', rol_en_turno: pg.rol, bloqueos: [], historial_transiciones: [],
   });
-  write(root, `.workflow/modules/${MOD}.json`, moduleState(moduleGate));
-  for (const f of ['docs/adrs/ADR-001.md', 'docs/adrs/ADR-002.md', `docs/modules/${MOD}/README.md`, `backend/src/modules/${MOD}/index.ts`]) write(root, f, '# fixture\n');
+  write(root, `.workflow/modules/${MOD}.json`, { ...moduleState(moduleGate, moduleEstado), historial_transiciones: moduleHistorial });
+  for (const f of ['docs/adrs/ADR-000.md', 'docs/adrs/ADR-001.md', 'docs/adrs/ADR-002.md', `docs/modules/${MOD}/README.md`, `backend/src/modules/${MOD}/index.ts`]) write(root, f, '# fixture\n');
   write(root, `docs/contracts/${MOD}.contract.ts`, "import { z } from 'zod';\nexport const DemoSchema = z.object({ estado: z.enum(['A', 'B']) });\n");
   git(root, 'init', '-q');
   git(root, 'config', 'user.name', 'test');
@@ -161,4 +162,58 @@ test('validate:state rechaza verificaciones de una compuerta inexistente', () =>
   const r = spawnSync(process.execPath, ['tooling/validate-state.mjs'], { cwd: root, encoding: 'utf-8' });
   assert.notEqual(r.status, 0);
   assert.match(`${r.stdout}${r.stderr}`, /verificaciones\.G9/);
+});
+
+// ── Perfil spike: sin producción, G4 como Checkpoint con verificaciones obligatorias ──
+
+const runProject = (root, ...args) => spawnSync(process.execPath, ['tooling/gate.mjs', 'proyecto', ...args], { cwd: root, encoding: 'utf-8' });
+const projectState = (root) => JSON.parse(fs.readFileSync(path.join(root, '.workflow', 'current_state.json'), 'utf-8'));
+
+test('spike: G4 no avanza sin verificaciones que sustituyan la firma', () => {
+  const root = fixture({ escala: 'spike', moduleGate: 'G4' });
+  const r = run(root, 'avanzar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /pasa sin firma humana/);
+  assert.equal(state(root).estado, 'EN_PROCESO');
+});
+
+test('spike: G4 con verificaciones en verde cierra el módulo sin firma', () => {
+  const root = fixture({ escala: 'spike', moduleGate: 'G4', verificaciones: { G4: ['node -e "process.exit(0)"'] } });
+  const r = run(root, 'avanzar');
+  assert.equal(r.status, 0, r.stderr);
+  const s = state(root);
+  assert.equal(s.estado, 'COMPLETADO');
+  assert.equal(s.historial_transiciones.at(-1).accion, 'avanzar');
+});
+
+test('spike: la pista de proyecto no abre un release', () => {
+  const root = fixture({ escala: 'spike' });
+  const r = runProject(root, 'solicitar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /no llega a producción/);
+  assert.equal(projectState(root).estado, 'EN_PROCESO');
+});
+
+test('promoción: un módulo cerrado sin firma de G4 bloquea el release hasta reabrirlo desde G4', () => {
+  const historial = [{ de: gate('G4').fase, a: gate('G4').fase, fecha: '2026-11-14', autor: 'test', accion: 'avanzar', motivo: 'spike' }];
+  const root = fixture({ escala: 'sprint', moduleGate: 'G4', moduleEstado: 'COMPLETADO', moduleHistorial: historial });
+  const r = runProject(root, 'solicitar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /sin la firma de G4/);
+  assert.equal(run(root, 'reabrir', '--desde', 'G4', '--motivo', 'promoción del spike', '--cita', 'promuevo').status, 0);
+  assert.equal(state(root).estado, 'EN_PROCESO');
+});
+
+test('una escala que llega a producción no puede volver G4 Checkpoint', () => {
+  const root = fixture({ extraProfiles: { rapido: { escala: 'rapido', descripcion: 'x', tipos: { G4: 'checkpoint' }, entregables: {} } } });
+  const r = spawnSync(process.execPath, ['tooling/validate-state.mjs'], { cwd: root, encoding: 'utf-8' });
+  assert.notEqual(r.status, 0);
+  assert.match(`${r.stdout}${r.stderr}`, /rapido\.json: G4 debe ser Halt/);
+});
+
+test('sprint: G6 como Checkpoint avanza al siguiente release', () => {
+  const root = fixture({ escala: 'sprint', projectGate: 'G6' });
+  const r = runProject(root, 'avanzar');
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(projectState(root).gate_activo, gate('G5').gate);
 });

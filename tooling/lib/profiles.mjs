@@ -30,12 +30,17 @@ function readDir(dir, label) {
   return { items, errors };
 }
 
-/** Comprueba que unos tipos efectivos respeten los invariantes de STAGE_GATES.md. */
-export function checkInvariants(table, tipos) {
+/**
+ * Comprueba que unos tipos efectivos respeten los invariantes de STAGE_GATES.md.
+ * `produccion: false` (perfil spike) solo relaja la regla `halt_si_produccion`.
+ */
+export function checkInvariants(table, tipos, { produccion = true } = {}) {
   const errors = [];
   for (const { ids, regla } of table.invariantes) {
     if (regla === 'halt') {
       for (const id of ids) if (tipos.get(id) !== 'halt') errors.push(`${id} debe ser Halt en cualquier perfil.`);
+    } else if (regla === 'halt_si_produccion') {
+      if (produccion) for (const id of ids) if (tipos.get(id) !== 'halt') errors.push(`${id} debe ser Halt en todo perfil que llegue a producción (solo un perfil con "produccion": false puede volverlo Checkpoint).`);
     } else if (regla === 'al_menos_un_halt' && !ids.some((id) => tipos.get(id) === 'halt')) {
       errors.push(`al menos una de ${ids.join(', ')} debe ser Halt (firma humana antes de construir).`);
     }
@@ -75,9 +80,10 @@ export function loadProfiles(table) {
     const label = `profiles/${name}.json`;
     if (data.escala !== name) errors.push(`${label}: "escala" debe valer "${name}" (igual que el nombre del archivo).`);
     const defErrors = validateDefinition(table, data, 'escala', label);
+    if ('produccion' in data && typeof data.produccion !== 'boolean') defErrors.push(`${label}: "produccion" debe ser true o false.`);
     if (defErrors.length === 0) {
       const tipos = new Map(table.stateful.map((g) => [g.id, data.tipos?.[g.id] ?? g.tipo]));
-      for (const e of checkInvariants(table, tipos)) defErrors.push(`${label}: ${e}`);
+      for (const e of checkInvariants(table, tipos, { produccion: data.produccion !== false })) defErrors.push(`${label}: ${e}`);
     }
     errors.push(...defErrors);
     escalas.set(name, data);
@@ -86,6 +92,7 @@ export function loadProfiles(table) {
     const label = `profiles/modifiers/${name}.json`;
     if (data.modificador !== name) errors.push(`${label}: "modificador" debe valer "${name}" (igual que el nombre del archivo).`);
     errors.push(...validateDefinition(table, data, 'modificador', label));
+    if ('produccion' in data) errors.push(`${label}: un modificador no puede cambiar "produccion" (solo la escala).`);
     modificadores.set(name, data);
   }
   if (!escalas.has(DEFAULT_SCALE)) errors.push(`Falta el perfil por defecto profiles/${DEFAULT_SCALE}.json.`);
@@ -94,8 +101,9 @@ export function loadProfiles(table) {
 
 /**
  * Plan efectivo para una combinación de escala y modificadores (y, si se indican, las capas activas).
- * @returns {{tipos: Map<string, string>, entregables: Map<string, string>, errors: string[]}}
- *   tipos: compuerta → halt|checkpoint; entregables: ID obligatorio → origen (base, escala o modificador)
+ * @returns {{tipos: Map<string, string>, entregables: Map<string, string>, produccion: boolean, errors: string[]}}
+ *   tipos: compuerta → halt|checkpoint; entregables: ID obligatorio → origen (base, escala o modificador);
+ *   produccion: false si la escala nunca llega a producción (spike).
  */
 export function resolvePlan(table, profiles, { escala = DEFAULT_SCALE, modificadores = [], capas = null } = {}) {
   const errors = [];
@@ -127,5 +135,5 @@ export function resolvePlan(table, profiles, { escala = DEFAULT_SCALE, modificad
       if (capa && !capas.includes(capa)) entregables.delete(id);
     }
   }
-  return { tipos, entregables, errors };
+  return { tipos, entregables, produccion: scale?.produccion !== false, errors };
 }

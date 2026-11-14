@@ -56,7 +56,7 @@ flowchart LR
 
 > 🛑 = **Halt** (firma del Director Humano) · ⚡ = **Checkpoint** automático del Orquestador (sin halt) · 🔧 = **Bootstrap** (`npm run init:project`).  
 > La definición completa de cada compuerta vive **únicamente** en [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md). Este manual solo las cita por ID.  
-> El diagrama muestra los tipos del perfil `standard`. Otros perfiles convierten algunos Halt en Checkpoint o al revés ([`.workflow/PROFILES.md`](.workflow/PROFILES.md)); G4 y G5 son Halt en cualquier perfil.
+> El diagrama muestra los tipos del perfil `standard`. Otros perfiles convierten algunos Halt en Checkpoint o al revés ([`.workflow/PROFILES.md`](.workflow/PROFILES.md)); G5 es Halt en cualquier perfil; G4 también, salvo en `spike`, que nunca llega a producción.
 
 ### 1.2. ¿Por qué es hiper-eficiente?
 1. **Reduce la alucinación y la sobrecarga:** Cada agente se concentra exclusivamente en su especialidad (Principio de Responsabilidad Única aplicado a agentes). El backend no inventa diseños; el frontend no inventa endpoints; el PM no inventa sintaxis SQL.
@@ -247,7 +247,7 @@ Si eres un agente nuevo ingresando al repositorio:
 │ 3. Si eres Frontend o QA, actualiza el walkthrough versionado.                         │
 │ 4. Si tu compuerta es Halt en el perfil activo (npm run status -- [XX_nombre]),        │
 │    ejecuta npm run gate -- [pista] solicitar, DETÉN EL USO DE HERRAMIENTAS             │
-│    (Halt/Yield) y termina la sesión. Gate 4 y Gate 5 son Halt en cualquier perfil.     │
+│    (Halt/Yield) y termina la sesión. Gate 5 siempre es Halt; Gate 4, salvo en spike.   │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -273,5 +273,5 @@ Cada paso de una conversación larga vuelve a procesar todo lo anterior: una ses
 7. ❌ **PROHIBIDO el uso de estilos fuera del Design System:** Todo componente visual debe apegarse estrictamente a la guía de tokens y diseño en `docs/project/design-system.md`.
 8. ❌ **PROHIBIDO maquillar u ocultar bugs (Transparencia Radical en QA):** Todo defecto, error de compilación, falla en tests o fallo de linter detectado DEBE quedar explícitamente documentado en el reporte de QA (`QA_REPORT.md`), catalogado con severidad (S1 a S4) y su causa raíz.
 9. ❌ **PROHIBIDO el commit sin nomenclatura canónica:** Todo commit DEBE seguir la nomenclatura `[vX.Y.Z] tipo(scope): descripcion`. Consulta `multiAgents/protocols/GIT_COMMIT_CONVENTION.md`.
-10. ❌ **PROHIBIDO el encadenamiento no autorizado de fases (Alto Mecánico Obligatorio):** Al culminar los entregables de una compuerta de tipo Halt en el perfil activo (con el perfil `standard`: Gate 1, Gate 2, Gate 3B, Gate 4, Gate 5 y Gate 6; Gate 4 y Gate 5 lo son en cualquier perfil), el agente DEBE detenerse inmediatamente (Halt/Yield), actualizar el archivo de estado de su pista y esperar la confirmación del Director Humano. El tipo efectivo de cada compuerta se consulta con `npm run status -- [XX_nombre]`.
+10. ❌ **PROHIBIDO el encadenamiento no autorizado de fases (Alto Mecánico Obligatorio):** Al culminar los entregables de una compuerta de tipo Halt en el perfil activo (con el perfil `standard`: Gate 1, Gate 2, Gate 3B, Gate 4, Gate 5 y Gate 6; Gate 5 lo es en cualquier perfil y Gate 4 en todo perfil que llegue a producción), el agente DEBE detenerse inmediatamente (Halt/Yield), actualizar el archivo de estado de su pista y esperar la confirmación del Director Humano. El tipo efectivo de cada compuerta se consulta con `npm run status -- [XX_nombre]`.
 11. ❌ **PROHIBIDO el uso del tipo `any` en TypeScript (Tolerancia Cero — Regla de Oro #11):** Queda terminantemente prohibido el uso del tipo `any` (`: any`, `as any`, `<any>`) tanto en Backend como en Frontend. Todo tipo debe definirse mediante contratos Zod, DTOs explícitos o `unknown` con type narrowing. Los verificadores AST integrados en `npm run build` abortan la compilación si detectan un solo `any`. QA ejercerá Veto Inmediato (Stop-the-Line) ante cualquier presencia de `any`.

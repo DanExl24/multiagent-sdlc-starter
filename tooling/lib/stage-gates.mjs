@@ -64,7 +64,7 @@ function parseNiveles(cell, id) {
  *   stateful: Array<{id: string, tipo: 'halt'|'checkpoint', niveles: Nivel[], fase: string, gate: string}>,
  *   estados: string[],
  *   capas: Map<string, string>,
- *   invariantes: Array<{ids: string[], regla: 'halt'|'al_menos_un_halt'}>,
+ *   invariantes: Array<{ids: string[], regla: 'halt'|'halt_si_produccion'|'al_menos_un_halt'}>,
  *   entregables: Map<string, {id: string, gate: string, pista: Nivel, capa: string|null, base: boolean, descripcion: string, ruta: string|null}>
  * }}
  */
@@ -120,8 +120,8 @@ export function loadStageGates(file = STAGE_GATES_PATH) {
     return [id, layer];
   }));
 
-  // Invariantes que ningún perfil puede romper (G4/G5 halt, al menos un halt en G1+G2).
-  const REGLAS = ['halt', 'al_menos_un_halt'];
+  // Invariantes que ningún perfil puede romper (G5 halt, G4 halt si el perfil llega a producción, al menos un halt en G1+G2).
+  const REGLAS = ['halt', 'halt_si_produccion', 'al_menos_un_halt'];
   const invariantes = tableRows(extractBlock(markdown, 'invariantes'), 'invariantes').map((cells, i) => {
     const ids = cells[0].replace(/\*/g, '').split('+').map((id) => id.trim());
     const regla = backticked(cells[1] ?? '');

@@ -76,7 +76,7 @@ Algunas compuertas solo existen si el proyecto tiene la capa correspondiente. La
 
 ### 2.3. Perfiles: el tipo efectivo de cada compuerta
 
-El **Tipo** de la Tabla Maestra es el del perfil `standard`. El perfil del proyecto (escala `sprint`, `standard` o `enterprise`, más modificadores de riesgo) puede convertir un Halt en Checkpoint o al revés, y ajustar los entregables (§7). Las reglas están en [`PROFILES.md`](PROFILES.md); los datos, en `.workflow/profiles/`. Para ver el tipo efectivo de cada compuerta: `npm run status -- [XX_nombre]` o `npm run status -- proyecto`.
+El **Tipo** de la Tabla Maestra es el del perfil `standard`. El perfil del proyecto (escala `spike`, `sprint`, `standard` o `enterprise`, más modificadores de riesgo) puede convertir un Halt en Checkpoint o al revés, y ajustar los entregables (§7). Las reglas están en [`PROFILES.md`](PROFILES.md); los datos, en `.workflow/profiles/`. Para ver el tipo efectivo de cada compuerta: `npm run status -- [XX_nombre]` o `npm run status -- proyecto`.
 
 Ningún perfil puede romper estos invariantes:
 
@@ -84,7 +84,7 @@ Ningún perfil puede romper estos invariantes:
 
 | Compuertas | Regla | Motivo |
 | :--- | :--- | :--- |
-| **G4** | `halt` | Nada entra a `main` sin firma humana. |
+| **G4** | `halt_si_produccion` | Nada que vaya a producción entra a `main` sin firma humana. Solo una escala con `"produccion": false` (`spike`) puede volverla Checkpoint, y entonces exige verificaciones ejecutables (§2.5); sus módulos no entran en un release sin reabrirse desde G4. |
 | **G5** | `halt` | Nada llega a producción sin firma humana. |
 | **G1+G2** | `al_menos_un_halt` | Siempre hay una firma humana antes de construir. |
 
@@ -121,7 +121,7 @@ Antes de `avanzar` un Checkpoint o `solicitar` la firma de un Halt, `npm run gat
 2. **Comandos de verificación:** los que `.workflow/project.json` declara para esa compuerta en `verificaciones`, por ejemplo `{"G3A": ["npm test --prefix backend", "npm run check:no-any"], "G3B": ["npm run build --prefix frontend"]}`. Se ejecutan en orden; el primero que termina con un código distinto de 0 bloquea la transición. `{modulo}` se sustituye por el ID del módulo.
 3. **Evidencia:** el resultado de cada comando queda en el `historial_transiciones` de la pista.
 
-Las compuertas que dependen de una capa (§2.2) **exigen** al menos un comando: sin ellos, ni G3A avanza ni G3B se solicita. El rol de fundación los declara junto con el stack; si faltan, los añade el rol en turno. Las demás compuertas los admiten de forma opcional.
+Las compuertas que dependen de una capa (§2.2) y las que un perfil sin producción vuelve Checkpoint (G4 en `spike`) **exigen** al menos un comando: sin ellos, ni G3A avanza ni G3B se solicita. El rol de fundación los declara junto con el stack; si faltan, los añade el rol en turno. Las demás compuertas los admiten de forma opcional.
 
 > ⚠️ **Esta tabla es la única copia de los datos.** `tooling/validate-state.mjs` la lee directamente entre los marcadores `gates:start` y `gates:end`; no existe otra lista que mantener. Si cambias el formato de las columnas o quitas un marcador, el validador falla en CI a propósito.
 
@@ -365,7 +365,7 @@ Además de los campos comunes, cada archivo de módulo declara `modulo` (igual a
 
 > ⚠️ **REGLA DIRECTA AL AGENTE:**  
 > Al culminar los entregables de una compuerta que sea **🛑 Halt en el perfil activo**, ejecuta `npm run gate -- [pista] solicitar` y **DEBES DETENER EL LLAMADO DE HERRAMIENTAS**. Tras la firma, regístrala con `npm run gate -- [pista] aprobar --cita "..."` y cierra la sesión (`AGENTS.md` §5.1). No encadenes la siguiente fase. Explica lo realizado, señala los aspectos visuales o arquitecturales a evaluar y espera la respuesta del usuario.  
-> Con el perfil `standard` son Halt **G1**, **G2**, **G3B**, **G4**, **G5** y **G6**, y **G3A** es un checkpoint automático. Otros perfiles cambian esa lista (§2.3); consulta la tuya con `npm run status -- [XX_nombre]` antes de seguir. **G4 y G5 son Halt en cualquier perfil.**
+> Con el perfil `standard` son Halt **G1**, **G2**, **G3B**, **G4**, **G5** y **G6**, y **G3A** es un checkpoint automático. Otros perfiles cambian esa lista (§2.3); consulta la tuya con `npm run status -- [XX_nombre]` antes de seguir. **G5 es Halt en cualquier perfil, y G4 también en todo perfil que llegue a producción** (en `spike`, G4 pasa con verificaciones obligatorias y nada llega a producción).
 
 ---
 

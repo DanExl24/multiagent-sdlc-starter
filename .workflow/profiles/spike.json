@@ -1,0 +1,35 @@
+{
+  "escala": "spike",
+  "descripcion": "Prototipos de una tarde que nunca llegan a producción. El Director Humano firma la especificación (G1) y el diseño (G2); la construcción y QA (G3A, G3B, G4) pasan como Checkpoint con verificaciones ejecutables obligatorias. No hay release: para publicar, se cambia a otra escala y cada módulo se reabre desde G4.",
+  "produccion": false,
+  "tipos": {
+    "G3B": "checkpoint",
+    "G4": "checkpoint",
+    "G6": "checkpoint"
+  },
+  "entregables": {
+    "opcionales": [
+      "atdd_spec",
+      "flujo_estados",
+      "arquitectura_c4",
+      "rbac",
+      "walkthrough",
+      "qa_report",
+      "api_bruno",
+      "e2e_a11y",
+      "carga_k6",
+      "rendimiento_cliente",
+      "auditoria_dependencias",
+      "changelog_fragmento",
+      "seeders",
+      "docker_health",
+      "changelog_release",
+      "runbook",
+      "plan_kaizen"
+    ],
+    "adicionales": [
+      "arquitectura_c4_reducida",
+      "e2e_smoke"
+    ]
+  }
+}
