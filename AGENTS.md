@@ -5,6 +5,8 @@
 > Si eres una IA que acaba de iniciar sesión en este proyecto (o un humano incorporándose al equipo) y **no tienes contexto previo en tu memoria**, **ESTE ES TU PUNTO DE ENTRADA Y ATERRIZAJE OBLIGATORIO**.  
 > **Axioma Fundamental:** La memoria conversacional es efímera y volátil; **el repositorio, los artefactos en disco y las pruebas automatizadas son la única e inmutable fuente de la verdad**.
 
+> 🧩 **¿Te lanzaron con un encargo de `.workflow/encargos/`?** Eres un subagente del modo orquestado: sigue **solo** ese encargo. No hagas el protocolo de aterrizaje (§5), no leas más gobernanza y no ejecutes `npm run gate` ([`.workflow/EXECUTION_MODES.md`](.workflow/EXECUTION_MODES.md)).
+
 ---
 
 ## 0. Jerarquía de Fuentes de Verdad
@@ -15,8 +17,9 @@
 | :--- | :--- |
 | Reglas de Oro (texto y numeración), catálogo de roles, protocolo de aterrizaje y precedencia entre documentos | **`AGENTS.md`** (este archivo) |
 | Compuertas: IDs, tipo (Halt / Checkpoint / Bootstrap), entregables, aprobador y valores permitidos de `current_state.json` | [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md), por delegación explícita de este manual |
-| Perfil del proyecto: escala (`sprint`, `standard`, `enterprise`) y modificadores de riesgo, que fijan el tipo efectivo de cada compuerta y los entregables exigidos | Reglas en [`.workflow/PROFILES.md`](.workflow/PROFILES.md); datos en `.workflow/profiles/`; perfil activo en `.workflow/project.json`. Vista del plan: `npm run status -- [XX_nombre]` |
+| Perfil del proyecto: escala (`spike`, `sprint`, `standard`, `enterprise`) y modificadores de riesgo, que fijan el tipo efectivo de cada compuerta y los entregables exigidos | Reglas en [`.workflow/PROFILES.md`](.workflow/PROFILES.md); datos en `.workflow/profiles/`; perfil activo en `.workflow/project.json`. Vista del plan: `npm run status -- [XX_nombre]` |
 | Estructura del proyecto: capas activas (backend, frontend), rutas de código y contratos, y verificaciones ejecutables por compuerta | `.workflow/project.json` (lo crea `npm run init:project` y lo valida `npm run validate:state`). Las rutas `backend/` y `frontend/` que citan los documentos son las predeterminadas |
+| Modo de ejecución (secuencial u orquestado con subagentes), paquetes de trabajo y encargos | [`.workflow/EXECUTION_MODES.md`](.workflow/EXECUTION_MODES.md); modo activo en `.workflow/project.json` → `ejecucion`. Encargos: `npm run plan:agentes` |
 | Estado vivo del ciclo de vida | `.workflow/current_state.json` (pista de proyecto y release) y `.workflow/modules/*.json` (una pista por módulo), validados contra `STAGE_GATES.md` con `npm run validate:state`. Vista consolidada: `npm run status` |
 | Detalle operativo de cada rol y subrol | `multiAgents/[rol]/ROLE.md` y `multiAgents/[rol]/subroles/` |
 | Protocolos de traspaso, commits, SemVer y RFC | `multiAgents/protocols/` |
@@ -81,9 +84,11 @@ flowchart LR
 ├── .workflow/                           # 🚦 Máquina de Estados y Gobernanza HITL
 │   ├── STAGE_GATES.md                   # Protocolo canónico de compuertas y altos obligatorios
 │   ├── PROFILES.md                      # Reglas de los perfiles: escala y modificadores de riesgo
+│   ├── EXECUTION_MODES.md               # Modo secuencial u orquestado y paquetes de trabajo para subagentes
 │   ├── profiles/                        # Datos de escalas (sprint, standard, enterprise) y modifiers/
 │   ├── project.json                     # Capas, rutas y verificaciones por compuerta del proyecto
 │   ├── current_state.json               # Estado de la pista de proyecto (línea base) y de release
+│   ├── encargos/                        # Encargos temporales de subagentes (modo orquestado; no se versionan)
 │   └── modules/                         # Un archivo de estado por módulo (XX_nombre.json): pistas paralelas
 │
 ├── multiAgents/                         # 🧠 Núcleo de Roles Líderes y Gobernanza Multiagente
@@ -256,7 +261,7 @@ Si eres un agente nuevo ingresando al repositorio:
 Cada paso de una conversación larga vuelve a procesar todo lo anterior: una sesión que acumula cientos de miles de tokens agota los límites del modelo aunque el trabajo pendiente sea pequeño. Este repositorio no necesita esa memoria, porque el estado vive en disco. Por eso:
 
 1. **Una sesión por compuerta.** Al terminar los entregables de un Halt, el agente ejecuta `npm run gate -- [pista] solicitar` y se detiene. Cuando el Director Humano firma, el agente registra la firma con `npm run gate -- [pista] aprobar --cita "palabras del humano"` y **cierra la sesión** (si los entregables cambian durante la revisión, se hace commit y se vuelve a `solicitar`: `aprobar` se niega a firmar algo distinto de lo revisado): el trabajo de la siguiente compuerta empieza en una **sesión nueva**, que aterriza con `npm run status`. Los Checkpoints no cortan la sesión.
-2. **Un subrol no es un subagente.** "Convocar un subrol" significa leer su **Contrato del Subrol** y aplicarlo en tu propio turno. Solo se lanza un subagente para trabajo realmente independiente y extenso; cada subagente vuelve a cargar la gobernanza.
+2. **Un subrol no es un subagente** (modo `secuencial`, el predeterminado). "Convocar un subrol" significa leer su **Contrato del Subrol** y aplicarlo en tu propio turno. En modo `orquestado` (`project.json` → `ejecucion`), el orquestador puede lanzar subagentes solo para los paquetes de trabajo de [`.workflow/EXECUTION_MODES.md`](.workflow/EXECUTION_MODES.md), cada uno con el encargo que genera `npm run plan:agentes`: así el subagente no recarga la gobernanza y devuelve un resumen corto. Solo el orquestador ejecuta `npm run gate`.
 3. **Lectura mínima.** Al aterrizar se lee `npm run status` (y `npm run status -- [XX_nombre]` para el plan del módulo), el `ROLE.md` del rol en turno y el **Contrato** de los subroles que vayas a aplicar. La técnica de un subrol, las secciones de `STAGE_GATES.md` y los protocolos se consultan solo cuando hacen falta, por sección. Los reportes generados (JSON de pruebas, logs) se leen por su resumen o filtrando fallos, nunca enteros.
 4. **El estado se cambia con `npm run gate`**, nunca editando a mano `current_state.json` ni los archivos de `.workflow/modules/`. El comando valida cada transición, escribe el historial y hace commit del archivo de estado. `solicitar` exige que los entregables ya estén en un commit. El push a remoto nunca es automático: requiere la autorización explícita del Director Humano, y `npm run status` avisa de los commits sin publicar.
 

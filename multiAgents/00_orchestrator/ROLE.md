@@ -124,6 +124,8 @@ stateDiagram-v2
 
 > 🧰 **Acciones del Kaizen.** Al aprobarse G6, el Orquestador comprueba dónde se ejecutará cada acción de alcance `futuro`: en el G1 del siguiente módulo o, si no hay ninguno previsto, en un módulo de mantenimiento que crea el PM (`CONTINUOUS_IMPROVEMENT_PROTOCOL.md`, paso 6). Nunca en la misma sesión de G6.
 
+> 🧩 **Modo orquestado.** Si `project.json` → `ejecucion.modo` es `orquestado`, en cada compuerta de construcción o QA el Orquestador ejecuta `npm run plan:agentes -- [XX_nombre]`, lanza un subagente por encargo (hasta `max_subagentes`), lee solo sus `*.resultado.md`, integra los cambios y ejecuta él mismo `npm run gate`. Reglas completas en `.workflow/EXECUTION_MODES.md`.
+
 > ♻️ **Reapertura de módulos.** Si el Kaizen o QA detectan un defecto S1/S2 o una violación de las Reglas de Oro en un módulo ya cerrado, el Orquestador propone al Director Humano reabrirlo desde la compuerta de origen (`.workflow/STAGE_GATES.md` §2.4) antes de empezar el siguiente módulo, y lo registra con `npm run gate -- [XX_nombre] reabrir`.
 
 > 🏗️ **Fundación.** Al aprobarse la línea base de G1, el Orquestador asigna el turno a `07_foundation_architect` (`rol_en_turno` en `current_state.json`, fase `FASE_2_ARQUITECTURA`). Cuando `project.json` → `fundacion.estado` es `COMPLETADA`, el turno pasa al Arquitecto de Software. `npm run validate:state` impide pedir la firma del G2 de línea base sin los ADRs de stack y estructura.

@@ -3,6 +3,21 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.20.0] - 2026-11-14
+
+### Added
+- **Modo de ejecución** (`.workflow/EXECUTION_MODES.md`, `project.json` → `ejecucion`): `secuencial` (por defecto, como hasta ahora) u `orquestado`, en el que un orquestador reparte trabajo independiente entre subagentes. Es independiente del perfil: `spike` o `standard` pueden usar cualquiera de los dos. `init:project` lo pregunta.
+- **Paquetes de trabajo** como dato único: backend y frontend en paralelo contra el contrato (G3A/G3B) y tres pilares de QA (G4). `validate:state` valida la tabla.
+- **`npm run plan:agentes -- [XX_nombre]`** genera en `.workflow/encargos/` un encargo por subagente: objetivo, Contrato de sus subroles (sin la técnica), rutas exactas de sus insumos, dónde puede escribir, verificación y respuesta de 15 líneas como máximo. Lo arma la herramienta, así que no cuesta tokens al orquestador; un encargo de backend ocupa unas 800 palabras frente a las más de 9.000 de gobernanza que antes releía un subagente. Respeta `max_subagentes`.
+- **Memoria temporal:** los encargos no se versionan y `npm run gate` los borra al cerrar la compuerta del módulo. `AGENTS.md` indica al subagente con encargo que siga solo ese encargo, sin protocolo de aterrizaje ni `npm run gate`.
+- Cada transición registra `marca` (fecha y hora) y `modo`, para medir el tiempo por compuerta y comparar modos.
+- Cinco pruebas nuevas en `test:tooling`.
+
+### Changed
+- `AGENTS.md` §5.1: "un subrol no es un subagente" rige en modo secuencial; en orquestado, solo se lanzan subagentes para los paquetes de trabajo y solo el orquestador ejecuta `npm run gate`.
+
+---
+
 ## [1.19.0] - 2026-11-14
 
 ### Added

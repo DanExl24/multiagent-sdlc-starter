@@ -187,7 +187,7 @@ npm run audit:dast -- http://localhost:3000
 npm run test:load -- http://localhost:3000
 # Genera: docs/qa/load-report.html y docs/qa/load-summary.json
 
-# 5. Escáner Automatizado de Accesibilidad (WCAG 2.1 AA):
+# 5. Lint estático de accesibilidad (preliminar; no certifica WCAG sin axe-core y revisión manual):
 npm run audit:a11y
 # Genera: docs/qa/a11y-audit-summary.json
 
@@ -198,6 +198,7 @@ npm run gate -- 04_pagos solicitar   # Cambia el estado de una pista (solicitar,
 npm run status -- 04_pagos   # Plan del módulo según el perfil: qué compuertas requieren firma y qué entregables
 npm run validate:state
 npm run release:changelog -- 0.2.0 --dry-run   # Al preparar un release: consolida changelog.d/
+npm run plan:agentes -- 04_pagos   # Modo orquestado: encargos para subagentes (.workflow/EXECUTION_MODES.md)
 
 # 7. Política de Fuentes de Verdad (sin citas numeradas fuera de AGENTS.md):
 npm run check:docs

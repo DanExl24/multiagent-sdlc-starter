@@ -43,6 +43,9 @@ blob-report/
 docs/qa/*.html
 docs/qa/*-summary.json
 
+# Encargos del modo orquestado (memoria temporal de los subagentes)
+.workflow/encargos/
+
 # Temp & Cache
 tmp/
 temp/

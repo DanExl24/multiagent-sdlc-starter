@@ -22,6 +22,7 @@ export const DEFAULT_CONFIG = {
   perfil: { escala: 'standard', modificadores: [], adr: null, confirmado: false },
   fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
   verificaciones: {},
+  ejecucion: { modo: 'secuencial', max_subagentes: 3 },
 };
 
 const isRelativeInside = (p) => typeof p === 'string' && p.length > 0 && !path.isAbsolute(p) && !p.split(/[\\/]/).includes('..');
@@ -77,6 +78,11 @@ export function loadProjectConfig() {
       if (!Array.isArray(cmds) || cmds.some((c) => typeof c !== 'string' || !c.trim())) errors.push(`project.json: verificaciones.${gate} debe ser una lista de comandos (texto no vacío).`);
     }
   }
+  // Modo de ejecución (opcional): secuencial (por defecto) u orquestado (.workflow/EXECUTION_MODES.md).
+  config.ejecucion = { ...DEFAULT_CONFIG.ejecucion, ...(config.ejecucion ?? {}) };
+  if (!['secuencial', 'orquestado'].includes(config.ejecucion.modo)) errors.push('project.json: ejecucion.modo debe ser "secuencial" u "orquestado".');
+  const maxSub = config.ejecucion.max_subagentes;
+  if (!Number.isInteger(maxSub) || maxSub < 1 || maxSub > 10) errors.push('project.json: ejecucion.max_subagentes debe ser un entero entre 1 y 10.');
   return { config: errors.length ? DEFAULT_CONFIG : config, exists: true, errors };
 }
 

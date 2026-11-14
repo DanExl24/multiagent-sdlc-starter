@@ -38,22 +38,26 @@ function moduleState(gateId, estado = 'EN_PROCESO') {
 }
 
 /** Repositorio temporal: línea base cerrada, solo backend activo y el módulo 01_demo en la compuerta indicada. */
-function fixture({ moduleGate = 'G3A', moduleEstado = 'EN_PROCESO', moduleHistorial = [], verificaciones = {}, escala = 'standard', projectGate = 'G5', extraProfiles = {} } = {}) {
+function fixture({ moduleGate = 'G3A', moduleEstado = 'EN_PROCESO', moduleHistorial = [], verificaciones = {}, escala = 'standard', projectGate = 'G5', extraProfiles = {}, frontend = false, ejecucion = undefined } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sdlc-gate-'));
   roots.push(root);
   fs.cpSync(path.join(STARTER, 'tooling'), path.join(root, 'tooling'), { recursive: true, filter: (src) => !src.includes(`${path.sep}tests`) });
   fs.cpSync(path.join(STARTER, '.workflow', 'profiles'), path.join(root, '.workflow', 'profiles'), { recursive: true });
   fs.copyFileSync(path.join(STARTER, '.workflow', 'STAGE_GATES.md'), path.join(root, '.workflow', 'STAGE_GATES.md'));
+  fs.copyFileSync(path.join(STARTER, '.workflow', 'EXECUTION_MODES.md'), path.join(root, '.workflow', 'EXECUTION_MODES.md'));
+  for (const rol of ['03_backend_engineer', '04_frontend_engineer', '05_qa_security_tester']) fs.cpSync(path.join(STARTER, 'multiAgents', rol, 'subroles'), path.join(root, 'multiAgents', rol, 'subroles'), { recursive: true });
+  write(root, '.gitignore', '.workflow/encargos/\n');
   write(root, 'package.json', { name: 'fixture', version: '0.1.0', type: 'module' });
   write(root, '.workflow/project.json', {
     capas: {
       backend: { activa: true, raiz: 'backend', modulos: 'backend/src/modules' },
-      frontend: { activa: false, raiz: 'frontend', modulos: 'frontend/src/modules' },
+      frontend: { activa: frontend, raiz: 'frontend', modulos: 'frontend/src/modules' },
     },
     rutas: { contratos: 'docs/contracts' },
     perfil: { escala, modificadores: [], adr: escala === 'standard' ? null : 'docs/adrs/ADR-000.md', confirmado: true },
     fundacion: { estado: 'COMPLETADA', stack: { backend: ['node'] }, adr_stack: 'docs/adrs/ADR-001.md', adr_estructura: 'docs/adrs/ADR-002.md' },
     verificaciones,
+    ...(ejecucion ? { ejecucion } : {}),
   });
   for (const [name, data] of Object.entries(extraProfiles)) write(root, `.workflow/profiles/${name}.json`, data);
   const pg = gate(projectGate);
@@ -216,4 +220,62 @@ test('sprint: G6 como Checkpoint avanza al siguiente release', () => {
   const r = runProject(root, 'avanzar');
   assert.equal(r.status, 0, r.stderr);
   assert.equal(projectState(root).gate_activo, gate('G5').gate);
+});
+
+// ── Modo orquestado: encargos como memoria temporal de los subagentes ──
+
+const planAgentes = (root, ...args) => spawnSync(process.execPath, ['tooling/plan-agentes.mjs', ...args], { cwd: root, encoding: 'utf-8' });
+const encargos = (root) => {
+  const dir = path.join(root, '.workflow', 'encargos');
+  return fs.existsSync(dir) ? fs.readdirSync(dir).sort() : [];
+};
+
+test('modo secuencial: plan:agentes no recomienda subagentes', () => {
+  const root = fixture({ frontend: true });
+  const r = planAgentes(root, MOD);
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /no se lanzan subagentes/);
+  assert.deepEqual(encargos(root), []);
+});
+
+test('modo orquestado: en G3A genera encargos de backend y frontend con su contrato e insumos', () => {
+  const root = fixture({ frontend: true, ejecucion: { modo: 'orquestado', max_subagentes: 3 }, verificaciones: { G3A: ['npm test --prefix backend'] } });
+  const r = planAgentes(root, MOD);
+  assert.equal(r.status, 0, r.stderr);
+  assert.deepEqual(encargos(root), [`${MOD}-backend.md`, `${MOD}-frontend.md`]);
+  const backend = fs.readFileSync(path.join(root, '.workflow', 'encargos', `${MOD}-backend.md`), 'utf-8');
+  assert.match(backend, /Sigue \*\*solo\*\* este encargo/);
+  assert.match(backend, /\| \*\*Responsabilidad\*\* \|/);
+  assert.match(backend, new RegExp(`docs/contracts/${MOD}\\.contract\\.ts\``));
+  assert.match(backend, /01_SPEC_FUNCIONAL\.md` \(⚠️ no existe/);
+  assert.match(backend, /npm test --prefix backend/);
+  assert.doesNotMatch(backend, /## 1\. ¿Qué es este Subrol\?/);
+});
+
+test('modo orquestado: respeta max_subagentes', () => {
+  const root = fixture({ frontend: true, ejecucion: { modo: 'orquestado', max_subagentes: 1 } });
+  const r = planAgentes(root, MOD);
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(encargos(root).length, 1);
+  assert.match(r.stdout, /En espera/);
+});
+
+test('gate borra los encargos del módulo al cerrar su compuerta y registra marca y modo', () => {
+  const root = fixture({ ejecucion: { modo: 'orquestado', max_subagentes: 3 }, verificaciones: { G3A: ['node -e "process.exit(0)"'] } });
+  assert.equal(planAgentes(root, MOD).status, 0);
+  write(root, '.workflow/encargos/02_otro-backend.md', '# de otro módulo\n');
+  assert.equal(encargos(root).length, 2);
+  const r = run(root, 'avanzar');
+  assert.equal(r.status, 0, r.stderr);
+  assert.deepEqual(encargos(root), ['02_otro-backend.md']);
+  const ultima = state(root).historial_transiciones.at(-1);
+  assert.equal(ultima.modo, 'orquestado');
+  assert.match(ultima.marca, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/);
+});
+
+test('validate:state rechaza un modo de ejecución desconocido', () => {
+  const root = fixture({ ejecucion: { modo: 'paralelo', max_subagentes: 3 } });
+  const r = spawnSync(process.execPath, ['tooling/validate-state.mjs'], { cwd: root, encoding: 'utf-8' });
+  assert.notEqual(r.status, 0);
+  assert.match(`${r.stdout}${r.stderr}`, /ejecucion\.modo/);
 });

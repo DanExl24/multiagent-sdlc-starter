@@ -157,6 +157,10 @@ async function main() {
     console.warn(`⚠️  El modificador "${m}" no existe y se omite.`);
     return false;
   });
+  // Modo de ejecución (.workflow/EXECUTION_MODES.md): secuencial gasta menos tokens; orquestado reparte trabajo entre subagentes.
+  const modoRaw = (await ask('7. Modo de ejecución (secuencial: un agente, menos tokens; orquestado: subagentes en paralelo, más rápido y más tokens)', 'secuencial')).toLowerCase();
+  const ejecucionModo = ['secuencial', 'orquestado'].includes(modoRaw) ? modoRaw : 'secuencial';
+  if (ejecucionModo !== modoRaw) console.warn(`⚠️  El modo "${modoRaw}" no existe; se usa "secuencial".`);
 
   console.log('\n⚙️  Configurando archivos y artefactos de gobernanza...');
 
@@ -204,6 +208,7 @@ async function main() {
     perfil: { escala, modificadores, adr: null, confirmado },
     fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
     verificaciones: {},
+    ejecucion: { modo: ejecucionModo, max_subagentes: 3 },
   };
   if (escala !== 'standard' || modificadores.length > 0) {
     projectConfig.perfil.adr = writeProfileAdr({ escala, modificadores, author, date: replacements.INIT_DATE });

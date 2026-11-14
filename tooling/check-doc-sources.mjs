@@ -32,7 +32,7 @@ import { loadStageGates, rootDir } from './lib/stage-gates.mjs';
 import { loadFragments } from './lib/changelog-fragments.mjs';
 import { loadModuleStates } from './lib/workflow-state.mjs';
 
-const SKIP_DIRS = new Set(['node_modules', '.git']);
+const SKIP_DIRS = new Set(['node_modules', '.git', 'encargos']);
 const SCAN_EXT = new Set(['.md', '.ts']);
 const RULE_CITATION = /regla(?:s)?\s+de\s+oro[\s*:]*#\s*\d+/i;
 // Nombres que suenan a una Regla de Oro pero no lo son ("Regla de Oro de X", "Reglas de Oro Legales").

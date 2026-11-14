@@ -75,7 +75,7 @@ if (target) {
 }
 
 console.log(`\n📍 Proyecto: ${project.proyecto ?? '-'} · versión ${project.version_actual ?? '-'}`);
-console.log(`   Perfil: ${perfilLabel(config.perfil.modificadores)}${config.perfil.confirmado ? '' : ' (⚠️ SIN CONFIRMAR: pregúntalo al Director Humano antes de G1)'} · capas activas: ${activeLayers(config).join(', ')}`);
+console.log(`   Perfil: ${perfilLabel(config.perfil.modificadores)}${config.perfil.confirmado ? '' : ' (⚠️ SIN CONFIRMAR: pregúntalo al Director Humano antes de G1)'} · capas activas: ${activeLayers(config).join(', ')} · ejecución: ${config.ejecucion.modo}${config.ejecucion.modo === 'orquestado' ? ` (máx. ${config.ejecucion.max_subagentes} subagentes; npm run plan:agentes)` : ''}`);
 console.log(`   Pista de proyecto/release: ${ICON[project.estado] ?? '⚪'} ${gateLabel(project)} · ${project.estado} · rol en turno: ${project.rol_en_turno}`);
 
 // Git: cambios sin commit y commits sin publicar (los agentes tienden a olvidarlos).

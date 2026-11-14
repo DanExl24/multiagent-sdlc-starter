@@ -31,6 +31,7 @@ import { execSync } from 'node:child_process';
 import { loadStageGates, rootDir } from './lib/stage-gates.mjs';
 import { activeLayers, loadProjectConfig } from './lib/project-config.mjs';
 import { missingDeliverables, runVerifications } from './lib/preflight.mjs';
+import { ENCARGOS_DIR } from './lib/work-packages.mjs';
 import { loadProfiles, resolvePlan } from './lib/profiles.mjs';
 import {
   MODULES_DIR, PROJECT_STATE_PATH, gatesForTrack, loadModuleStates, loadProjectState,
@@ -81,7 +82,8 @@ function rolFor(gate) {
 }
 
 function record({ to = current, estado, motivo, extra = {} }) {
-  state.historial_transiciones.push({ de: state.fase_activa, a: to.fase, fecha: today, autor, accion, motivo, ...extra });
+  // marca (fecha y hora) y modo permiten medir el tiempo entre transiciones y comparar modos (EXECUTION_MODES.md §4).
+  state.historial_transiciones.push({ de: state.fase_activa, a: to.fase, fecha: today, marca: new Date().toISOString(), modo: config.ejecucion.modo, autor, accion, motivo, ...extra });
   state.fase_activa = to.fase;
   state.gate_activo = to.gate;
   state.estado = estado;
@@ -373,12 +375,24 @@ if (check.errors.length) {
 
 const now = track.find((g) => g.gate === state.gate_activo);
 
+// Memoria temporal del modo orquestado: al cerrar la compuerta de un módulo, sus encargos ya no sirven.
+function limpiarEncargos() {
+  if (isProject || !fs.existsSync(ENCARGOS_DIR)) return 0;
+  const cerrada = now.id !== current.id || state.estado === 'COMPLETADO';
+  if (!cerrada) return 0;
+  const propios = fs.readdirSync(ENCARGOS_DIR).filter((f) => f.startsWith(`${pista}-`));
+  for (const f of propios) fs.rmSync(path.join(ENCARGOS_DIR, f), { force: true });
+  return propios.length;
+}
+
 // La transición queda en Git: commit solo del archivo de estado (los entregables ya se commitearon antes).
 const version = loadProjectState().version_actual ?? 'v0.0.0';
 const relFile = path.relative(rootDir, file).split(path.sep).join('/');
 const committed = commitStateFile(relFile, `[${version.startsWith('v') ? version : `v${version}`}] chore(workflow): ${pista} ${accion} ${current.id}${now.id !== current.id ? ` -> ${now.id}` : ''}`);
 console.log(`✅ ${pista}: ${now.id} ${TIPO[now.tipo]} · ${state.estado} · rol en turno: ${state.rol_en_turno}`);
 if (committed) console.log(`📝 Commit de la transición: ${committed}`);
+const encargosBorrados = limpiarEncargos();
+if (encargosBorrados) console.log(`🧹 Encargos de ${pista} borrados: ${encargosBorrados} (memoria temporal del modo orquestado).`);
 
 if ((accion === 'aprobar' || accion === 'avanzar') && !isProject && state.estado === 'COMPLETADO') {
   console.log(`🔀 Pendiente: fusionar ${state.rama} en main (${accion === 'avanzar' ? 'G4 superado con verificaciones; sin firma humana, el módulo no entra en un release' : 'G4 lo autoriza'}). El push a remoto requiere la autorización explícita del Director Humano.`);
@@ -390,4 +404,5 @@ if (sessionEnd) {
   console.log('🛑 Fin de sesión: espera la firma del Director Humano. Tras la firma, registra "aprobar" y continúa en una sesión nueva (empieza con npm run status).');
 } else if (next) {
   console.log(`➡️  Siguiente trabajo: ${now.id} con ${state.rol_en_turno}. Recomendado: una sesión nueva para este rol (AGENTS.md §5).`);
+  if (config.ejecucion.modo === 'orquestado' && !isProject) console.log(`🧩 Modo orquestado: npm run plan:agentes -- ${pista} para ver los subagentes recomendados.`);
 }

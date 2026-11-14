@@ -26,5 +26,9 @@
     "adr_stack": null,
     "adr_estructura": null
   },
-  "verificaciones": {}
+  "verificaciones": {},
+  "ejecucion": {
+    "modo": "secuencial",
+    "max_subagentes": 3
+  }
 }

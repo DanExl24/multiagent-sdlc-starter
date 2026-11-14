@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 export const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const STAGE_GATES_PATH = path.join(rootDir, '.workflow', 'STAGE_GATES.md');
 
-function extractBlock(markdown, name) {
+export function extractBlock(markdown, name) {
   const re = new RegExp(`<!--\\s*${name}:start\\s*-->([\\s\\S]*?)<!--\\s*${name}:end\\s*-->`);
   const match = markdown.match(re);
   if (!match) {
@@ -28,7 +28,7 @@ function extractBlock(markdown, name) {
 }
 
 /** Devuelve las filas de datos (sin encabezado ni separador) como arreglos de celdas. */
-function tableRows(block, name) {
+export function tableRows(block, name) {
   const rows = block
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -41,7 +41,7 @@ function tableRows(block, name) {
   return rows.slice(1); // descarta el encabezado
 }
 
-const backticked = (cell) => {
+export const backticked = (cell) => {
   const match = cell.match(/`([^`]+)`/);
   return match ? match[1] : null;
 };
