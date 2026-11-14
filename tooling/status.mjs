@@ -49,6 +49,9 @@ function printPlan(title, track, mods, current) {
       const tag = origen === 'base' ? '' : `  (${origen})`;
       console.log(`        - ${table.entregables.get(id).descripcion.replace(/`/g, '')}${tag}`);
     }
+    const cmds = config.verificaciones?.[gate.id] ?? [];
+    if (cmds.length) console.log(`        🔎 Verificación previa: ${cmds.join(' · ')}`);
+    else if (table.capas.has(gate.id)) console.log('        ⚠️  Sin verificaciones en project.json: son obligatorias para pasar esta compuerta');
   }
   const skipped = [...table.capas].filter(([, layer]) => !activeLayers(config).includes(layer));
   if (track === 'modulo' && skipped.length) console.log(`\n   Omitidas por capa inactiva: ${skipped.map(([id, layer]) => `${id} (${layer})`).join(', ')}`);

@@ -113,6 +113,16 @@ Los defectos **S3 y S4** van al backlog del siguiente módulo o a un release de 
 
 **Cómo:** con la firma del Director Humano, `npm run gate -- [XX_nombre] reabrir --desde [Gx] --motivo "hallazgo, severidad y origen" --cita "..."`. El módulo vuelve a `EN_PROCESO` en esa compuerta, su versión liberada pasa a `releases_previos` y recorre de nuevo hasta G4. La corrección entra en un nuevo release (parche si no cambia el comportamiento esperado). Si otros módulos dependen del reabierto, `npm run validate:state` avisa para revisar si también deben reabrirse.
 
+### 2.5. Verificación previa: el agente no declara, la herramienta comprueba
+
+Antes de `avanzar` un Checkpoint o `solicitar` la firma de un Halt, `npm run gate` ejecuta la verificación previa de la compuerta en curso. Si algo falla, la transición no se aplica y el mensaje dice qué corregir:
+
+1. **Entregables con ruta fija:** los del plan efectivo con valor en la columna "Ruta comprobada" del catálogo (§7) deben existir.
+2. **Comandos de verificación:** los que `.workflow/project.json` declara para esa compuerta en `verificaciones`, por ejemplo `{"G3A": ["npm test --prefix backend", "npm run check:no-any"], "G3B": ["npm run build --prefix frontend"]}`. Se ejecutan en orden; el primero que termina con un código distinto de 0 bloquea la transición. `{modulo}` se sustituye por el ID del módulo.
+3. **Evidencia:** el resultado de cada comando queda en el `historial_transiciones` de la pista.
+
+Las compuertas que dependen de una capa (§2.2) **exigen** al menos un comando: sin ellos, ni G3A avanza ni G3B se solicita. El rol de fundación los declara junto con el stack; si faltan, los añade el rol en turno. Las demás compuertas los admiten de forma opcional.
+
 > ⚠️ **Esta tabla es la única copia de los datos.** `tooling/validate-state.mjs` la lee directamente entre los marcadores `gates:start` y `gates:end`; no existe otra lista que mantener. Si cambias el formato de las columnas o quitas un marcador, el validador falla en CI a propósito.
 
 ---
@@ -361,68 +371,68 @@ Además de los campos comunes, cada archivo de módulo declara `modulo` (igual a
 
 ## 7. Catálogo de Entregables
 
-Cada entregable tiene un ID que citan los perfiles de `.workflow/profiles/`. La columna **En standard** indica si es obligatorio con el perfil por defecto; los perfiles y modificadores lo vuelven opcional o lo añaden. La columna **Capa** indica si solo aplica cuando esa capa está activa en `.workflow/project.json` (por ejemplo, Bruno, k6 o DAST sobre HTTP no aplican a un proyecto sin backend); "—" aplica siempre. El detalle de cada compuerta (§4) sigue siendo la descripción completa.
+Cada entregable tiene un ID que citan los perfiles de `.workflow/profiles/`. La columna **En standard** indica si es obligatorio con el perfil por defecto; los perfiles y modificadores lo vuelven opcional o lo añaden. La columna **Capa** indica si solo aplica cuando esa capa está activa en `.workflow/project.json` (por ejemplo, Bruno, k6 o DAST sobre HTTP no aplican a un proyecto sin backend); "—" aplica siempre. La columna **Ruta comprobada** es el archivo que `npm run gate` exige antes de `avanzar` o `solicitar` esa compuerta (`{modulo}` es el ID del módulo, `{version}` la `version_actual` y `*` cualquier nombre en ese nivel); "—" significa que el entregable no tiene ruta fija y lo verifica el rol o el Director Humano. El detalle de cada compuerta (§4) sigue siendo la descripción completa.
 
 <!-- entregables:start -->
 
-| ID | Compuerta | Pista | Capa | En standard | Entregable |
-| :--- | :--- | :--- | :--- | :---: | :--- |
-| `prd` | G1 | proyecto | — | Sí | `docs/project/prd.md` |
-| `glosario` | G1 | proyecto | — | Sí | `docs/project/glossary.md` con los términos del dominio |
-| `spec_funcional` | G1 | modulo | — | Sí | `01_SPEC_FUNCIONAL.md` del módulo |
-| `historias_bdd` | G1 | modulo | — | Sí | `02_HISTORIAS_USUARIO.md`: historias INVEST con criterios Gherkin |
-| `flujo_estados` | G1 | modulo | — | Sí | `03_FLUJO_Y_ESTADOS.md` con diagramas Mermaid |
-| `atdd_spec` | G1 | modulo | — | Sí | Especificación ATDD firmada por los Three Amigos |
-| `matriz_normativa` | G1 | modulo | — | No | Matriz normativa del subrol legal (`RN-DOM-XX`) |
-| `arquitectura_c4` | G2 | proyecto | — | Sí | `docs/project/architecture.md` con el modelo C4 completo |
-| `arquitectura_c4_reducida` | G2 | proyecto | — | No | Un único diagrama de contexto y contenedores en `architecture.md` |
-| `adr_stack` | G2 | proyecto | — | Sí | ADR del stack aceptado por el desarrollador (rol de fundación) |
-| `estructura_repo` | G2 | proyecto | — | Sí | `docs/project/repo-structure.md` y su ADR aceptado (rol de fundación) |
-| `ddl` | G2 | modulo | `backend` | Sí | DDL relacional en `04_ARQUITECTURA_Y_CODIGO.md`, con los estados como `ENUM` o `CHECK` |
-| `contrato_zod` | G2 | modulo | — | Sí | Contrato Zod del módulo en la ruta de contratos, con los estados como `z.enum` |
-| `rbac` | G2 | modulo | — | Sí | Matriz de permisos RBAC del módulo |
-| `adr_decisiones` | G2 | modulo | — | No | Un ADR por cada decisión estructural del módulo |
-| `modelo_amenazas` | G2 | modulo | — | No | Modelo de amenazas (STRIDE o equivalente) |
-| `mapa_datos_personales` | G2 | modulo | — | No | Mapa de datos personales: qué se guarda, dónde y durante cuánto tiempo |
-| `contrato_idempotencia` | G2 | modulo | — | No | Claves de idempotencia declaradas en el contrato |
-| `adr_aislamiento_tenant` | G2 | modulo | — | No | ADR con la estrategia de aislamiento entre tenants |
-| `contrato_eventos` | G2 | modulo | — | No | Contrato de eventos en tiempo real: canales y payloads tipados con Zod |
-| `estrategia_reconexion` | G2 | modulo | — | No | Estrategia de reconexión, reenvío y orden de eventos |
-| `vitest_backend` | G3A | modulo | `backend` | Sí | Suite Vitest del backend al 100 % y ciclo TDD completo |
-| `no_any_backend` | G3A | modulo | `backend` | Sí | `check:no-any` en verde en el backend |
-| `rutas_protegidas` | G3A | modulo | `backend` | Sí | Rutas con autenticación, RBAC y aislamiento según el contrato |
-| `integracion_persistencia_backend` | G3A | modulo | `backend` | Sí | Prueba de integración contra la base de datos real (sin mocks) por cada ruta que guarda o lee datos |
-| `vistas_design_system` | G3B | modulo | `frontend` | Sí | Vistas sobre el Design System con estados Loading, Empty, Error y Success |
-| `tests_componentes` | G3B | modulo | `frontend` | Sí | Pruebas de componentes y stores en verde |
-| `walkthrough` | G3B | modulo | — | Sí | `WALKTHROUGH.md` versionado y reproducible |
-| `no_any_frontend` | G3B | modulo | `frontend` | Sí | `check:no-any` en verde en el frontend |
-| `integracion_persistencia_frontend` | G3B | modulo | `frontend` | Sí | Si el frontend persiste datos: prueba de integración contra el almacenamiento real (sin mocks) por cada ruta de guardado o lectura |
-| `qa_report` | G4 | modulo | — | Sí | `QA_REPORT.md` con RCA de cada defecto |
-| `no_any_cert` | G4 | modulo | — | Sí | Certificación AST de cero `any` (pilar 4) |
-| `vitest_suite` | G4 | modulo | — | Sí | Suite automatizada al 100 % y 0 defectos S1/S2 abiertos (pilar 1) |
-| `api_bruno` | G4 | modulo | `backend` | Sí | Colección de contratos de API con Bruno (pilar 1) |
-| `e2e_smoke` | G4 | modulo | `frontend` | No | E2E de humo del flujo principal |
-| `e2e_a11y` | G4 | modulo | `frontend` | Sí | E2E completos con Playwright y accesibilidad con axe-core (pilar 2) |
-| `carga_k6` | G4 | modulo | `backend` | Sí | Prueba de carga con k6 (pilar 3) |
-| `rendimiento_cliente` | G4 | modulo | `frontend` | Sí | Medición de rendimiento en cliente (tiempos de interacción o render en dispositivo real o emulado) |
-| `changelog_fragmento` | G4 | modulo | — | Sí | Fragmento del módulo en `changelog.d/` |
-| `auditoria_dependencias` | G4 | modulo | — | Sí | Auditoría de vulnerabilidades de dependencias (`npm audit` o equivalente) sin altas ni críticas |
-| `dast` | G4 | modulo | `backend` | No | Escaneo DAST en runtime (`npm run audit:dast`) |
-| `presupuesto_rendimiento` | G4 | modulo | — | No | Presupuesto de rendimiento verificado (p95, tamaño de bundle) |
-| `logs_sin_pii` | G4 | modulo | `backend` | No | Verificación de que los logs no contienen datos personales |
-| `pruebas_doble_cobro` | G4 | modulo | — | No | Pruebas de doble cobro, reintentos e idempotencia |
-| `pruebas_fuga_tenant` | G4 | modulo | `backend` | No | Pruebas de fuga de datos entre tenants |
-| `rtm_trazabilidad` | G4 | modulo | — | No | Matriz de trazabilidad RTM completa (requisito, prueba, evidencia) |
-| `pruebas_concurrencia_eventos` | G4 | modulo | — | No | Pruebas de concurrencia, orden de eventos y desconexión |
-| `carga_websocket` | G4 | modulo | `backend` | No | Carga con conexiones simultáneas (k6 WebSocket) |
-| `seeders` | G5 | release | `backend` | Sí | Seeders y migraciones idempotentes |
-| `docker_health` | G5 | release | `backend` | Sí | Contenedores sin advertencias y `/api/health` en OK |
-| `changelog_release` | G5 | release | — | Sí | `CHANGELOG.md` consolidado con `npm run release:changelog` y tag `vX.Y.Z` |
-| `runbook` | G5 | release | — | Sí | Runbooks de operación completos |
-| `runbook_minimo` | G5 | release | — | No | Runbook mínimo: arranque, parada y restauración |
-| `rollback_probado` | G5 | release | — | No | Plan de rollback ensayado |
-| `plan_kaizen` | G6 | release | — | Sí | `docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md` con Ishikawa y Pareto |
-| `retro_breve` | G6 | release | — | No | Retrospectiva de una página: qué mantener, qué cambiar |
-| `revision_cumplimiento` | G6 | release | — | No | Revisión de cumplimiento normativo del release |
+| ID | Compuerta | Pista | Capa | En standard | Entregable | Ruta comprobada |
+| :--- | :--- | :--- | :--- | :---: | :--- | :--- |
+| `prd` | G1 | proyecto | — | Sí | `docs/project/prd.md` | `docs/project/prd.md` |
+| `glosario` | G1 | proyecto | — | Sí | `docs/project/glossary.md` con los términos del dominio | `docs/project/glossary.md` |
+| `spec_funcional` | G1 | modulo | — | Sí | `01_SPEC_FUNCIONAL.md` del módulo | `docs/modules/{modulo}/01_SPEC_FUNCIONAL.md` |
+| `historias_bdd` | G1 | modulo | — | Sí | `02_HISTORIAS_USUARIO.md`: historias INVEST con criterios Gherkin | `docs/modules/{modulo}/02_HISTORIAS_USUARIO.md` |
+| `flujo_estados` | G1 | modulo | — | Sí | `03_FLUJO_Y_ESTADOS.md` con diagramas Mermaid | `docs/modules/{modulo}/03_FLUJO_Y_ESTADOS.md` |
+| `atdd_spec` | G1 | modulo | — | Sí | Especificación ATDD firmada por los Three Amigos | — |
+| `matriz_normativa` | G1 | modulo | — | No | Matriz normativa del subrol legal (`RN-DOM-XX`) | — |
+| `arquitectura_c4` | G2 | proyecto | — | Sí | `docs/project/architecture.md` con el modelo C4 completo | `docs/project/architecture.md` |
+| `arquitectura_c4_reducida` | G2 | proyecto | — | No | Un único diagrama de contexto y contenedores en `architecture.md` | `docs/project/architecture.md` |
+| `adr_stack` | G2 | proyecto | — | Sí | ADR del stack aceptado por el desarrollador (rol de fundación) | — |
+| `estructura_repo` | G2 | proyecto | — | Sí | `docs/project/repo-structure.md` y su ADR aceptado (rol de fundación) | `docs/project/repo-structure.md` |
+| `ddl` | G2 | modulo | `backend` | Sí | DDL relacional en `04_ARQUITECTURA_Y_CODIGO.md`, con los estados como `ENUM` o `CHECK` | `docs/modules/{modulo}/04_ARQUITECTURA_Y_CODIGO.md` |
+| `contrato_zod` | G2 | modulo | — | Sí | Contrato Zod del módulo en la ruta de contratos, con los estados como `z.enum` | — |
+| `rbac` | G2 | modulo | — | Sí | Matriz de permisos RBAC del módulo | — |
+| `adr_decisiones` | G2 | modulo | — | No | Un ADR por cada decisión estructural del módulo | — |
+| `modelo_amenazas` | G2 | modulo | — | No | Modelo de amenazas (STRIDE o equivalente) | — |
+| `mapa_datos_personales` | G2 | modulo | — | No | Mapa de datos personales: qué se guarda, dónde y durante cuánto tiempo | — |
+| `contrato_idempotencia` | G2 | modulo | — | No | Claves de idempotencia declaradas en el contrato | — |
+| `adr_aislamiento_tenant` | G2 | modulo | — | No | ADR con la estrategia de aislamiento entre tenants | — |
+| `contrato_eventos` | G2 | modulo | — | No | Contrato de eventos en tiempo real: canales y payloads tipados con Zod | — |
+| `estrategia_reconexion` | G2 | modulo | — | No | Estrategia de reconexión, reenvío y orden de eventos | — |
+| `vitest_backend` | G3A | modulo | `backend` | Sí | Suite Vitest del backend al 100 % y ciclo TDD completo | — |
+| `no_any_backend` | G3A | modulo | `backend` | Sí | `check:no-any` en verde en el backend | — |
+| `rutas_protegidas` | G3A | modulo | `backend` | Sí | Rutas con autenticación, RBAC y aislamiento según el contrato | — |
+| `integracion_persistencia_backend` | G3A | modulo | `backend` | Sí | Prueba de integración contra la base de datos real (sin mocks) por cada ruta que guarda o lee datos | — |
+| `vistas_design_system` | G3B | modulo | `frontend` | Sí | Vistas sobre el Design System con estados Loading, Empty, Error y Success | — |
+| `tests_componentes` | G3B | modulo | `frontend` | Sí | Pruebas de componentes y stores en verde | — |
+| `walkthrough` | G3B | modulo | — | Sí | `WALKTHROUGH.md` versionado y reproducible | `docs/walkthroughs/{modulo}/*/WALKTHROUGH.md` |
+| `no_any_frontend` | G3B | modulo | `frontend` | Sí | `check:no-any` en verde en el frontend | — |
+| `integracion_persistencia_frontend` | G3B | modulo | `frontend` | Sí | Si el frontend persiste datos: prueba de integración contra el almacenamiento real (sin mocks) por cada ruta de guardado o lectura | — |
+| `qa_report` | G4 | modulo | — | Sí | `QA_REPORT.md` con RCA de cada defecto | `docs/qa/{modulo}/*/QA_REPORT.md` |
+| `no_any_cert` | G4 | modulo | — | Sí | Certificación AST de cero `any` (pilar 4) | — |
+| `vitest_suite` | G4 | modulo | — | Sí | Suite automatizada al 100 % y 0 defectos S1/S2 abiertos (pilar 1) | — |
+| `api_bruno` | G4 | modulo | `backend` | Sí | Colección de contratos de API con Bruno (pilar 1) | — |
+| `e2e_smoke` | G4 | modulo | `frontend` | No | E2E de humo del flujo principal | — |
+| `e2e_a11y` | G4 | modulo | `frontend` | Sí | E2E completos con Playwright y accesibilidad con axe-core (pilar 2) | — |
+| `carga_k6` | G4 | modulo | `backend` | Sí | Prueba de carga con k6 (pilar 3) | — |
+| `rendimiento_cliente` | G4 | modulo | `frontend` | Sí | Medición de rendimiento en cliente (tiempos de interacción o render en dispositivo real o emulado) | — |
+| `changelog_fragmento` | G4 | modulo | — | Sí | Fragmento del módulo en `changelog.d/` | `changelog.d/{modulo}*.md` |
+| `auditoria_dependencias` | G4 | modulo | — | Sí | Auditoría de vulnerabilidades de dependencias (`npm audit` o equivalente) sin altas ni críticas | — |
+| `dast` | G4 | modulo | `backend` | No | Escaneo DAST en runtime (`npm run audit:dast`) | — |
+| `presupuesto_rendimiento` | G4 | modulo | — | No | Presupuesto de rendimiento verificado (p95, tamaño de bundle) | — |
+| `logs_sin_pii` | G4 | modulo | `backend` | No | Verificación de que los logs no contienen datos personales | — |
+| `pruebas_doble_cobro` | G4 | modulo | — | No | Pruebas de doble cobro, reintentos e idempotencia | — |
+| `pruebas_fuga_tenant` | G4 | modulo | `backend` | No | Pruebas de fuga de datos entre tenants | — |
+| `rtm_trazabilidad` | G4 | modulo | — | No | Matriz de trazabilidad RTM completa (requisito, prueba, evidencia) | — |
+| `pruebas_concurrencia_eventos` | G4 | modulo | — | No | Pruebas de concurrencia, orden de eventos y desconexión | — |
+| `carga_websocket` | G4 | modulo | `backend` | No | Carga con conexiones simultáneas (k6 WebSocket) | — |
+| `seeders` | G5 | release | `backend` | Sí | Seeders y migraciones idempotentes | — |
+| `docker_health` | G5 | release | `backend` | Sí | Contenedores sin advertencias y `/api/health` en OK | — |
+| `changelog_release` | G5 | release | — | Sí | `CHANGELOG.md` consolidado con `npm run release:changelog` y tag `vX.Y.Z` | — |
+| `runbook` | G5 | release | — | Sí | Runbooks de operación completos | — |
+| `runbook_minimo` | G5 | release | — | No | Runbook mínimo: arranque, parada y restauración | — |
+| `rollback_probado` | G5 | release | — | No | Plan de rollback ensayado | — |
+| `plan_kaizen` | G6 | release | — | Sí | `docs/quality/IMPROVEMENT_PLAN_vX.Y.Z.md` con Ishikawa y Pareto | `docs/quality/IMPROVEMENT_PLAN_{version}.md` |
+| `retro_breve` | G6 | release | — | No | Retrospectiva de una página: qué mantener, qué cambiar | — |
+| `revision_cumplimiento` | G6 | release | — | No | Revisión de cumplimiento normativo del release | — |
 
 <!-- entregables:end -->

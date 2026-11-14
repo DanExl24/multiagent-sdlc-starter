@@ -1,5 +1,6 @@
 /**
- * Configuración estructural del proyecto (.workflow/project.json): capas activas y rutas.
+ * Configuración estructural del proyecto (.workflow/project.json): capas activas, rutas y
+ * verificaciones por compuerta (comandos que `npm run gate` ejecuta antes de avanzar o solicitar).
  * Permite que el repositorio que adopta el starter use su propia estructura de carpetas
  * (monorepo, sin frontend, rutas distintas) sin editar el tooling.
  *
@@ -20,6 +21,7 @@ export const DEFAULT_CONFIG = {
   rutas: { contratos: 'docs/contracts' },
   perfil: { escala: 'standard', modificadores: [], adr: null, confirmado: false },
   fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
+  verificaciones: {},
 };
 
 const isRelativeInside = (p) => typeof p === 'string' && p.length > 0 && !path.isAbsolute(p) && !p.split(/[\\/]/).includes('..');
@@ -64,6 +66,16 @@ export function loadProjectConfig() {
   if (typeof fundacion.stack !== 'object' || fundacion.stack === null || Array.isArray(fundacion.stack)) errors.push('project.json: fundacion.stack debe ser un objeto (capa → tecnologías).');
   for (const key of ['adr_stack', 'adr_estructura']) {
     if (fundacion[key] !== null && !isRelativeInside(fundacion[key])) errors.push(`project.json: fundacion.${key} debe ser null o una ruta relativa a un ADR.`);
+  }
+  // Verificaciones (opcional): compuerta → comandos. Los IDs de compuerta se validan en validate:state.
+  config.verificaciones = config.verificaciones ?? {};
+  const verif = config.verificaciones;
+  if (typeof verif !== 'object' || verif === null || Array.isArray(verif)) {
+    errors.push('project.json: verificaciones debe ser un objeto (compuerta → lista de comandos), por ejemplo {"G3A": ["npm test --prefix backend"]}.');
+  } else {
+    for (const [gate, cmds] of Object.entries(verif)) {
+      if (!Array.isArray(cmds) || cmds.some((c) => typeof c !== 'string' || !c.trim())) errors.push(`project.json: verificaciones.${gate} debe ser una lista de comandos (texto no vacío).`);
+    }
   }
   return { config: errors.length ? DEFAULT_CONFIG : config, exists: true, errors };
 }

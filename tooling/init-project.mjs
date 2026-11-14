@@ -203,6 +203,7 @@ async function main() {
     rutas: { contratos: 'docs/contracts' },
     perfil: { escala, modificadores, adr: null, confirmado },
     fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
+    verificaciones: {},
   };
   if (escala !== 'standard' || modificadores.length > 0) {
     projectConfig.perfil.adr = writeProfileAdr({ escala, modificadores, author, date: replacements.INIT_DATE });

@@ -3,6 +3,19 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.18.0] - 2026-11-14
+
+### Added
+- **Verificación previa en `npm run gate`** (`STAGE_GATES.md` §2.5): antes de `avanzar` o `solicitar`, comprueba que existan los entregables con ruta fija y ejecuta los comandos de `verificaciones` que `.workflow/project.json` declara para esa compuerta. Si un comando falla, la transición no se aplica y se muestran sus últimas líneas; si pasan, el resultado queda como evidencia en el historial. G3A y G3B exigen al menos un comando: un checkpoint ya no avanza con las pruebas fallando.
+- Columna **Ruta comprobada** en el Catálogo de Entregables (`{modulo}`, `{version}` y `*` por segmento): es el dato que usa la verificación previa, sin una segunda lista.
+- `npm run status -- [XX_nombre]` muestra las verificaciones de cada compuerta y avisa cuando faltan en una compuerta de capa.
+- **Pruebas de comportamiento del tooling** (`npm run test:tooling`, incluido en `npm test`): repositorios temporales con Git que comprueban, entre otros casos, que G3A no avanza con una verificación fallida, que G4 no se solicita con un S2 declarado, que `aprobar` rechaza entregables cambiados tras la solicitud y que un commit fallido deshace la transición.
+
+### Changed
+- El rol de fundación declara las `verificaciones` de G3A y G3B junto con el stack (`07_foundation_architect` y su subrol de estructura). `init:project` crea el campo vacío y `validate:state` rechaza compuertas inexistentes.
+
+---
+
 ## [1.17.0] - 2026-11-13
 
 ### Added

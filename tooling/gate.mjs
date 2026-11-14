@@ -18,6 +18,8 @@
  * entregables cambiaron desde entonces (se vuelve a `solicitar`). Cada transición hace commit de su archivo
  * de estado y, si ese commit falla, se deshace.
  * En G4 de un módulo, `solicitar` exige además la sección 0 del QA_REPORT, con su resumen verificable en cero.
+ * Antes de `avanzar` o `solicitar`, la verificación previa comprueba los entregables con ruta fija (STAGE_GATES.md §7)
+ * y ejecuta los comandos de `verificaciones` del project.json para esa compuerta (obligatorios en G3A y G3B).
  * El push a remoto nunca lo hace el comando: requiere autorización explícita del Director Humano.
  *
  * Cada cambio se valida con las mismas reglas que `npm run validate:state`; si algo no cuadra,
@@ -27,7 +29,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { loadStageGates, rootDir } from './lib/stage-gates.mjs';
-import { loadProjectConfig } from './lib/project-config.mjs';
+import { activeLayers, loadProjectConfig } from './lib/project-config.mjs';
+import { missingDeliverables, runVerifications } from './lib/preflight.mjs';
 import { loadProfiles, resolvePlan } from './lib/profiles.mjs';
 import {
   MODULES_DIR, PROJECT_STATE_PATH, gatesForTrack, loadModuleStates, loadProjectState,
@@ -60,7 +63,7 @@ if (!fs.existsSync(file)) fail(`La pista "${pista}" no existe. Usa "proyecto" o 
 const original = fs.readFileSync(file, 'utf-8');
 const state = JSON.parse(original);
 const mods = isProject ? projectModifiers(config, modules) : moduleModifiers(config, state);
-const plan = resolvePlan(table, profiles, { escala: config.perfil.escala, modificadores: mods });
+const plan = resolvePlan(table, profiles, { escala: config.perfil.escala, modificadores: mods, capas: activeLayers(config) });
 if (plan.errors.length) fail(plan.errors.join(' '));
 const track = gatesForTrack(table, isProject ? 'proyecto' : 'modulo', config, plan.tipos);
 const idx = track.findIndex((g) => g.gate === state.gate_activo);
@@ -162,6 +165,35 @@ function qaReportGaps(moduleId) {
   return { report: path.relative(rootDir, reports[0]).split(path.sep).join('/'), gaps, bloqueos };
 }
 
+/**
+ * Verificación previa de la compuerta en curso: entregables con ruta fija y comandos de verificación.
+ * Devuelve la evidencia que queda en el historial; si algo falla, la transición no se aplica.
+ */
+function preflight() {
+  const version = loadProjectState().version_actual ?? '';
+  const modulo = isProject ? '' : pista;
+  const faltan = missingDeliverables(table, plan.entregables, { gateId: current.id, pistas: isProject ? ['proyecto', 'release'] : ['modulo'], modulo, version });
+  if (faltan.length) {
+    fail(`Faltan entregables de ${current.id} (STAGE_GATES.md §7, columna "Ruta comprobada"):\n   ${faltan.map((f) => `${f.id}: ${f.ruta}`).join('\n   ')}`);
+  }
+  const comandos = config.verificaciones?.[current.id] ?? [];
+  const capa = table.capas.get(current.id);
+  if (!comandos.length) {
+    if (capa) {
+      fail(`${current.id} construye la capa ${capa} y exige verificaciones ejecutables en .workflow/project.json, por ejemplo:\n   "verificaciones": { "${current.id}": ["npm test --prefix ${config.capas[capa].raiz}", "npm run check:no-any"] }\nLas define el rol de fundación junto con el stack (o el rol en turno, si faltan). Sin ellas, "${accion}" no puede comprobar que todo está en verde.`);
+    }
+    return [];
+  }
+  console.log(`🔎 Verificaciones de ${current.id}:`);
+  const resultados = runVerifications(comandos, { modulo, version });
+  for (const r of resultados) console.log(`   ${r.resultado === 'PASS' ? '✅' : '❌'} ${r.comando} (${r.segundos} s)`);
+  const fallo = resultados.find((r) => r.resultado === 'FAIL');
+  if (fallo) {
+    fail(`La verificación "${fallo.comando}" falló, así que ${current.id} no puede ${accion === 'avanzar' ? 'avanzar' : 'solicitarse'}. Últimas líneas:\n${fallo.salida.split('\n').map((l) => `   ${l}`).join('\n')}`);
+  }
+  return resultados.map(({ comando, resultado, segundos }) => ({ comando, resultado, segundos }));
+}
+
 function requireText(key, label) {
   if (typeof opts[key] !== 'string' || !opts[key].trim()) fail(`"${accion}" exige ${label} (--${key} "...").`);
   return opts[key].trim();
@@ -196,13 +228,18 @@ switch (accion) {
         fail(`G4 no se solicita con ${bloqueos.join(', ')} (${report}). Es un veto de QA: npm run gate -- ${pista} volver G3A|G3B --motivo "...". Una prueba omitida se ejecuta o se documenta con su evidencia; un requisito incumplido solo se reevalúa si el Director Humano lo cambia de forma explícita.`);
       }
     }
+    const evidencias = preflight();
+    const sucios = uncommittedChanges();
+    if (sucios.length) {
+      fail(`Las verificaciones modificaron archivos versionados (${sucios.slice(0, 5).join(', ')}). Añade esas salidas a .gitignore o haz commit, y vuelve a solicitar.`);
+    }
     const commit = headCommit();
     record({
       estado: 'ESPERANDO_APROBACION_HUMANA',
       motivo: opts.nota || (resolicitud
         ? `Nueva solicitud de firma de ${current.id}: los entregables cambiaron durante la revisión.`
         : `Entregables de ${current.id} listos; se solicita la firma del Director Humano.`),
-      extra: commit ? { commit } : {},
+      extra: { ...(commit ? { commit } : {}), ...(evidencias.length ? { verificaciones: evidencias } : {}) },
     });
     sessionEnd = true;
     break;
@@ -239,7 +276,13 @@ switch (accion) {
     if (current.tipo !== 'checkpoint') fail(`${current.id} es un Halt en el perfil activo: requiere "solicitar" y la firma humana ("aprobar").`);
     next = track[idx + 1];
     if (!next) fail(`${current.id} es la última compuerta de la pista.`);
-    record({ to: next, estado: 'EN_PROCESO', motivo: opts.nota || `Checkpoint ${current.id} superado: verificaciones en verde.` });
+    const evidencias = preflight();
+    record({
+      to: next,
+      estado: 'EN_PROCESO',
+      motivo: opts.nota || `Checkpoint ${current.id} superado: verificación previa en verde.`,
+      extra: evidencias.length ? { verificaciones: evidencias } : {},
+    });
     break;
   }
   case 'bloquear': {

@@ -65,7 +65,7 @@ function parseNiveles(cell, id) {
  *   estados: string[],
  *   capas: Map<string, string>,
  *   invariantes: Array<{ids: string[], regla: 'halt'|'al_menos_un_halt'}>,
- *   entregables: Map<string, {id: string, gate: string, pista: Nivel, capa: string|null, base: boolean, descripcion: string}>
+ *   entregables: Map<string, {id: string, gate: string, pista: Nivel, capa: string|null, base: boolean, descripcion: string, ruta: string|null}>
  * }}
  */
 export function loadStageGates(file = STAGE_GATES_PATH) {
@@ -143,7 +143,12 @@ export function loadStageGates(file = STAGE_GATES_PATH) {
     if (!gates.some((g) => g.id === gate)) throw new Error(`entregables: "${id}" cita la compuerta "${gate}", que no existe.`);
     if (!['proyecto', 'modulo', 'release'].includes(pista)) throw new Error(`entregables: "${id}" tiene una pista desconocida "${pista}".`);
     if (capa && !['backend', 'frontend'].includes(capa)) throw new Error(`entregables: "${id}" tiene una capa desconocida "${capa}".`);
-    return [id, { id, gate, pista, capa, base, descripcion: (cells[5] ?? '').trim() }];
+    // Ruta fija (opcional) que `npm run gate` comprueba; admite {modulo}, {version} y `*` en un segmento.
+    const ruta = backticked(cells[6] ?? '') || null;
+    if (ruta && (ruta.startsWith('/') || ruta.split('/').includes('..') || /{(?!modulo}|version})/.test(ruta))) {
+      throw new Error(`entregables: "${id}" tiene una ruta inválida "${ruta}" (relativa a la raíz; solo {modulo}, {version} y *).`);
+    }
+    return [id, { id, gate, pista, capa, base, descripcion: (cells[5] ?? '').trim(), ruta }];
   }));
 
   return { gates, stateful, estados, capas, invariantes, entregables };

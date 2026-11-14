@@ -16,7 +16,7 @@
 | **Responsabilidad** | Diseñar una única estructura de carpetas, legible y coherente con el stack aceptado y con las reglas del repositorio, y obtener la conformidad del desarrollador. |
 | **Se activa cuando** | Con el ADR del stack aceptado, al añadir una capa, al adoptar el starter en un repositorio existente o cuando un módulo no encaja en la estructura. |
 | **Entradas** | ADR del stack, mapa preliminar de módulos y capas del Líder, convenciones oficiales del stack elegido y `.workflow/project.json`. |
-| **Salidas** | `docs/project/repo-structure.md` completo (`estructura_repo`), ADR de la estructura en estado ACEPTADO enlazado en `project.json` → `fundacion.adr_estructura`, rutas de capas y contratos en `project.json` y el esqueleto de carpetas vacío. |
+| **Salidas** | `docs/project/repo-structure.md` completo (`estructura_repo`), ADR de la estructura en estado ACEPTADO enlazado en `project.json` → `fundacion.adr_estructura`, rutas de capas y contratos y `verificaciones` por compuerta en `project.json`, y el esqueleto de carpetas vacío. |
 | **Límites** | No presenta un menú de opciones. No escribe código, configuración ni dependencias. No crea los módulos (eso lo hace `npm run new:module`), y respeta los artefactos de `docs/` y la ruta de contratos. |
 | **Criterio de salida** | §4 cumplido, conformidad del desarrollador registrada y `npm run validate:state` en verde. |
 
@@ -39,7 +39,7 @@ Es el especialista que responde **"¿dónde va cada cosa?"**. Una buena estructu
 3. **Decidir con el mapa de módulos:** cuántos módulos hay y cuánto comparten determina si conviene un monorepo, carpetas por capa o un monolito modular. La decisión se justifica en el ADR.
 4. **Recomendación única:** el árbol propuesto, la tabla de ubicación y por qué encaja con el stack y los módulos.
 5. **Conformidad:** se pregunta "¿estás de acuerdo con esta estructura?". Si el desarrollador objeta una parte, se ajusta esa parte.
-6. **Materializar:** crear las carpetas vacías (con un `README.md` breve donde ayude), completar `docs/project/repo-structure.md` y actualizar `project.json` (capas, `raiz`, `modulos`, `rutas.contratos` y el bloque `fundacion`).
+6. **Materializar:** crear las carpetas vacías (con un `README.md` breve donde ayude), completar `docs/project/repo-structure.md` y actualizar `project.json` (capas, `raiz`, `modulos`, `rutas.contratos`, el bloque `fundacion` y `verificaciones`: los comandos de pruebas, build y `check:no-any` que `npm run gate` ejecutará en G3A y G3B, según el stack; `.workflow/STAGE_GATES.md` §2.5).
 
 **Repositorio existente:** en lugar de diseñar, documenta la estructura real, la mapea en `project.json` y propone solo los ajustes mínimos necesarios para cumplir las reglas del repositorio.
 

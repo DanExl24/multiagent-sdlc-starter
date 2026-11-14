@@ -172,6 +172,11 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
   const projectPlan = planOf(projectModifiers(config, modules));
   errors.push(...validateTrack(project, table, 'proyecto', 'current_state.json', config, projectPlan?.tipos));
 
+  // Verificaciones por compuerta: solo IDs de compuertas que existen.
+  for (const gate of Object.keys(config.verificaciones ?? {})) {
+    if (!table.gates.some((g) => g.id === gate)) errors.push(`project.json: verificaciones.${gate} no corresponde a ninguna compuerta (${table.gates.map((g) => g.id).join(', ')}).`);
+  }
+
   // Compuertas de línea base: las que se recorren en proyecto y en módulo (G1, G2).
   const baseline = table.stateful.filter((g) => g.niveles.includes('proyecto') && g.niveles.includes('modulo'));
   const lastBaseline = baseline[baseline.length - 1];
