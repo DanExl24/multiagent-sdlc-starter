@@ -3,7 +3,7 @@
 
 > **Agente Padre:** `05_qa_security_tester` (QA Lead & Security Director)  
 > **Área:** Fase 4 — Pruebas de Carga, Estrés, Concurrencia y Auditoría Dinámica de Seguridad  
-> **Herramientas Obligatorias:** **k6** (`npm run test:load`), **OWASP ZAP / DAST Runner** (`npm run audit:dast`), Suites Anti-IDOR  
+> **Herramientas Obligatorias:** **k6** (`npm run test:load`), **DAST básico** (`npm run audit:dast`; para un escaneo completo, OWASP ZAP), Suites Anti-IDOR  
 > **Regla Mandatoria:** Script k6 obligatorio para todo módulo con concurrencia; escaneo DAST obligatorio antes de autorizar release.
 
 ---
@@ -25,7 +25,7 @@
 ## 1. ¿Qué es este Subrol?
 Es el especialista de QA responsable de someter al sistema a condiciones de **estrés extremo, concurrencia masiva y auditoría dinámica de vulnerabilidades de seguridad (DAST)**. 
 - Utiliza **k6** (`npm run test:load`) para evaluar latencia, límites del pool de conexiones, degradación de memoria/CPU y cumplimiento de SLAs p95/p99. Genera automáticamente `docs/qa/load-report.html` y `docs/qa/load-summary.json`.
-- Utiliza **DAST Runner / OWASP ZAP** (`npm run audit:dast`) para auditar endpoints en ejecución en busca de inyecciones SQL, Cross-Site Scripting (XSS), debilidades en cabeceras HTTP, cookies inseguras y fallas de autorización. Genera automáticamente `docs/qa/dast-audit-summary.json`.
+- Utiliza `npm run audit:dast` para las comprobaciones básicas en runtime (cabeceras HTTP, cookies, CORS y trazas en errores) y **OWASP ZAP** cuando el perfil exija un escaneo completo (inyecciones, XSS, autorización). Genera `docs/qa/dast-audit-summary.json`; sin servidor, los controles quedan `NOT_RUN`. `npm run test:load` sin k6 instalado ejecuta un benchmark ligero que no equivale a una prueba de carga k6.
 
 ---
 

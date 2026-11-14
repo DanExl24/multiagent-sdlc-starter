@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Zero ANY](https://img.shields.io/badge/TypeScript-Zero%20ANY%20Enforced-emerald.svg)](tooling/)
 [![Stage Gates](https://img.shields.io/badge/Methodology-Artifact--Driven%20Stage--Gates-003366.svg)](.workflow/)
-[![HITL](https://img.shields.io/badge/Governance-HITL%20Guaranteed-amber.svg)](AGENTS.md)
+[![HITL](https://img.shields.io/badge/Governance-HITL%20Stage--Gates-amber.svg)](AGENTS.md)
 
 > **Plantilla rectora universal para desarrollo de software de misión crítica guiado por Inteligencias Artificiales concurrentes y especializadas, artefactos inmutables en disco y compuertas de calidad HITL (Human In The Loop).**
 
@@ -17,7 +17,7 @@ El desarrollo de software asistido por IAs suele fracasar cuando se utiliza un �
 3. **Deuda Técnica y `any` descontrolado:** Los modelos colocan `any` para silenciar errores del compilador.
 4. **Alucinaciones Funcionales:** Agentes que inventan requisitos o alteran reglas de negocio.
 
-**Este Starter Kit erradica esos problemas** convirtiendo tu repositorio en una **fábrica de software concurrente**, donde cada rol líder y sus subroles operan bajo **Compuertas de Calidad ("Stage-Gates")**, validación estricta por AST (Cero `any`) y contratos Zod API-First compartidos.
+**Este Starter Kit reduce esos riesgos** convirtiendo tu repositorio en una **fábrica de software concurrente**, donde cada rol líder y sus subroles operan bajo **Compuertas de Calidad ("Stage-Gates")**, validación estricta por AST (Cero `any`) y contratos Zod API-First compartidos. Lo que se puede verificar lo verifican las herramientas (`npm run gate`, `validate:state`, `check:no-any`, `test:contracts`); lo que no, queda en manos del Director Humano en cada compuerta Halt.
 
 > 🧭 **Dónde está la verdad:** este README es solo un puente. El mapa de compuertas, las reglas innegociables y el catálogo de roles están en [`AGENTS.md`](AGENTS.md); los datos de cada compuerta, en [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md).
 
@@ -39,10 +39,12 @@ Personaliza automáticamente todos los documentos de gobernanza, nombres de proy
 npm run init:project
 ```
 El asistente te preguntará:
-- Nombre del proyecto (ej. `FintechPay`, `HealthOps`, `StoreFlow`)
+- Nombre del proyecto (ej. `FintechPay`, `HealthOps`, `StoreFlow`) y una descripción breve
 - Dominio del negocio (ej. `Banca Digital`, `Salud y Clínicas`, `Logística`)
 - Autor u Organización
-- Stacks de Backend y Frontend
+- Escala del proyecto (`sprint`, `standard` o `enterprise`) y modificadores de riesgo
+
+El stack y la estructura de carpetas **no** se eligen aquí: los propone el Arquitecto de Fundación después de que apruebes la idea de negocio, y se aceptan mediante ADR.
 
 ### Paso 3: Aterrizar tu Agente de IA
 Abre el proyecto en tu entorno de IA favorito (**Antigravity IDE**, **Cursor**, **Claude**, **ChatGPT**, **Windsurf**, etc.) y copia el siguiente prompt de aterrizaje:

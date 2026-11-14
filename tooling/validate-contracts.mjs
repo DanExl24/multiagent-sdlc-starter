@@ -36,7 +36,7 @@ if (!fs.existsSync(contractsDir)) {
 const contractFiles = fs.readdirSync(contractsDir).filter((f) => f.endsWith('.contract.ts') || f.endsWith('.contract.js'));
 
 if (contractFiles.length === 0) {
-  console.warn(`⚠️  No se encontraron archivos de contrato en ${path.relative(rootDir, contractsDir)}/`);
+  console.log(`⚪ NOT_APPLICABLE: no hay contratos en ${path.relative(rootDir, contractsDir)}/ todavía. Desde G2 cada módulo necesita el suyo, y npm run validate:state lo exige.`);
   process.exit(0);
 }
 
@@ -141,7 +141,7 @@ const reportData = {
     pass: passCount,
     warn: warnCount,
     fail: failCount,
-    estado_contratos: failCount === 0 ? 'CONTRATOS_VALIDADOS' : 'DISCREPANCIAS_O_ANY_DETECTADO',
+    estado_contratos: failCount > 0 ? 'FAIL' : warnCount > 0 ? 'PASS_CON_ADVERTENCIAS' : 'PASS',
   },
   archivos: contractFiles,
   hallazgos: findings,
@@ -153,7 +153,7 @@ fs.writeFileSync(outputPath, JSON.stringify(reportData, null, 2), 'utf8');
 console.log('\n=============================================================');
 console.log(`📊 Resumen Contratos: ${passCount} Validaciones Exitosas | ${warnCount} Advertencias | ${failCount} Fallos`);
 console.log(`📄 Reporte JSON guardado en: docs/qa/contracts-audit-summary.json`);
-console.log(`🚦 Veredicto: ${failCount === 0 ? '✅ APROBADO (Contratos Blindados)' : '❌ STOP-THE-LINE: Corregir contratos de datos'}`);
+console.log(`🚦 Veredicto: ${failCount > 0 ? '❌ STOP-THE-LINE: Corregir contratos de datos' : warnCount > 0 ? `⚠️ PASS con ${warnCount} advertencia(s): revísalas y justifícalas en el reporte de QA` : '✅ PASS (contratos validados)'}`);
 console.log('=============================================================\n');
 
 if (failCount > 0 && !process.env.ALLOW_FAIL) {

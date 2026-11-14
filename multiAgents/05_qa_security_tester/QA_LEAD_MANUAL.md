@@ -68,7 +68,7 @@ El QA Lead busca proactivamente prácticas deficientes:
    - Ejecuta: `npm run test:contracts` (validación de esquemas y envelopes DTO) y `npm run test` (pruebas unitarias).
    - Valida: Servicios, transacciones atómicas, esquemas Zod y códigos HTTP REST.
 2. **E2E & A11y Specialist ➔ Playwright + Auditor A11y (Q2/Q3 - Navegador Real & Accesibilidad):**
-   - Ejecuta: `npm run audit:a11y` (escáner automatizado WCAG 2.1 AA) y `npx playwright test`.
+   - Ejecuta: `npm run audit:a11y` (lint estático preliminar; la conformidad WCAG exige axe-core en navegador y revisión manual) y `npx playwright test`.
    - Valida: Flujos de usuario completos, modales, responsive y accesibilidad (cero violaciones).
 3. **Performance & DAST Auditor ➔ k6 + DAST Runner (Q4 - Resiliencia y Seguridad):**
    - Ejecuta: `npm run test:load -- [URL]` en módulos de concurrencia (SLA p95 < 500ms, genera `docs/qa/load-report.html` y `load-summary.json`).

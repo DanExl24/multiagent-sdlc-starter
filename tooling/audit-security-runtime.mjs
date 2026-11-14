@@ -9,6 +9,9 @@
  * 3. Configuración Dinámica de CORS (Orígenes no autorizados / credenciales).
  * 4. Fuga de Trazas e Información en Respuestas de Error (Stack Traces en HTTP 500).
  *
+ * Estados de cada control: PASS, WARN, FAIL o NOT_RUN. Un control que no se pudo verificar
+ * contra un servidor en ejecución es NOT_RUN, nunca PASS.
+ *
  * Salida:
  * - Reporte legible en consola.
  * - Archivo estructurado JSON en: docs/qa/dast-audit-summary.json
@@ -24,7 +27,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-const targetUrl = process.argv[2] || process.env.TARGET_URL || 'http://localhost:3000';
+const targetUrl = process.argv.slice(2).find((a) => !a.startsWith('--')) || process.env.TARGET_URL || 'http://localhost:3000';
 const isOfflineDemo = process.argv.includes('--offline') || process.argv.includes('--dry-run');
 
 console.log('\n=============================================================');
@@ -36,6 +39,7 @@ const findings = [];
 let passCount = 0;
 let warnCount = 0;
 let failCount = 0;
+let notRunCount = 0;
 
 function recordFinding(category, name, status, details, recommendation) {
   const item = { category, name, status, details, recommendation };
@@ -48,6 +52,9 @@ function recordFinding(category, name, status, details, recommendation) {
     warnCount++;
     console.log(`  ⚠️  [WARN] ${name}: ${details}`);
     if (recommendation) console.log(`     ↳ Remedio: ${recommendation}`);
+  } else if (status === 'NOT_RUN') {
+    notRunCount++;
+    console.log(`  ⚪ [NOT_RUN] ${name}: ${details}`);
   } else {
     failCount++;
     console.log(`  ❌ [FAIL] ${name}: ${details}`);
@@ -87,11 +94,8 @@ async function runAudit() {
   let response;
 
   if (isOfflineDemo) {
-    console.log('ℹ️  Modo offline/dry-run activado. Simulando verificación de directivas de configuración...');
-    recordFinding('Headers', 'Content-Security-Policy', 'PASS', 'Directiva CSP estricta simulada.', null);
-    recordFinding('Headers', 'X-Content-Type-Options', 'PASS', 'nosniff activo.', null);
-    recordFinding('Headers', 'Server Info Leak', 'PASS', 'Cabecera X-Powered-By ausente.', null);
-    recordFinding('CORS', 'Origin Reflection', 'PASS', 'Orígenes no autorizados rechazados.', null);
+    console.log('ℹ️  Modo offline/dry-run: no se contacta ningún servidor, así que ningún control queda verificado.');
+    markNotRun('Modo offline: no se contactó ningún servidor.');
     finalizeReport();
     return;
   }
@@ -102,13 +106,7 @@ async function runAudit() {
     console.log(`⚠️  No se pudo conectar con el servidor en ${targetUrl} (${err.message}).`);
     console.log('ℹ️  Para auditar una API real, inicia tu servidor backend o ejecuta:');
     console.log(`    npm run audit:dast -- ${targetUrl}`);
-    console.log('\nGenerando reporte preliminar de directivas de seguridad para el pipeline...');
-
-    recordFinding('Connectivity', 'Server Connection', 'WARN', `Servidor local inactivo en ${targetUrl}.`, 'Iniciar servidor local antes de la auditoría runtime.');
-    recordFinding('Headers', 'Content-Security-Policy', 'WARN', 'Pendiente de verificación en runtime.', 'Configurar helmet({ contentSecurityPolicy: true }) en backend.');
-    recordFinding('Headers', 'X-Content-Type-Options', 'PASS', 'Verificación estática: estandarizado en middleware.', null);
-    recordFinding('Headers', 'X-Powered-By Leak Prevention', 'PASS', 'Verificación estática: app.disable("x-powered-by") estándar.', null);
-    recordFinding('Cookies', 'Cookie Flags (HttpOnly/Secure)', 'WARN', 'Pendiente de verificar con sesión activa.', 'Revisar flags en cookie-parser / session.');
+    markNotRun(`Servidor inactivo en ${targetUrl}: inicia el backend y repite la auditoría.`);
 
     finalizeReport();
     return;
@@ -181,7 +179,7 @@ async function runAudit() {
       recordFinding('CORS', 'Origin Policy', 'PASS', `CORS seguro (Allow-Origin: ${allowOrigin || 'No reflejado'}).`, null);
     }
   } catch (corsErr) {
-    recordFinding('CORS', 'Origin Policy', 'PASS', 'Petición con origen arbitrario rechazada o no soportada.', null);
+    recordFinding('CORS', 'Origin Policy', 'NOT_RUN', `La petición con origen arbitrario falló (${corsErr.message}); no se pudo verificar la política.`, null);
   }
 
   // 4. Prueba de Fuga de Stack Traces en Error 500
@@ -196,11 +194,26 @@ async function runAudit() {
     } else {
       recordFinding('Error Handling', 'Stack Trace Masking', 'PASS', 'Errores formateados sin divulgación de trazas internas.', null);
     }
-  } catch {
-    recordFinding('Error Handling', 'Stack Trace Masking', 'PASS', 'Peticiones erróneas neutralizadas a nivel de red.', null);
+  } catch (errProbe) {
+    recordFinding('Error Handling', 'Stack Trace Masking', 'NOT_RUN', `La petición de prueba falló (${errProbe.message}); no se pudo verificar el manejo de errores.`, null);
   }
 
   finalizeReport();
+}
+
+function markNotRun(motivo) {
+  for (const [category, name] of [
+    ['Headers', 'Cabeceras de seguridad (CSP, nosniff, X-Frame-Options, fingerprint)'],
+    ['Cookies', 'Banderas de cookies de sesión'],
+    ['CORS', 'Política de orígenes'],
+    ['Error Handling', 'Ocultación de trazas en errores'],
+  ]) recordFinding(category, name, 'NOT_RUN', motivo, null);
+}
+
+function veredicto() {
+  if (failCount > 0) return 'FAIL';
+  if (notRunCount > 0) return 'NOT_RUN';
+  return 'PASS';
 }
 
 function finalizeReport() {
@@ -217,7 +230,9 @@ function finalizeReport() {
       pass: passCount,
       warn: warnCount,
       fail: failCount,
-      estado_general: failCount === 0 ? 'CERTIFICADO' : 'RECHAZADO_CON_VULNERABILIDADES',
+      not_run: notRunCount,
+      estado_general: veredicto(),
+      alcance: 'Comprobaciones básicas de cabeceras, cookies, CORS y trazas sobre la URL indicada. No sustituye un escaneo DAST completo (OWASP ZAP).',
     },
     hallazgos: findings,
   };
@@ -226,14 +241,17 @@ function finalizeReport() {
   fs.writeFileSync(outputPath, JSON.stringify(reportData, null, 2), 'utf8');
 
   console.log('\n=============================================================');
-  console.log(`📊 Resumen DAST: ${passCount} PASS | ${warnCount} WARN | ${failCount} FAIL`);
+  console.log(`📊 Resumen DAST: ${passCount} PASS | ${warnCount} WARN | ${failCount} FAIL | ${notRunCount} NOT_RUN`);
   console.log(`📄 Reporte JSON guardado en: docs/qa/dast-audit-summary.json`);
-  console.log(`🚦 Veredicto: ${failCount === 0 ? '✅ APROBADO (Clean DAST)' : '❌ STOP-THE-LINE: Vulnerabilidades detectadas'}`);
+  const v = veredicto();
+  console.log(`🚦 Veredicto: ${v === 'PASS' ? '✅ PASS (controles básicos verificados en runtime)' : v === 'NOT_RUN' ? '⚪ NOT_RUN: hay controles sin verificar; no cuenta como aprobado' : '❌ STOP-THE-LINE: vulnerabilidades detectadas'}`);
   console.log('=============================================================\n');
 
   if (failCount > 0 && !process.env.ALLOW_FAIL) {
     process.exit(1);
   }
+  // Sin servidor no hay auditoría: el código de salida no debe parecer un éxito (salvo --offline, pedido a propósito).
+  if (v === 'NOT_RUN' && !isOfflineDemo) process.exit(2);
 }
 
 runAudit();

@@ -1,7 +1,7 @@
 {
   "proyecto": "{{PROJECT_NAME}}",
   "dominio": "{{PROJECT_DOMAIN}}",
-  "version_actual": "v1.16.0",
+  "version_actual": "v1.17.0",
   "fecha_actualizacion": "2026-11-13",
   "fase_activa": "FASE_1_REQUERIMIENTOS",
   "gate_activo": "GATE_1_PRD_APPROVAL",

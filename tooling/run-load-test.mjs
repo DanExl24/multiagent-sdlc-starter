@@ -3,9 +3,9 @@
  * ⏱️ k6 Load Test Runner & Benchmark Orchestrator
  * multiagent-sdlc-starter — Herramienta de Ejecución y Reporte de Pruebas de Carga
  *
- * Ejecuta k6 si está instalado en el sistema. Si no está instalado, ejecuta
- * una prueba de estrés concurrente nativa mediante Node.js HTTP pool y genera
- * los reportes HTML y JSON en docs/qa/.
+ * Ejecuta k6 si está instalado en el sistema. Si no está instalado, ejecuta un benchmark
+ * ligero con Node.js (100 GET a la URL base) que NO equivale a una prueba de carga k6, y lo
+ * declara así en el reporte. Sin servidor (o con --offline) el resultado es NOT_RUN, nunca PASS.
  */
 
 import { spawnSync } from 'node:child_process';
@@ -19,7 +19,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-const targetUrl = process.argv[2] || process.env.TARGET_URL || 'http://localhost:3000';
+const targetUrl = process.argv.slice(2).find((a) => !a.startsWith('--')) || process.env.TARGET_URL || 'http://localhost:3000';
 const isOfflineDemo = process.argv.includes('--offline') || process.argv.includes('--dry-run');
 
 console.log('\n=============================================================');
@@ -64,24 +64,30 @@ if (hasK6 && !isOfflineDemo) {
     process.exit(result.status || 1);
   }
 } else {
-  if (!isOfflineDemo) {
-    console.log('ℹ️  k6 no está instalado globalmente en el sistema.');
-    console.log('ℹ️  Ejecutando suite de benchmark concurrente nativa con Node.js...');
+  if (isOfflineDemo) {
+    console.log('ℹ️  Modo dry-run / offline: no se envía ninguna petición, así que no hay medición.');
+    writeNotRun('Modo offline: no se envió ninguna petición.');
   } else {
-    console.log('ℹ️  Modo dry-run / offline activado.');
+    console.log('ℹ️  k6 no está instalado: se ejecuta un benchmark ligero con Node.js (no equivale a una prueba de carga k6).');
+    runNativeBenchmark();
   }
+}
 
-  // Generar reporte sintético o ejecutar mini-benchmark nativo
-  runNativeBenchmark();
+function writeNotRun(motivo) {
+  const summary = { fecha: new Date().toISOString(), objetivo: targetUrl, motor: 'ninguno', estado: 'NOT_RUN', motivo };
+  fs.writeFileSync(path.join(outputDir, 'load-summary.json'), JSON.stringify(summary, null, 2), 'utf8');
+  console.log(`\n⚪ NOT_RUN: ${motivo} No cuenta como aprobado.`);
+  console.log('📄 Reporte JSON: docs/qa/load-summary.json\n');
 }
 
 async function runNativeBenchmark() {
-  const totalRequests = isOfflineDemo ? 50 : 100;
-  const concurrency = isOfflineDemo ? 5 : 10;
+  const totalRequests = 100;
+  const concurrency = 10;
+  let connectionErrors = 0;
   const latencies = [];
   let failures = 0;
 
-  console.log(`📊 Simulando ${totalRequests} peticiones concurrentes (${concurrency} hilos)...`);
+  console.log(`📊 Enviando ${totalRequests} peticiones GET (${concurrency} concurrentes)...`);
 
   const startTime = Date.now();
 
@@ -89,15 +95,6 @@ async function runNativeBenchmark() {
     const chunk = Array.from({ length: Math.min(concurrency, totalRequests - i) }, () => {
       const reqStart = Date.now();
       return new Promise((resolve) => {
-        if (isOfflineDemo) {
-          // Latencia simulada en offline (20ms a 80ms)
-          const simulatedLatency = Math.floor(Math.random() * 60) + 20;
-          setTimeout(() => {
-            latencies.push(simulatedLatency);
-            resolve();
-          }, simulatedLatency);
-          return;
-        }
 
         try {
           const url = new URL(targetUrl);
@@ -110,6 +107,7 @@ async function runNativeBenchmark() {
           });
           req.on('error', () => {
             failures++;
+            connectionErrors++;
             latencies.push(Date.now() - reqStart);
             resolve();
           });
@@ -128,6 +126,10 @@ async function runNativeBenchmark() {
     await Promise.all(chunk);
   }
 
+  if (connectionErrors === totalRequests) {
+    writeNotRun(`No se pudo conectar con ${targetUrl}: inicia el servidor y repite la prueba.`);
+    process.exit(2);
+  }
   const durationSec = ((Date.now() - startTime) / 1000).toFixed(2);
   latencies.sort((a, b) => a - b);
   const p95Index = Math.floor(latencies.length * 0.95);
@@ -140,7 +142,9 @@ async function runNativeBenchmark() {
   const summaryData = {
     fecha: new Date().toISOString(),
     objetivo: targetUrl,
-    motor: hasK6 ? 'k6-official' : 'node-native-benchmark',
+    motor: 'node-native-benchmark',
+    estado: slaPassed ? 'PASS' : 'FAIL',
+    alcance: 'Benchmark ligero: 100 GET concurrentes (10 a la vez) a la URL base. No equivale a una prueba de carga k6 con escenarios.',
     total_solicitudes: totalRequests,
     tiempo_total_segundos: Number(durationSec),
     metricas: {
@@ -208,6 +212,6 @@ async function runNativeBenchmark() {
   console.log(`📈 Resultados Benchmark: Total: ${totalRequests} | p95: ${p95}ms | Fallos: ${(failRate * 100).toFixed(2)}%`);
   console.log(`📄 Reporte JSON: docs/qa/load-summary.json`);
   console.log(`🌐 Reporte HTML: docs/qa/load-report.html`);
-  console.log(`🚦 Veredicto: ${slaPassed ? '✅ APROBADO (SLA Cumplido)' : '❌ STOP-THE-LINE: Latencia p95 o fallos exceden el SLA'}`);
+  console.log(`🚦 Veredicto: ${slaPassed ? '✅ PASS en el benchmark ligero (no equivale a k6)' : '❌ STOP-THE-LINE: Latencia p95 o fallos exceden el SLA'}`);
   console.log('=============================================================\n');
 }

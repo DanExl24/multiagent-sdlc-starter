@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 /**
- * ♿ Automated Accessibility (A11y) & WCAG 2.1/2.2 AA Auditor
- * multiagent-sdlc-starter — Herramienta de Auditoría de Accesibilidad Web
+ * ♿ Lint estático preliminar de accesibilidad
+ * multiagent-sdlc-starter
+ *
+ * NO certifica WCAG: revisa 5 reglas sobre el código fuente. La conformidad exige además
+ * axe-core en el navegador (Playwright) y revisión manual. Estados: SIN_HALLAZGOS_ESTATICOS,
+ * VIOLACIONES_DETECTADAS o NOT_APPLICABLE (sin componentes que revisar).
  *
  * Audita archivos frontend (HTML/Vue/JSX/TSX) o endpoints de interfaz en vivo:
  * 1. Elementos interactivos sin nombre accesible (botones, enlaces vacíos).
@@ -24,7 +28,7 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
 console.log('\n=============================================================');
-console.log('♿  [AUDIT-A11Y] Escáner Automatizado de Accesibilidad WCAG 2.1 AA');
+console.log('♿  [AUDIT-A11Y] Lint estático preliminar de accesibilidad (no certifica WCAG)');
 console.log('=============================================================\n');
 
 const findings = [];
@@ -143,10 +147,12 @@ for (const filePath of filesToAudit) {
   });
 }
 
+const componentes = filesToAudit.filter((f) => !f.endsWith('.md')).length;
 if (findings.length === 0) {
   passCount = 1;
-  console.log('  ✅ [PASS] Cero violaciones estáticas de accesibilidad detectadas en archivos inspeccionados.');
+  console.log('  ✅ [PASS] Cero hallazgos de las reglas estáticas en los archivos inspeccionados.');
 }
+const estado = componentes === 0 ? 'NOT_APPLICABLE' : failCount === 0 ? 'SIN_HALLAZGOS_ESTATICOS' : 'VIOLACIONES_DETECTADAS';
 
 const outputDir = path.join(rootDir, 'docs', 'qa');
 if (!fs.existsSync(outputDir)) {
@@ -160,7 +166,8 @@ const reportData = {
     pass: passCount,
     warn: warningCount,
     fail: failCount,
-    estado_accesibilidad: failCount === 0 ? 'CONFORME_WCAG_2.1_AA' : 'VIOLACIONES_DETECTADAS',
+    estado_accesibilidad: estado,
+    alcance: 'Lint estático de 5 reglas (nombre accesible, labels, alt, tabindex, div clicable). No certifica WCAG 2.1/2.2 AA: complementar con axe-core en navegador y revisión manual.',
   },
   hallazgos: findings,
 };
@@ -169,9 +176,9 @@ const outputPath = path.join(outputDir, 'a11y-audit-summary.json');
 fs.writeFileSync(outputPath, JSON.stringify(reportData, null, 2), 'utf8');
 
 console.log('\n=============================================================');
-console.log(`📊 Resumen A11y: ${passCount} Conformes | ${warningCount} Advertencias | ${failCount} Violaciones`);
+console.log(`📊 Resumen A11y: ${componentes} componente(s) | ${warningCount} Advertencias | ${failCount} Violaciones`);
 console.log(`📄 Reporte JSON guardado en: docs/qa/a11y-audit-summary.json`);
-console.log(`🚦 Veredicto: ${failCount === 0 ? '✅ APROBADO (Conforme WCAG 2.1 AA)' : '❌ STOP-THE-LINE: Corregir violaciones de accesibilidad'}`);
+console.log(`🚦 Veredicto: ${estado === 'NOT_APPLICABLE' ? '⚪ NOT_APPLICABLE: no hay componentes de interfaz que revisar' : estado === 'SIN_HALLAZGOS_ESTATICOS' ? '✅ Sin hallazgos estáticos (no certifica WCAG: falta axe-core en navegador y revisión manual)' : '❌ STOP-THE-LINE: Corregir violaciones de accesibilidad'}`);
 console.log('=============================================================\n');
 
 if (failCount > 0 && !process.env.ALLOW_FAIL) {

@@ -267,7 +267,7 @@ Los defectos **S3 y S4** van al backlog del siguiente módulo o a un release de 
 - **Agente Receptor:** `06_devops_release`
 - **Aprobador Requerido:** **Director Humano**
 - **Entregables Obligatorios:**
-  - `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md`: Auditoría forense con análisis RCA de cualquier defecto encontrado. Su **sección 0** (requisitos aprobados no cumplidos y limitaciones de entorno con evidencia) es obligatoria aunque esté vacía: `npm run gate -- [XX_modulo] solicitar` no pide la firma de G4 sin ella.
+  - `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md`: Auditoría forense con análisis RCA de cualquier defecto encontrado. Su **sección 0** es obligatoria aunque esté vacía: el resumen verificable (S1 y S2 abiertos, requisitos aprobados no cumplidos y pruebas omitidas sin evidencia), los requisitos incumplidos y las limitaciones de entorno con evidencia. `npm run gate -- [XX_modulo] solicitar` no pide la firma de G4 sin ella, ni si algún indicador del resumen es mayor que 0. Un resultado `NOT_RUN` de las herramientas (`audit:dast`, `test:load`) es una prueba omitida, nunca un PASS.
   - Suite de pruebas automatizadas 100% en verde y 0 defectos S1/S2 abiertos.
   - **Certificación AST de Cero ANY:** Verificación de `npm run check:no-any` en `backend/` y `frontend/` con 0 incidencias. Si se detecta un solo `any`, el QA Lead aplica **Veto Inmediato (Stop-the-Line)**.
   - Fragmento del módulo en `changelog.d/[XX_modulo].md` (formato Keep a Changelog), validado por `npm run check:docs`. En una rama de módulo no se edita `CHANGELOG.md`.

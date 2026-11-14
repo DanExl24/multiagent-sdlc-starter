@@ -3,6 +3,22 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.17.0] - 2026-11-13
+
+### Added
+- **Resumen verificable en el reporte de QA:** la sección 0 de `QA_REPORT_TEMPLATE.md` abre con cuatro indicadores (S1 y S2 abiertos, requisitos aprobados no cumplidos, pruebas omitidas sin evidencia). `npm run gate` los lee al solicitar G4 y rechaza la solicitud si falta alguno o si alguno es mayor que 0. Antes bastaba con que existieran los encabezados, aunque el reporte declarara un S2 abierto.
+- **La firma cubre lo revisado:** `solicitar` guarda el commit de los entregables y `aprobar` se niega si cambiaron desde entonces. Se puede volver a `solicitar` desde `ESPERANDO_APROBACION_HUMANA`.
+
+### Changed
+- **Las herramientas de QA ya no certifican lo que no comprobaron.** `audit:dast` y `test:load` marcan `NOT_RUN` sin servidor o con `--offline` (antes registraban `PASS` simulados) y salen con código 2 si no pudieron ejecutarse. `audit:a11y` se presenta como lint estático preliminar (`SIN_HALLAZGOS_ESTATICOS` en lugar de `CONFORME_WCAG_2.1_AA`). `test:contracts` distingue `NOT_APPLICABLE`, `PASS`, `PASS_CON_ADVERTENCIAS` y `FAIL`. Cada reporte declara su alcance; el benchmark sin k6 aclara que no equivale a una prueba de carga.
+- **Commit de la transición transaccional:** si el commit del archivo de estado falla, `gate` deshace la transición en lugar de dejar el estado modificado sin registrar.
+- README y `AGENTS.md` §1.2 sin promesas absolutas ("erradica", "HITL Guaranteed"); el README ya no dice que `init:project` pregunta el stack.
+
+### Fixed
+- `audit:dast -- --offline` y `test:load -- --offline` tomaban `--offline` como URL objetivo.
+
+---
+
 ## [1.16.0] - 2026-11-13
 
 ### Added

@@ -14,8 +14,10 @@
  *   npm run gate -- <modulo> reabrir --desde <Gx> --motivo "..." --cita "..."  Rehace un módulo ya COMPLETADO
  *
  * En la pista de proyecto, `aprobar` en G6 abre el siguiente release (vuelve a G5); con --cerrar marca COMPLETADO.
- * `solicitar` exige que no haya cambios sin commit, y cada transición hace commit de su archivo de estado.
- * En G4 de un módulo, `solicitar` exige además la sección 0 del QA_REPORT (requisitos no cumplidos y limitaciones).
+ * `solicitar` exige que no haya cambios sin commit y guarda el commit revisado; `aprobar` se niega si los
+ * entregables cambiaron desde entonces (se vuelve a `solicitar`). Cada transición hace commit de su archivo
+ * de estado y, si ese commit falla, se deshace.
+ * En G4 de un módulo, `solicitar` exige además la sección 0 del QA_REPORT, con su resumen verificable en cero.
  * El push a remoto nunca lo hace el comando: requiere autorización explícita del Director Humano.
  *
  * Cada cambio se valida con las mismas reglas que `npm run validate:state`; si algo no cuadra,
@@ -97,6 +99,9 @@ function uncommittedChanges() {
     .filter((line) => !(line.startsWith('??') && !line.slice(3).replace(/^"|"$/g, '').includes('/')));
 }
 
+const headCommit = () => { if (!isGitRepo) return null; try { return git('rev-parse HEAD'); } catch { return null; } };
+
+/** Commit del archivo de estado. Si Git falla, la transición se deshace: estado en disco y en Git nunca divergen. */
 function commitStateFile(relFile, message) {
   if (!isGitRepo) return null;
   try {
@@ -104,13 +109,30 @@ function commitStateFile(relFile, message) {
     git(`commit -q -m "${message.replace(/"/g, '\\"')}" -- "${relFile}"`);
     return git('log -1 --format=%h');
   } catch (err) {
-    console.warn(`⚠️  No se pudo hacer commit de la transición (${err.message.split('\n')[0]}). Hazlo a mano: git commit -- ${relFile}`);
-    return null;
+    fs.writeFileSync(file, original);
+    try { git(`reset -q -- "${relFile}"`); } catch { /* sin nada que deshacer en el índice */ }
+    fail(`No se pudo hacer commit de la transición (${err.message.split('\n')[0]}). La transición se deshizo y el estado quedó como estaba: resuelve el problema de Git y repite el comando.`);
   }
 }
 
+/** Archivos que cambiaron desde el commit en que se solicitó la firma (sin contar los archivos de estado). */
+function changesSince(commit) {
+  let cambios;
+  try {
+    cambios = git(`diff --name-only ${commit} HEAD`).split(/\r?\n/).filter(Boolean);
+  } catch {
+    fail(`No encuentro el commit ${commit.slice(0, 7)} en el que se solicitó la firma (¿se reescribió el historial?). Vuelve a solicitarla: npm run gate -- ${pista} solicitar`);
+  }
+  const pendientes = uncommittedChanges().map((line) => line.slice(3).replace(/^"|"$/g, ''));
+  return [...new Set([...cambios, ...pendientes])]
+    .filter((f) => f !== '.workflow/current_state.json' && !f.startsWith('.workflow/modules/'));
+}
+
+// Indicadores de la tabla "0. Resumen verificable" del QA_REPORT: todos deben valer 0 para pedir G4.
+const QA_INDICADORES = ['Defectos S1 abiertos', 'Defectos S2 abiertos', 'Requisitos aprobados no cumplidos', 'Pruebas omitidas sin evidencia'];
+
 // G4: el QA_REPORT más reciente del módulo debe traer la sección 0 de la plantilla
-// (QA_REPORT_TEMPLATE.md), que el Director Humano revisa antes de firmar.
+// (QA_REPORT_TEMPLATE.md), que el Director Humano revisa antes de firmar, y su resumen verificable.
 function qaReportGaps(moduleId) {
   const dir = path.join(rootDir, 'docs', 'qa', moduleId);
   const reports = [];
@@ -128,10 +150,16 @@ function qaReportGaps(moduleId) {
   reports.sort((a, b) => { const x = ver(a); const y = ver(b); for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return y[i] - x[i]; return 0; });
   const text = fs.readFileSync(reports[0], 'utf-8');
   const gaps = [];
-  if (!/requisitos aprobados no cumplidos/i.test(text)) gaps.push('Falta la sección 0.1 "Requisitos aprobados no cumplidos" (escribe "Ninguno" si no hay).');
-  if (!/limitaciones de entorno/i.test(text)) gaps.push('Falta la sección 0.2 "Limitaciones de entorno" (con evidencia de cada prueba no ejecutada, o "Ninguna").');
+  const bloqueos = [];
+  for (const label of QA_INDICADORES) {
+    const m = text.match(new RegExp(`^\\|\\s*\\**${label}\\**\\s*\\|\\s*\\**(\\d+)\\**\\s*\\|`, 'im'));
+    if (!m) gaps.push(`Falta el indicador "${label}" con un número en la tabla "0. Resumen verificable".`);
+    else if (Number(m[1]) > 0) bloqueos.push(`${label}: ${m[1]}`);
+  }
+  if (!/^#{2,4}\s*0\.1\.?\s.*requisitos aprobados no cumplidos/im.test(text)) gaps.push('Falta la sección "0.1. Requisitos aprobados no cumplidos" (escribe "Ninguno" si no hay).');
+  if (!/^#{2,4}\s*0\.2\.?\s.*limitaciones de entorno/im.test(text)) gaps.push('Falta la sección "0.2. Limitaciones de entorno" (con evidencia de cada prueba no ejecutada, o "Ninguna").');
   if (/\[RNF-XX-NN\]/.test(text)) gaps.push('La sección 0.1 conserva la fila de ejemplo de la plantilla ([RNF-XX-NN]).');
-  return { report: path.relative(rootDir, reports[0]).split(path.sep).join('/'), gaps };
+  return { report: path.relative(rootDir, reports[0]).split(path.sep).join('/'), gaps, bloqueos };
 }
 
 function requireText(key, label) {
@@ -146,7 +174,7 @@ switch (accion) {
     console.log(`\n${pista}: ${current.id} ${TIPO[current.tipo]} · ${state.estado} · rol en turno: ${state.rol_en_turno}`);
     const acciones = {
       EN_PROCESO: current.tipo === 'halt' ? 'solicitar, bloquear' : 'avanzar, bloquear',
-      ESPERANDO_APROBACION_HUMANA: 'aprobar --cita "...", bloquear, volver',
+      ESPERANDO_APROBACION_HUMANA: 'aprobar --cita "...", solicitar (de nuevo, si cambiaron los entregables), bloquear, volver',
       BLOQUEADO: 'desbloquear, volver',
       COMPLETADO: isProject ? '—' : 'reabrir --desde Gx --motivo "..." --cita "..." (solo ante inconsistencias graves; STAGE_GATES.md §2.4)',
     };
@@ -154,23 +182,42 @@ switch (accion) {
     process.exit(0);
   }
   case 'solicitar': {
-    if (state.estado !== 'EN_PROCESO') fail(`Solo se pide firma desde EN_PROCESO (estado actual: ${state.estado}).`);
+    const resolicitud = state.estado === 'ESPERANDO_APROBACION_HUMANA';
+    if (state.estado !== 'EN_PROCESO' && !resolicitud) fail(`Solo se pide firma desde EN_PROCESO (estado actual: ${state.estado}).`);
     if (current.tipo !== 'halt') fail(`${current.id} es un Checkpoint en el perfil activo: no se pide firma, se usa "avanzar" cuando todo está en verde.`);
     const pendientes = uncommittedChanges();
     if (pendientes.length) {
       fail(`Hay cambios sin commit. Haz commit de los entregables de ${current.id} en la rama antes de pedir la firma (GIT_COMMIT_CONVENTION.md §1.1):\n   ${pendientes.slice(0, 10).join('\n   ')}${pendientes.length > 10 ? `\n   … y ${pendientes.length - 10} más` : ''}`);
     }
     if (!isProject && current.id === 'G4') {
-      const { report, gaps } = qaReportGaps(pista);
+      const { report, gaps, bloqueos } = qaReportGaps(pista);
       if (gaps.length) fail(`El reporte de QA no está listo para la firma de G4 (QA_REPORT_TEMPLATE.md, sección 0)${report ? ` en ${report}` : ''}:\n   ${gaps.join('\n   ')}`);
+      if (bloqueos.length) {
+        fail(`G4 no se solicita con ${bloqueos.join(', ')} (${report}). Es un veto de QA: npm run gate -- ${pista} volver G3A|G3B --motivo "...". Una prueba omitida se ejecuta o se documenta con su evidencia; un requisito incumplido solo se reevalúa si el Director Humano lo cambia de forma explícita.`);
+      }
     }
-    record({ estado: 'ESPERANDO_APROBACION_HUMANA', motivo: opts.nota || `Entregables de ${current.id} listos; se solicita la firma del Director Humano.` });
+    const commit = headCommit();
+    record({
+      estado: 'ESPERANDO_APROBACION_HUMANA',
+      motivo: opts.nota || (resolicitud
+        ? `Nueva solicitud de firma de ${current.id}: los entregables cambiaron durante la revisión.`
+        : `Entregables de ${current.id} listos; se solicita la firma del Director Humano.`),
+      extra: commit ? { commit } : {},
+    });
     sessionEnd = true;
     break;
   }
   case 'aprobar': {
     if (state.estado !== 'ESPERANDO_APROBACION_HUMANA') fail(`Solo se aprueba una firma solicitada (estado actual: ${state.estado}). Primero: npm run gate -- ${pista} solicitar`);
     const cita = requireText('cita', 'las palabras exactas del Director Humano');
+    // La firma cubre lo que se revisó: si los entregables cambiaron después de solicitarla, hay que volver a pedirla.
+    const solicitud = [...state.historial_transiciones].reverse().find((h) => h.accion === 'solicitar');
+    if (solicitud?.commit && isGitRepo) {
+      const cambios = changesSince(solicitud.commit);
+      if (cambios.length) {
+        fail(`Los entregables cambiaron después de solicitar la firma, así que la firma no cubriría lo revisado:\n   ${cambios.slice(0, 10).join('\n   ')}${cambios.length > 10 ? `\n   … y ${cambios.length - 10} más` : ''}\nHaz commit de los cambios, vuelve a solicitar (npm run gate -- ${pista} solicitar) y pide al Director Humano que revise lo nuevo.`);
+      }
+    }
     if (idx === track.length - 1) {
       if (isProject && !opts.cerrar) {
         next = track.find((g) => g.niveles.includes('release'));
@@ -248,12 +295,12 @@ if (check.errors.length) {
 }
 
 const now = track.find((g) => g.gate === state.gate_activo);
-console.log(`✅ ${pista}: ${now.id} ${TIPO[now.tipo]} · ${state.estado} · rol en turno: ${state.rol_en_turno}`);
 
 // La transición queda en Git: commit solo del archivo de estado (los entregables ya se commitearon antes).
 const version = loadProjectState().version_actual ?? 'v0.0.0';
 const relFile = path.relative(rootDir, file).split(path.sep).join('/');
 const committed = commitStateFile(relFile, `[${version.startsWith('v') ? version : `v${version}`}] chore(workflow): ${pista} ${accion} ${current.id}${now.id !== current.id ? ` -> ${now.id}` : ''}`);
+console.log(`✅ ${pista}: ${now.id} ${TIPO[now.tipo]} · ${state.estado} · rol en turno: ${state.rol_en_turno}`);
 if (committed) console.log(`📝 Commit de la transición: ${committed}`);
 
 if (accion === 'aprobar' && !isProject && state.estado === 'COMPLETADO') {
