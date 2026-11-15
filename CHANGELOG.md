@@ -3,6 +3,15 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.25.0] - 2026-11-15
+
+### Changed
+- **El modo de ejecución se elige antes de construir, no al inicializar.** `npm run init:project` ya no lo pregunta: en G0 todavía no se conocen los módulos, el stack ni la herramienta. Lo propone el rol de fundación en la línea base de G2 (`EXECUTION_MODES.md` §1.1). Primero dice si su herramienta puede lanzar subagentes, después presenta la tabla de ventajas y costos de cada modo aplicada al proyecto, y el Director Humano decide.
+- `project.json` → `ejecucion.confirmado` registra esa decisión. `npm run gate` no pasa la línea base de G2 sin ella, y `npm run status` la muestra como "sin confirmar" mientras tanto. El modo puede cambiarse después, entre compuertas.
+- Dos pruebas nuevas en `test:tooling`.
+
+---
+
 ## [1.24.0] - 2026-11-15
 
 ### Added

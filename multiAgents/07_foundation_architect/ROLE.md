@@ -32,6 +32,9 @@ PRD y glosario aprobados (G1 de línea base)
 3. ESTRUCTURA (Subrol 02) ──► propone una ──► ¿de acuerdo? ──► ADR de la estructura (ACEPTADO)
         │                                                        + repo-structure.md
         ▼                                                        + project.json + esqueleto
+4. MODO DE EJECUCIÓN ──► ¿la herramienta lanza subagentes? ──► ¿secuencial u orquestado? ──► project.json
+        │                 (EXECUTION_MODES.md §1.1)                                          (confirmado)
+        ▼
 Traspaso al Arquitecto de Software (C4, seguridad y convenciones de la línea base de G2)
 ```
 
@@ -82,5 +85,6 @@ El rol trabaja una vez al inicio, y vuelve solo en estos casos:
 - [ ] `project.json` con capas, rutas y `fundacion.estado: "COMPLETADA"`, validado con `npm run validate:state`.
 - [ ] `herramientas` en `project.json`, una por cada uso que exige el plan, y `npm run doctor` en verde: `npm run gate` no pasa G2 sin ello (`STAGE_GATES.md` §2.5).
 - [ ] `verificaciones` en `project.json` para cada compuerta de capa activa (G3A, G3B): los comandos reales de pruebas, build y `check:no-any` del stack elegido (`STAGE_GATES.md` §2.5).
+- [ ] Modo de ejecución elegido por el Director Humano tras explicarle la tabla de `.workflow/EXECUTION_MODES.md` §1 y si la herramienta puede lanzar subagentes, registrado en `project.json` → `ejecucion` con `"confirmado": true`: `npm run gate` no pasa la línea base de G2 sin ello.
 - [ ] Esqueleto de carpetas creado (vacías, con un `README.md` breve donde ayude a orientarse).
 - [ ] Bitácora actualizada en `multiAgents/07_foundation_architect/WORKLOG.md`.

@@ -30,6 +30,7 @@
   "herramientas": [],
   "ejecucion": {
     "modo": "secuencial",
-    "max_subagentes": 3
+    "max_subagentes": 3,
+    "confirmado": false
   }
 }

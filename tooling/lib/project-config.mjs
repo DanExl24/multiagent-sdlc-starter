@@ -24,7 +24,7 @@ export const DEFAULT_CONFIG = {
   fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
   verificaciones: {},
   herramientas: [],
-  ejecucion: { modo: 'secuencial', max_subagentes: 3 },
+  ejecucion: { modo: 'secuencial', max_subagentes: 3, confirmado: false },
 };
 
 const isRelativeInside = (p) => typeof p === 'string' && p.length > 0 && !path.isAbsolute(p) && !p.split(/[\\/]/).includes('..');
@@ -102,6 +102,7 @@ export function loadProjectConfig() {
   if (!['secuencial', 'orquestado'].includes(config.ejecucion.modo)) errors.push('project.json: ejecucion.modo debe ser "secuencial" u "orquestado".');
   const maxSub = config.ejecucion.max_subagentes;
   if (!Number.isInteger(maxSub) || maxSub < 1 || maxSub > 10) errors.push('project.json: ejecucion.max_subagentes debe ser un entero entre 1 y 10.');
+  if (typeof config.ejecucion.confirmado !== 'boolean') errors.push('project.json: ejecucion.confirmado debe ser true o false.');
   return { config: errors.length ? DEFAULT_CONFIG : config, exists: true, errors };
 }
 

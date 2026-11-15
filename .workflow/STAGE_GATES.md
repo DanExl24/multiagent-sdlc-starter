@@ -123,7 +123,7 @@ Antes de `avanzar` un Checkpoint o `solicitar` la firma de un Halt, `npm run gat
 4. **Pruebas registradas (módulos):** en una compuerta cuyos entregables exigen un uso de herramienta (G3A, G3B, G4), la tabla "Pruebas del módulo" del índice (`docs/modules/[XX_nombre]/README.md`) debe tener al menos una fila por cada uso exigido, y todas sus rutas deben existir. Así se sabe qué pruebas son de qué módulo, y la tabla no se queda en una predicción.
 5. **Evidencia:** el resultado de cada comando queda en el `historial_transiciones` de la pista.
 
-Las compuertas que dependen de una capa (§2.2) y las que un perfil sin producción vuelve Checkpoint (G4 en `spike`) **exigen** al menos un comando: sin ellos, ni G3A avanza ni G3B se solicita. El rol de fundación los declara junto con el stack; si faltan, los añade el rol en turno. Las demás compuertas los admiten de forma opcional.
+Las compuertas que dependen de una capa (§2.2) y las que un perfil sin producción vuelve Checkpoint (G4 en `spike`) **exigen** al menos un comando: sin ellos, ni G3A avanza ni G3B se solicita. El rol de fundación los declara junto con el stack; si faltan, los añade el rol en turno. Las demás compuertas los admiten de forma opcional. La línea base de G2, último alto antes de construir, exige además que el Director Humano haya elegido el modo de ejecución (`.workflow/EXECUTION_MODES.md` §1.1, `ejecucion.confirmado` en `project.json`).
 
 > ⚠️ **Esta tabla es la única copia de los datos.** `tooling/validate-state.mjs` la lee directamente entre los marcadores `gates:start` y `gates:end`; no existe otra lista que mantener. Si cambias el formato de las columnas o quitas un marcador, el validador falla en CI a propósito.
 

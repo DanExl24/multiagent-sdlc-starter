@@ -12,6 +12,16 @@
 | `secuencial` | La opción por defecto. Proyectos de un solo módulo a la vez o con límites de uso ajustados | El menor en tokens. Un subrol no es un subagente (`AGENTS.md` §5.1) |
 | `orquestado` | Varios módulos independientes, o módulos grandes donde backend, frontend y la preparación de las pruebas de QA pueden avanzar en paralelo | Más tokens (cada subagente paga un piso fijo al arrancar) a cambio de menos tiempo. En tareas largas puede compensarse, porque el trabajo del subagente no se acumula en el contexto del orquestador |
 
+### 1.1. Cómo se elige
+
+El modo lo elige el Director Humano **antes de construir**, en la línea base de G2, cuando ya se conocen el stack, el mapa de módulos y la herramienta con la que se va a trabajar. `npm run init:project` no lo pregunta, porque en ese momento todavía no hay con qué decidir. Lo propone el rol de fundación, junto con el stack:
+
+1. **Capacidad de la herramienta.** El agente dice primero si su herramienta puede lanzar subagentes y cómo. Si no puede, el modo orquestado no es una opción real: se dice así y se elige `secuencial`.
+2. **Explicación.** Presenta la tabla anterior tal cual, sin reescribirla, y la aterriza al proyecto en dos o tres líneas: cuántos módulos hay, cuáles son grandes, y si backend, frontend y la preparación de QA podrían avanzar en paralelo.
+3. **Registro.** La respuesta queda en `.workflow/project.json` → `ejecucion` (`modo` y `"confirmado": true`) y en la bitácora del rol. `npm run gate` no pasa la línea base de G2 sin esa confirmación, y `npm run status` la muestra como "sin confirmar" mientras tanto.
+
+El modo puede cambiarse después, entre compuertas, si un módulo grande lo justifica: se edita `ejecucion.modo`, se hace commit y el siguiente `npm run plan:agentes` ya lo aplica. El historial registra el modo de cada transición.
+
 ---
 
 ## 2. Reglas del modo orquestado

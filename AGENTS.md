@@ -202,7 +202,7 @@ Asegura despliegue en 2 minutos, seeders reproducibles, observabilidad y CI/CD.
 ### 3.7. 🏗️ `07_foundation_architect` — Arquitecto de Fundación (rol transversal)
 No es una fase del SDLC: actúa una vez aprobada la idea de negocio (G1 de línea base) y antes de que el Arquitecto de Software prepare la línea base de G2. Sigue el orden **idea de negocio → stack → estructura de carpetas**, con una recomendación justificada en cada paso y la conformidad explícita del desarrollador. Se reactiva al añadir una capa, cambiar una pieza del stack o adoptar el starter en un repositorio existente.
 - **Subroles:** Stack Selector, Repo Structure Designer.
-- **Entregables:** ADR del stack y ADR de la estructura (aceptados), `docs/project/repo-structure.md`, `.workflow/project.json` (capas, rutas, bloque `fundacion`, `verificaciones` de G3A/G3B y `herramientas` del stack, una por uso de verificación) y el esqueleto de carpetas vacío.
+- **Entregables:** ADR del stack y ADR de la estructura (aceptados), `docs/project/repo-structure.md`, `.workflow/project.json` (capas, rutas, bloque `fundacion`, `verificaciones` de G3A/G3B y `herramientas` del stack, una por uso de verificación, y el modo de ejecución que elige el Director Humano) y el esqueleto de carpetas vacío.
 
 ---
 

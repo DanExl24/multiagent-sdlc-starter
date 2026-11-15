@@ -194,6 +194,10 @@ function preflight() {
       fail(`Las pruebas de ${current.id} no están registradas en ${indice} (tabla "Pruebas del módulo", STAGE_GATES.md §2.5):\n   ${pruebas.join('\n   ')}\nAñade una fila por suite con su ruta real y el uso que ejercita, por ejemplo:\n   | Integración API | \`backend/tests/integration/${modulo}.test.ts\` | \`datos\` | ${current.id} |`);
     }
   }
+  // Línea base de G2: el último alto antes de construir. El Director Humano elige el modo de ejecución.
+  if (isProject && current.id === 'G2' && !config.ejecucion.confirmado) {
+    fail(`Antes de construir, el Director Humano elige el modo de ejecución (.workflow/EXECUTION_MODES.md §1.1). Dile si tu herramienta puede lanzar subagentes, preséntale la tabla de §1 (secuencial u orquestado: para qué sirve cada uno y cuánto cuesta) y registra su respuesta en .workflow/project.json:\n   "ejecucion": { "modo": "secuencial" | "orquestado", "max_subagentes": 3, "confirmado": true }\nHaz commit y repite "${accion}". Actual: "${config.ejecucion.modo}", sin confirmar.`);
+  }
   const previas = current.id === 'G2' ? herramientasDelStack() : [];
   const comandos = config.verificaciones?.[current.id] ?? [];
   const capa = table.capas.get(current.id);

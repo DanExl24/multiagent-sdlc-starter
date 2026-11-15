@@ -417,3 +417,29 @@ test('G3A se niega si una ruta registrada no existe, y la fila de plantilla no c
   const sinTabla = fixture({ verificaciones: { G3A: ['node -e "process.exit(0)"'] }, moduleReadme: '# Demo\n' });
   assert.match(run(sinTabla, 'avanzar').stderr, /No existe la tabla "Pruebas del módulo"/);
 });
+
+// ── Modo de ejecución: lo elige el Director Humano en la línea base de G2 ──
+
+function baselineG2Fixture(ejecucion) {
+  const root = fixture({ projectGate: 'G2', moduleGate: 'G1', herramientas: STACK_BACKEND, ejecucion });
+  write(root, 'docs/project/architecture.md', '# C4\n');
+  write(root, 'docs/project/repo-structure.md', '# Estructura\n');
+  commitAll(root, 'línea base G2');
+  return root;
+}
+
+test('la línea base de G2 no se solicita sin que el Director Humano haya elegido el modo de ejecución', () => {
+  const root = baselineG2Fixture({ modo: 'secuencial', max_subagentes: 3, confirmado: false });
+  const r = runProject(root, 'solicitar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /elige el modo de ejecución/);
+  assert.match(r.stderr, /puede lanzar subagentes/);
+  assert.equal(projectState(root).estado, 'EN_PROCESO');
+});
+
+test('con el modo confirmado, la línea base de G2 se solicita', () => {
+  const root = baselineG2Fixture({ modo: 'orquestado', max_subagentes: 3, confirmado: true });
+  const r = runProject(root, 'solicitar');
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(projectState(root).estado, 'ESPERANDO_APROBACION_HUMANA');
+});
