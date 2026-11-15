@@ -21,7 +21,8 @@
  * Tras cada transición se imprime un prompt de continuación para abrir una conversación nueva (AGENTS.md §5.1).
  * Antes de `avanzar` o `solicitar`, la verificación previa comprueba los entregables con ruta fija (STAGE_GATES.md §7)
  * y ejecuta los comandos de `verificaciones` del project.json para esa compuerta (obligatorios en G3A y G3B).
- * En G2 comprueba además las herramientas del stack (project.json → herramientas), como npm run doctor.
+ * En G2 comprueba además las herramientas del stack (project.json → herramientas), como npm run doctor, y en las
+ * compuertas que exigen pruebas, que el índice del módulo las registre con rutas reales (tabla "Pruebas del módulo").
  * El push a remoto nunca lo hace el comando: requiere autorización explícita del Director Humano.
  *
  * Cada cambio se valida con las mismas reglas que `npm run validate:state`; si algo no cuadra,
@@ -30,9 +31,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
-import { loadStageGates, rootDir } from './lib/stage-gates.mjs';
+import { loadStageGates, rootDir, USOS_HERRAMIENTA } from './lib/stage-gates.mjs';
 import { activeLayers, loadProjectConfig } from './lib/project-config.mjs';
-import { missingDeliverables, runVerifications } from './lib/preflight.mjs';
+import { missingDeliverables, runVerifications, testIndexGaps } from './lib/preflight.mjs';
 import { checkTools, gapLine, toolCoverageGaps, toolLine } from './lib/tools.mjs';
 import { ENCARGOS_DIR } from './lib/work-packages.mjs';
 import { loadProfiles, resolvePlan } from './lib/profiles.mjs';
@@ -186,6 +187,12 @@ function preflight() {
   const faltan = missingDeliverables(table, plan.entregables, { gateId: current.id, pistas: isProject ? ['proyecto', 'release'] : ['modulo'], modulo, version });
   if (faltan.length) {
     fail(`Faltan entregables de ${current.id} (STAGE_GATES.md §7, columna "Ruta comprobada"):\n   ${faltan.map((f) => `${f.id}: ${f.ruta}`).join('\n   ')}`);
+  }
+  if (!isProject) {
+    const { file: indice, gaps: pruebas } = testIndexGaps(table, plan.entregables, { gateId: current.id, modulo, usosValidos: USOS_HERRAMIENTA });
+    if (pruebas.length) {
+      fail(`Las pruebas de ${current.id} no están registradas en ${indice} (tabla "Pruebas del módulo", STAGE_GATES.md §2.5):\n   ${pruebas.join('\n   ')}\nAñade una fila por suite con su ruta real y el uso que ejercita, por ejemplo:\n   | Integración API | \`backend/tests/integration/${modulo}.test.ts\` | \`datos\` | ${current.id} |`);
+    }
   }
   const previas = current.id === 'G2' ? herramientasDelStack() : [];
   const comandos = config.verificaciones?.[current.id] ?? [];

@@ -120,7 +120,8 @@ Antes de `avanzar` un Checkpoint o `solicitar` la firma de un Halt, `npm run gat
 1. **Entregables con ruta fija:** los del plan efectivo con valor en la columna "Ruta comprobada" del catálogo (§7) deben existir.
 2. **Comandos de verificación:** los que `.workflow/project.json` declara para esa compuerta en `verificaciones`, por ejemplo `{"G3A": ["npm test --prefix backend", "npm run check:no-any"], "G3B": ["npm run build --prefix frontend"]}`. Se ejecutan en orden; el primero que termina con un código distinto de 0 bloquea la transición. `{modulo}` se sustituye por el ID del módulo.
 3. **Herramientas del stack (en G2, de la línea base y de cada módulo):** cada entregable del plan efectivo con valor en la columna "Herramienta" del catálogo (§7) exige en `.workflow/project.json` → `herramientas` una herramienta declarada para ese uso, y el comando `comprobar` de cada herramienta declarada debe terminar en 0. Es lo mismo que ejecuta `npm run doctor`: una herramienta que falta aparece cuando el Director Humano puede instalarla, antes de construir, y no en G4.
-4. **Evidencia:** el resultado de cada comando queda en el `historial_transiciones` de la pista.
+4. **Pruebas registradas (módulos):** en una compuerta cuyos entregables exigen un uso de herramienta (G3A, G3B, G4), la tabla "Pruebas del módulo" del índice (`docs/modules/[XX_nombre]/README.md`) debe tener al menos una fila por cada uso exigido, y todas sus rutas deben existir. Así se sabe qué pruebas son de qué módulo, y la tabla no se queda en una predicción.
+5. **Evidencia:** el resultado de cada comando queda en el `historial_transiciones` de la pista.
 
 Las compuertas que dependen de una capa (§2.2) y las que un perfil sin producción vuelve Checkpoint (G4 en `spike`) **exigen** al menos un comando: sin ellos, ni G3A avanza ni G3B se solicita. El rol de fundación los declara junto con el stack; si faltan, los añade el rol en turno. Las demás compuertas los admiten de forma opcional.
 

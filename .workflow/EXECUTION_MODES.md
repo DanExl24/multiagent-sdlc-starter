@@ -22,7 +22,7 @@
 4. **Respuesta corta.** Cada subagente deja un resumen de 15 líneas como máximo en `.workflow/encargos/[id].resultado.md`. El orquestador lee esos resúmenes, nunca el trabajo completo.
 5. **Memoria temporal.** Los encargos no se versionan y `npm run gate` los borra al cerrar la compuerta de su pista. La evidencia permanente es la bitácora, los commits y las verificaciones del historial.
 6. **Gasto controlado.** Como máximo `max_subagentes` a la vez. Solo se lanzan los paquetes de la tabla (trabajo grande e independiente); el resto lo hace el orquestador. Si una verificación falla, se reintenta solo ese paquete, añadiendo la salida del fallo a su encargo.
-7. **Integración antes de la transición.** Cada subagente trabaja en su propia rama o worktree cuando el entorno lo permite. El orquestador integra los cambios y la verificación previa de la compuerta (`STAGE_GATES.md` §2.5) se ejecuta sobre el resultado integrado.
+7. **Integración antes de la transición.** Cada subagente trabaja en su propia rama o worktree cuando el entorno lo permite. El orquestador integra los cambios, añade a la tabla "Pruebas del módulo" del índice las suites que cada subagente reporta (los subagentes no editan ese archivo compartido) y la verificación previa de la compuerta (`STAGE_GATES.md` §2.5) se ejecuta sobre el resultado integrado.
 
 ---
 

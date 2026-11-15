@@ -66,8 +66,6 @@ CREATE INDEX IF NOT EXISTS idx_modulo_entidad_tenant ON modulo_entidad(tenant_id
 - **Store Reactivo:** `frontend/src/modules/XX_[modulo]/stores/[modulo]Store.ts`
 - **Cliente HTTP (Service):** `frontend/src/modules/XX_[modulo]/services/[modulo]Service.ts`
 
-### D. Capa de Pruebas y Certificación (QA)
-- **Suite de Pruebas Backend (Vitest):** `backend/tests/modules/XX_[modulo].test.ts`
-- **Suite de Pruebas Frontend (Playwright E2E):** `frontend/tests/e2e/XX_[modulo].spec.ts`
-- **Colección API (Bruno):** `tests/bruno/XX_[modulo]/`
+### D. Pruebas
+- **Rutas reales de las pruebas:** en la tabla "Pruebas del módulo" del índice del módulo (`README.md`), que cada rol completa al crear sus suites. La ubicación general la fija `docs/project/repo-structure.md`; este documento no las repite.
 - **Guía de Verificación Interactiva:** `docs/walkthroughs/XX_[modulo]/[vX.Y.Z]/WALKTHROUGH.md`

@@ -126,6 +126,7 @@ Escríbela en \`.workflow/encargos/${id}.resultado.md\` y devuélvela al orquest
 - **Resultado:** COMPLETO o INCOMPLETO
 - **Archivos** creados o modificados
 - **Verificación:** comando y resultado
+- **Pruebas creadas:** ruta real y uso de cada suite (\`backend\`, \`datos\`, \`frontend\`, \`qa_api\`, \`qa_e2e\`, \`qa_carga\`, \`qa_seguridad\`); el orquestador las registra en el índice del módulo, tú no lo edites
 - **Problemas abiertos** o dudas sobre el contrato (sin improvisar)
 `;
 }

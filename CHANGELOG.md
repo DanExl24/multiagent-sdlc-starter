@@ -3,6 +3,19 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.24.0] - 2026-11-15
+
+### Added
+- **Tabla "Pruebas del módulo"** en el índice de cada módulo (`docs/modules/[XX_nombre]/README.md`): una fila por suite con su ruta real, el uso de herramienta que ejercita y la compuerta en que se creó. Backend la completa en G3A, Frontend en G3B y QA en G4 (en modo orquestado, el orquestador registra las suites que reportan los subagentes).
+- `npm run gate` comprueba, en cada compuerta que exige pruebas (G3A, G3B, G4), que haya una fila por cada uso que pide el plan y que todas las rutas existan.
+- Dos pruebas nuevas en `test:tooling`.
+
+### Changed
+- La sección "D" de `04_ARQUITECTURA_Y_CODIGO.md` ya no predice rutas de pruebas en G2: remite a la tabla del índice, que se llena con las reales. En el experimento de crud-clientes, la ruta prevista del E2E no coincidía con la real.
+- Los encargos piden al subagente reportar la ruta y el uso de cada suite que crea.
+
+---
+
 ## [1.23.0] - 2026-11-15
 
 ### Added

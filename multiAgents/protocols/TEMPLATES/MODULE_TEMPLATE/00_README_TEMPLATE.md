@@ -39,6 +39,14 @@ Punto de entrada del módulo para personas y agentes. **Este archivo enlaza; no 
 | Walkthroughs | `docs/walkthroughs/<modulo>/[vX.Y.Z]/WALKTHROUGH.md` |
 | Términos del dominio | [`docs/project/glossary.md`](../../project/glossary.md) |
 
+### Pruebas del módulo
+
+Cada rol añade una fila por suite cuando la crea: Backend en G3A, Frontend en G3B y QA en G4 (o antes, con `qa_preparacion`). **Ruta** es la real, relativa a la raíz; admite `*` en un segmento (por ejemplo, `backend/src/modules/<modulo>/*.test.ts`). **Herramienta** es el uso que la prueba ejercita, según la columna del mismo nombre del catálogo de entregables (`backend`, `datos`, `frontend`, `qa_api`, `qa_e2e`, `qa_carga`, `qa_seguridad`). Al pasar cada compuerta, `npm run gate` exige una fila por cada uso que el plan pide y que todas las rutas existan.
+
+| Tipo | Ruta | Herramienta | Compuerta |
+| :--- | :--- | :--- | :--- |
+| [Integración API contra la base de datos real] | `[ruta real]` | `datos` | G3A |
+
 ---
 
 ## 4. Qué cargar según tu rol (divulgación progresiva)

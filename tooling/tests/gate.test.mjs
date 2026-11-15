@@ -37,8 +37,15 @@ function moduleState(gateId, estado = 'EN_PROCESO') {
   };
 }
 
+/** Índice del módulo con la tabla "Pruebas del módulo": una fila por uso; la fila de plantilla (con corchetes) se ignora. */
+function readmeConPruebas(usos, ruta = `backend/src/modules/${MOD}/*.ts`) {
+  const filas = usos.map((u) => `| Suite ${u} | \`${ruta}\` | \`${u}\` | G3A |`);
+  return ['# Demo', '', '### Pruebas del módulo', '', '| Tipo | Ruta | Herramienta | Compuerta |', '| :--- | :--- | :--- | :--- |',
+    '| [Ejemplo] | `[ruta real]` | `backend` | G3A |', ...filas, '', '## Historial', ''].join('\n');
+}
+
 /** Repositorio temporal: línea base cerrada, solo backend activo y el módulo 01_demo en la compuerta indicada. */
-function fixture({ moduleGate = 'G3A', moduleEstado = 'EN_PROCESO', moduleHistorial = [], verificaciones = {}, escala = 'standard', projectGate = 'G5', extraProfiles = {}, frontend = false, ejecucion = undefined, herramientas = undefined } = {}) {
+function fixture({ moduleGate = 'G3A', moduleEstado = 'EN_PROCESO', moduleHistorial = [], verificaciones = {}, escala = 'standard', projectGate = 'G5', extraProfiles = {}, frontend = false, ejecucion = undefined, herramientas = undefined, moduleReadme = undefined } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sdlc-gate-'));
   roots.push(root);
   fs.cpSync(path.join(STARTER, 'tooling'), path.join(root, 'tooling'), { recursive: true, filter: (src) => !src.includes(`${path.sep}tests`) });
@@ -67,7 +74,8 @@ function fixture({ moduleGate = 'G3A', moduleEstado = 'EN_PROCESO', moduleHistor
     fase_activa: pg.fase, gate_activo: pg.gate, estado: 'EN_PROCESO', rol_en_turno: pg.rol, bloqueos: [], historial_transiciones: [],
   });
   write(root, `.workflow/modules/${MOD}.json`, { ...moduleState(moduleGate, moduleEstado), historial_transiciones: moduleHistorial });
-  for (const f of ['docs/adrs/ADR-000.md', 'docs/adrs/ADR-001.md', 'docs/adrs/ADR-002.md', `docs/modules/${MOD}/README.md`, `backend/src/modules/${MOD}/index.ts`]) write(root, f, '# fixture\n');
+  for (const f of ['docs/adrs/ADR-000.md', 'docs/adrs/ADR-001.md', 'docs/adrs/ADR-002.md', `backend/src/modules/${MOD}/index.ts`]) write(root, f, '# fixture\n');
+  write(root, `docs/modules/${MOD}/README.md`, moduleReadme ?? readmeConPruebas(['backend', 'datos', 'frontend', 'qa_api', 'qa_e2e', 'qa_carga', 'qa_seguridad']));
   write(root, `docs/contracts/${MOD}.contract.ts`, "import { z } from 'zod';\nexport const DemoSchema = z.object({ estado: z.enum(['A', 'B']) });\n");
   git(root, 'init', '-q');
   git(root, 'config', 'user.name', 'test');
@@ -169,7 +177,7 @@ test('solicitar G4 con un S2 declarado en el resumen verificable se rechaza (vet
 test('aprobar se niega si los entregables cambiaron tras solicitar; tras volver a solicitar, aprueba', () => {
   const root = g4Fixture();
   assert.equal(run(root, 'solicitar').status, 0);
-  write(root, `docs/modules/${MOD}/README.md`, '# cambiado durante la revisión\n');
+  write(root, `docs/qa/${MOD}/v0.1.0/QA_REPORT.md`, `${qaReport()}\nCorrección durante la revisión.\n`);
   commitAll(root, 'cambio durante la revisión');
   const rechazo = run(root, 'aprobar', '--cita', 'apruebo');
   assert.notEqual(rechazo.status, 0);
@@ -389,4 +397,23 @@ test('modo orquestado: el encargo de QA lista las herramientas de QA del stack, 
   assert.doesNotMatch(qa, /PostgreSQL/);
   const backend = fs.readFileSync(path.join(root, '.workflow', 'encargos', `${MOD}-backend.md`), 'utf-8');
   assert.match(backend, /\*\*PostgreSQL\*\* \(datos\)/);
+});
+
+// ── Pruebas registradas en el índice del módulo ──
+
+test('G3A se niega si el índice del módulo no registra una prueba de un uso exigido', () => {
+  const root = fixture({ verificaciones: { G3A: ['node -e "process.exit(0)"'] }, moduleReadme: readmeConPruebas(['backend']) });
+  const r = run(root, 'avanzar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /Falta una fila de uso "datos" \(la exige integracion_persistencia_backend\)/);
+  assert.equal(state(root).gate_activo, gate('G3A').gate);
+});
+
+test('G3A se niega si una ruta registrada no existe, y la fila de plantilla no cuenta', () => {
+  const root = fixture({ verificaciones: { G3A: ['node -e "process.exit(0)"'] }, moduleReadme: readmeConPruebas(['backend', 'datos'], 'backend/tests/integration/no_existe.test.ts') });
+  const r = run(root, 'avanzar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /La ruta "backend\/tests\/integration\/no_existe\.test\.ts" \(Suite backend\) no existe/);
+  const sinTabla = fixture({ verificaciones: { G3A: ['node -e "process.exit(0)"'] }, moduleReadme: '# Demo\n' });
+  assert.match(run(sinTabla, 'avanzar').stderr, /No existe la tabla "Pruebas del módulo"/);
 });

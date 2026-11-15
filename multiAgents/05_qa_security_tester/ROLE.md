@@ -158,6 +158,7 @@ Para que el Orquestador y el Director Humano firmen el **Stage-Gate 4**, el QA L
 - [ ] 4. Escaneo DAST (herramienta `qa_seguridad`) verificado con 0 vulnerabilidades Críticas / Altas.
 - [ ] 5. Sesión de Testing Exploratorio documentada con su respectivo Test Charter.
 - [ ] 6. 100% de los defectos S1 (Blocker) y S2 (Critical) en estado **CERRADO** (0 bugs bloqueantes abiertos).
+- [ ] 7. Cada suite de QA (API, E2E, carga, DAST), registrada con su ruta real en la tabla "Pruebas del módulo" del índice del módulo (`npm run gate` lo comprueba en G4).
 - [ ] 7. Auditoría AST Cero ANY certificada: `npm run check:no-any` en Backend y Frontend con 0 violaciones.
 - [ ] 8. Reporte modular de QA emitido en `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md` con análisis forense RCA, y panel consolidado `docs/qa/index.md` actualizado.
 

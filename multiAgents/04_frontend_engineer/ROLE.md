@@ -83,5 +83,6 @@ Si se detecta código duplicado en validaciones de formulario, formateo de fecha
 - [ ] 100% de modales consumiendo el Core Base Kit.
 - [ ] Rutas protegidas mediante Router y metadatos RBAC.
 - [ ] Walkthrough versionado en `docs/walkthroughs/[XX]/[vX.Y.Z]/WALKTHROUGH.md`.
+- [ ] Cada suite creada, registrada con su ruta real en la tabla "Pruebas del módulo" de `docs/modules/[XX_nombre]/README.md` (`npm run gate` lo comprueba en G3B).
 - [ ] Bitácora actualizada en `multiAgents/04_frontend_engineer/worklog/[XX_nombre].md` (o en `WORKLOG.md` si el trabajo es transversal).
 - [ ] Listo para entrega al Agente 05 (QA Lead & Security Tester).
