@@ -134,6 +134,8 @@ El QA Lead no reporta bugs mediante comentarios informales. Todo defecto detecta
 | **Pilar 3: k6 & OWASP ZAP** | **Q4** | `tests/load/k6_*.js`, Reporte DAST | Módulos con concurrencia / API | Incumplimiento de SLA p95 o alertas OWASP Altas/Críticas. |
 | **Pilar 4: Test Charters UX** | **Q3** | `tests/exploratory/CHARTER-*.md` | Flujos de usuario complejos | Inconsistencias graves de UX o bloqueos en navegación. |
 
+> **Preparación adelantada (modo orquestado).** Con el paquete `qa_preparacion` (`.workflow/EXECUTION_MODES.md` §3), QA entra en G3A o G3B para escribir las pruebas de aceptación desde las historias y el contrato, sin leer la implementación. No certifica nada en ese momento: el veredicto se emite en G4, ejecutando esas pruebas sobre el resultado integrado.
+
 > **Pilares según las capas activas.** Las herramientas de los pilares 1 y 3 que actúan sobre HTTP (Bruno, k6, DAST) solo se exigen si la capa `backend` está activa. En un proyecto sin backend, el plan del módulo (`npm run status -- [XX_nombre]`) ya las sustituye por pruebas contra el repositorio local, `rendimiento_cliente` y `auditoria_dependencias`: no hace falta justificarlo como excepción.
 
 ### Reglas Inviolables del Rol (economía y transparencia)

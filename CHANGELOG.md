@@ -3,6 +3,16 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.22.0] - 2026-11-15
+
+### Added
+- **Paquete `qa_preparacion`** en el modo orquestado (`.workflow/EXECUTION_MODES.md` §3): en G3A o G3B, un subagente de QA escribe las pruebas de aceptación desde las historias Gherkin y el contrato, en paralelo con backend y frontend y sin leer su implementación. Los elementos de la interfaz se localizan por rol y nombre accesible. Con `max_subagentes: 3`, G3A lanza backend, frontend y QA a la vez.
+
+### Changed
+- Los pilares 1 y 2 de G4 (`qa_logica`, `qa_e2e`) ejecutan y completan las pruebas preparadas, si existen. QA sigue emitiendo su veredicto solo en G4 y las compuertas siguen cerrándose en orden: lo que corre en paralelo es el trabajo, no las firmas.
+
+---
+
 ## [1.21.0] - 2026-11-15
 
 ### Added

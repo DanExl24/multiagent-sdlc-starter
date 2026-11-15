@@ -276,11 +276,15 @@ test('modo secuencial: plan:agentes no recomienda subagentes', () => {
   assert.deepEqual(encargos(root), []);
 });
 
-test('modo orquestado: en G3A genera encargos de backend y frontend con su contrato e insumos', () => {
+test('modo orquestado: en G3A genera encargos de backend, frontend y preparación de QA con su contrato e insumos', () => {
   const root = fixture({ frontend: true, ejecucion: { modo: 'orquestado', max_subagentes: 3 }, verificaciones: { G3A: ['npm test --prefix backend'] } });
   const r = planAgentes(root, MOD);
   assert.equal(r.status, 0, r.stderr);
-  assert.deepEqual(encargos(root), [`${MOD}-backend.md`, `${MOD}-frontend.md`]);
+  assert.deepEqual(encargos(root), [`${MOD}-backend.md`, `${MOD}-frontend.md`, `${MOD}-qa_preparacion.md`]);
+  const qa = fs.readFileSync(path.join(root, '.workflow', 'encargos', `${MOD}-qa_preparacion.md`), 'utf-8');
+  assert.match(qa, /sin leer su implementación/);
+  assert.match(qa, /02_HISTORIAS_USUARIO\.md/);
+  assert.match(qa, /nunca código de producción/);
   const backend = fs.readFileSync(path.join(root, '.workflow', 'encargos', `${MOD}-backend.md`), 'utf-8');
   assert.match(backend, /Sigue \*\*solo\*\* este encargo/);
   assert.match(backend, /\| \*\*Responsabilidad\*\* \|/);
@@ -302,7 +306,7 @@ test('gate borra los encargos del módulo al cerrar su compuerta y registra marc
   const root = fixture({ ejecucion: { modo: 'orquestado', max_subagentes: 3 }, verificaciones: { G3A: ['node -e "process.exit(0)"'] } });
   assert.equal(planAgentes(root, MOD).status, 0);
   write(root, '.workflow/encargos/02_otro-backend.md', '# de otro módulo\n');
-  assert.equal(encargos(root).length, 2);
+  assert.deepEqual(encargos(root), ['01_demo-backend.md', '01_demo-qa_preparacion.md', '02_otro-backend.md']);
   const r = run(root, 'avanzar');
   assert.equal(r.status, 0, r.stderr);
   assert.deepEqual(encargos(root), ['02_otro-backend.md']);
