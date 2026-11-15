@@ -90,17 +90,17 @@ graph TD
 
 ### Sub-Rol 1: SDET (API, Contracts & Integration Tester — Q1/Q2)
 - **Archivo Rector:** [`subroles/01_sdet_api_contracts.md`](subroles/01_sdet_api_contracts.md)
-- **Herramientas Obligatorias:** **`Vitest`** (en `backend/tests/modules/`) y **`Bruno CLI`** (`tests/bruno/`).
+- **Herramientas:** el ejecutor de pruebas del backend y la herramienta `qa_api` del stack (por defecto **`Vitest`** y **`Bruno CLI`** en `tests/bruno/`).
 - **Misión:** Validar la lógica aislada, servicios de dominio, contratos Zod y endpoints REST.
 
 ### Sub-Rol 2: E2E & Accessibility Specialist (Q2/Q3)
 - **Archivo Rector:** [`subroles/02_e2e_a11y_specialist.md`](subroles/02_e2e_a11y_specialist.md)
-- **Herramientas Obligatorias:** **`Playwright`** y **`@axe-core/playwright`**.
+- **Herramientas:** la herramienta `qa_e2e` del stack (por defecto **`Playwright`** y **`@axe-core/playwright`**).
 - **Misión:** Simular al usuario real en navegador Chromium headless: navegación, modales, responsive y accesibilidad WCAG 2.1 AA.
 
 ### Sub-Rol 3: Performance & DAST Security Auditor (Q4)
 - **Archivo Rector:** [`subroles/03_performance_security_auditor.md`](subroles/03_performance_security_auditor.md)
-- **Herramientas Obligatorias:** **`k6`** (concurrencia y SLAs) y **`OWASP ZAP`** (análisis dinámico DAST contra SQLi, XSS, headers y Anti-IDOR).
+- **Herramientas:** las herramientas `qa_carga` y `qa_seguridad` del stack (por defecto **`k6`** para concurrencia y SLAs, y **`OWASP ZAP`** para DAST contra SQLi, XSS, headers y Anti-IDOR).
 - **Misión:** Validar estabilidad bajo estrés concurrente y blindar los endpoints contra vulnerabilidades web.
 
 ### Sub-Rol 4: Exploratory & Usability (UX) Tester (Q3)
@@ -129,12 +129,14 @@ El QA Lead no reporta bugs mediante comentarios informales. Todo defecto detecta
 
 | Pilar de Calidad | Cuadrante Ágil | Ubicación Estricta Obligatoria | Condición de Exigencia | Criterio de Rechazo Inmediato (Veto) |
 | :--- | :---: | :--- | :--- | :--- |
-| **Pilar 1: Vitest & Bruno** | **Q1 / Q2** | `backend/tests/modules/`, `tests/bruno/` | 100% de los módulos desarrollados | Fallo en aserciones o contratos Zod no probados. |
-| **Pilar 2: Playwright & A11y** | **Q2 / Q3** | `frontend/tests/e2e/*.spec.ts` | Todo módulo con vista SPA | Ausencia de spec E2E o violaciones críticas axe-core. |
-| **Pilar 3: k6 & OWASP ZAP** | **Q4** | `tests/load/k6_*.js`, Reporte DAST | Módulos con concurrencia / API | Incumplimiento de SLA p95 o alertas OWASP Altas/Críticas. |
+| **Pilar 1: Lógica y API (Vitest y Bruno por defecto)** | **Q1 / Q2** | `backend/tests/modules/`, `tests/bruno/` | 100% de los módulos desarrollados | Fallo en aserciones o contratos Zod no probados. |
+| **Pilar 2: E2E y A11y (Playwright y axe-core por defecto)** | **Q2 / Q3** | `frontend/tests/e2e/*.spec.ts` | Todo módulo con vista SPA | Ausencia de spec E2E o violaciones críticas axe-core. |
+| **Pilar 3: Carga y DAST (k6 y OWASP ZAP por defecto)** | **Q4** | `tests/load/k6_*.js`, Reporte DAST | Módulos con concurrencia / API | Incumplimiento de SLA p95 o alertas OWASP Altas/Críticas. |
 | **Pilar 4: Test Charters UX** | **Q3** | `tests/exploratory/CHARTER-*.md` | Flujos de usuario complejos | Inconsistencias graves de UX o bloqueos en navegación. |
 
 > **Preparación adelantada (modo orquestado).** Con el paquete `qa_preparacion` (`.workflow/EXECUTION_MODES.md` §3), QA entra en G3A o G3B para escribir las pruebas de aceptación desde las historias y el contrato, sin leer la implementación. No certifica nada en ese momento: el veredicto se emite en G4, ejecutando esas pruebas sobre el resultado integrado.
+
+> **Herramientas del stack.** Las herramientas de cada pilar no son fijas: las elige el rol de fundación con el desarrollador y quedan en `.workflow/project.json` → `herramientas` (`npm run status -- [XX_nombre]` las muestra junto a cada entregable). Al empezar G4, ejecuta `npm run doctor`. Usa las declaradas y no las sustituyas por un equivalente casero en silencio: si una no está instalada, pide al Director Humano que la instale o regístrala como limitación de entorno (sección 0.2 del `QA_REPORT.md`) con la salida del comando.
 
 > **Pilares según las capas activas.** Las herramientas de los pilares 1 y 3 que actúan sobre HTTP (Bruno, k6, DAST) solo se exigen si la capa `backend` está activa. En un proyecto sin backend, el plan del módulo (`npm run status -- [XX_nombre]`) ya las sustituye por pruebas contra el repositorio local, `rendimiento_cliente` y `auditoria_dependencias`: no hace falta justificarlo como excepción.
 
@@ -150,10 +152,10 @@ El QA Lead no reporta bugs mediante comentarios informales. Todo defecto detecta
 ## 7. Estructura de Entregables del QA Lead (Checklist de Salida Gate 4)
 
 Para que el Orquestador y el Director Humano firmen el **Stage-Gate 4**, el QA Lead debe entregar obligatoriamente:
-- [ ] 1. Suite Vitest y colección Bruno en verde (`100% PASS`).
-- [ ] 2. Spec Playwright en Chromium headless ejecutado y sin violaciones de accesibilidad WCAG 2.1 AA.
-- [ ] 3. Script k6 ejecutado cumpliendo SLAs de latencia (si aplica concurrencia).
-- [ ] 4. Escaneo OWASP ZAP verificado con 0 vulnerabilidades Críticas / Altas.
+- [ ] 1. Suite de pruebas y colección de API (herramienta `qa_api`) en verde (`100% PASS`).
+- [ ] 2. E2E (herramienta `qa_e2e`) en navegador headless ejecutado y sin violaciones de accesibilidad WCAG 2.1 AA.
+- [ ] 3. Prueba de carga (herramienta `qa_carga`) ejecutada cumpliendo SLAs de latencia (si aplica concurrencia).
+- [ ] 4. Escaneo DAST (herramienta `qa_seguridad`) verificado con 0 vulnerabilidades Críticas / Altas.
 - [ ] 5. Sesión de Testing Exploratorio documentada con su respectivo Test Charter.
 - [ ] 6. 100% de los defectos S1 (Blocker) y S2 (Critical) en estado **CERRADO** (0 bugs bloqueantes abiertos).
 - [ ] 7. Auditoría AST Cero ANY certificada: `npm run check:no-any` en Backend y Frontend con 0 violaciones.

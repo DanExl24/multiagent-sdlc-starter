@@ -1,6 +1,7 @@
 /**
  * Configuración estructural del proyecto (.workflow/project.json): capas activas, rutas y
- * verificaciones por compuerta (comandos que `npm run gate` ejecuta antes de avanzar o solicitar).
+ * verificaciones por compuerta (comandos que `npm run gate` ejecuta antes de avanzar o solicitar) y
+ * herramientas del stack (cada una con el comando que comprueba que está instalada: npm run doctor).
  * Permite que el repositorio que adopta el starter use su propia estructura de carpetas
  * (monorepo, sin frontend, rutas distintas) sin editar el tooling.
  *
@@ -8,7 +9,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { rootDir } from './stage-gates.mjs';
+import { rootDir, USOS_HERRAMIENTA } from './stage-gates.mjs';
 
 export const PROJECT_CONFIG_PATH = path.join(rootDir, '.workflow', 'project.json');
 export const LAYERS = ['backend', 'frontend'];
@@ -22,6 +23,7 @@ export const DEFAULT_CONFIG = {
   perfil: { escala: 'standard', modificadores: [], adr: null, confirmado: false },
   fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
   verificaciones: {},
+  herramientas: [],
   ejecucion: { modo: 'secuencial', max_subagentes: 3 },
 };
 
@@ -77,6 +79,23 @@ export function loadProjectConfig() {
     for (const [gate, cmds] of Object.entries(verif)) {
       if (!Array.isArray(cmds) || cmds.some((c) => typeof c !== 'string' || !c.trim())) errors.push(`project.json: verificaciones.${gate} debe ser una lista de comandos (texto no vacío).`);
     }
+  }
+  // Herramientas del stack (opcional): las declara el rol de fundación; npm run doctor ejecuta cada `comprobar`.
+  config.herramientas = config.herramientas ?? [];
+  if (!Array.isArray(config.herramientas)) {
+    errors.push('project.json: herramientas debe ser una lista de objetos {nombre, uso, comprobar, instalar}.');
+  } else {
+    config.herramientas.forEach((h, i) => {
+      if (typeof h !== 'object' || h === null || Array.isArray(h)) {
+        errors.push(`project.json: herramientas[${i}] debe ser un objeto {nombre, uso, comprobar, instalar}.`);
+        return;
+      }
+      const label = `project.json: herramientas[${i}]${typeof h.nombre === 'string' && h.nombre.trim() ? ` (${h.nombre})` : ''}`;
+      for (const key of ['nombre', 'comprobar', 'instalar']) {
+        if (typeof h[key] !== 'string' || !h[key].trim()) errors.push(`${label}: "${key}" debe ser un texto no vacío.`);
+      }
+      if (!USOS_HERRAMIENTA.includes(h.uso)) errors.push(`${label}: "uso" debe ser uno de ${USOS_HERRAMIENTA.join(', ')}.`);
+    });
   }
   // Modo de ejecución (opcional): secuencial (por defecto) u orquestado (.workflow/EXECUTION_MODES.md).
   config.ejecucion = { ...DEFAULT_CONFIG.ejecucion, ...(config.ejecucion ?? {}) };

@@ -3,7 +3,7 @@
 
 > **Tipo de rol:** Transversal de fundación. No es una fase del SDLC ni tiene compuerta propia: trabaja **después de aprobar la línea base de G1** (PRD y glosario) y **antes de que el Arquitecto de Software** prepare la línea base de G2.  
 > **Directorio de Trabajo:** `multiAgents/07_foundation_architect/`  
-> **Entregables:** ADR del stack, ADR de la estructura, `docs/project/repo-structure.md`, `.workflow/project.json` (capas, rutas, bloque `fundacion` y `verificaciones`) y el esqueleto de carpetas vacío  
+> **Entregables:** ADR del stack, ADR de la estructura, `docs/project/repo-structure.md`, `.workflow/project.json` (capas, rutas, bloque `fundacion`, `verificaciones` y `herramientas`) y el esqueleto de carpetas vacío  
 > **Lo ratifica:** la firma del Director Humano en el G2 de línea base (`.workflow/STAGE_GATES.md`)
 
 ---
@@ -80,6 +80,7 @@ El rol trabaja una vez al inicio, y vuelve solo en estos casos:
 - [ ] ADR de la estructura aceptado y enlazado en `project.json` → `fundacion.adr_estructura`.
 - [ ] `docs/project/repo-structure.md` completo: árbol, tabla de ubicación por tipo de archivo y reglas de nombres.
 - [ ] `project.json` con capas, rutas y `fundacion.estado: "COMPLETADA"`, validado con `npm run validate:state`.
+- [ ] `herramientas` en `project.json`, una por cada uso que exige el plan, y `npm run doctor` en verde: `npm run gate` no pasa G2 sin ello (`STAGE_GATES.md` §2.5).
 - [ ] `verificaciones` en `project.json` para cada compuerta de capa activa (G3A, G3B): los comandos reales de pruebas, build y `check:no-any` del stack elegido (`STAGE_GATES.md` §2.5).
 - [ ] Esqueleto de carpetas creado (vacías, con un `README.md` breve donde ayude a orientarse).
 - [ ] Bitácora actualizada en `multiAgents/07_foundation_architect/WORKLOG.md`.

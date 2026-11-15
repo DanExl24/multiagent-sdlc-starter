@@ -47,7 +47,10 @@ function printPlan(title, track, mods, current) {
     });
     for (const [id, origen] of items) {
       const tag = origen === 'base' ? '' : `  (${origen})`;
-      console.log(`        - ${table.entregables.get(id).descripcion.replace(/`/g, '')}${tag}`);
+      const uso = table.entregables.get(id).herramienta;
+      const declaradas = uso ? config.herramientas.filter((h) => h.uso === uso).map((h) => h.nombre) : [];
+      const tool = !uso ? '' : declaradas.length ? `  🧰 ${declaradas.join(', ')}` : `  ⚠️ sin herramienta "${uso}" (npm run doctor)`;
+      console.log(`        - ${table.entregables.get(id).descripcion.replace(/`/g, '')}${tag}${tool}`);
     }
     const cmds = config.verificaciones?.[gate.id] ?? [];
     if (cmds.length) console.log(`        🔎 Verificación previa: ${cmds.join(' · ')}`);
@@ -79,6 +82,7 @@ if (/\{\{[A-Z_]+\}\}/.test(`${project.proyecto ?? ''} ${project.dominio ?? ''}`)
   console.log('   ⚠️  Proyecto sin inicializar (G0 Bootstrap): ejecuta npm run init:project. Hasta entonces npm run gate no aplica transiciones.');
 }
 console.log(`   Perfil: ${perfilLabel(config.perfil.modificadores)}${config.perfil.confirmado ? '' : ' (⚠️ SIN CONFIRMAR: pregúntalo al Director Humano antes de G1)'} · capas activas: ${activeLayers(config).join(', ')} · ejecución: ${config.ejecucion.modo}${config.ejecucion.modo === 'orquestado' ? ` (máx. ${config.ejecucion.max_subagentes} subagentes; npm run plan:agentes)` : ''}`);
+console.log(`   Herramientas del stack: ${config.herramientas.length ? `${config.herramientas.map((h) => `${h.nombre} (${h.uso})`).join(', ')}` : 'ninguna declarada'} · comprobación: npm run doctor`);
 console.log(`   Pista de proyecto/release: ${ICON[project.estado] ?? '⚪'} ${gateLabel(project)} · ${project.estado} · rol en turno: ${project.rol_en_turno}`);
 
 // Git: cambios sin commit y commits sin publicar (los agentes tienden a olvidarlos).

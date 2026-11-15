@@ -18,6 +18,9 @@ import { fileURLToPath } from 'node:url';
 export const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const STAGE_GATES_PATH = path.join(rootDir, '.workflow', 'STAGE_GATES.md');
 
+/** Usos de herramienta: columna Herramienta del catálogo (§7) y campo uso de project.json → herramientas. */
+export const USOS_HERRAMIENTA = ['backend', 'frontend', 'datos', 'qa_api', 'qa_e2e', 'qa_carga', 'qa_seguridad', 'despliegue', 'otro'];
+
 export function extractBlock(markdown, name) {
   const re = new RegExp(`<!--\\s*${name}:start\\s*-->([\\s\\S]*?)<!--\\s*${name}:end\\s*-->`);
   const match = markdown.match(re);
@@ -65,7 +68,7 @@ function parseNiveles(cell, id) {
  *   estados: string[],
  *   capas: Map<string, string>,
  *   invariantes: Array<{ids: string[], regla: 'halt'|'halt_si_produccion'|'al_menos_un_halt'}>,
- *   entregables: Map<string, {id: string, gate: string, pista: Nivel, capa: string|null, base: boolean, descripcion: string, ruta: string|null}>
+ *   entregables: Map<string, {id: string, gate: string, pista: Nivel, capa: string|null, base: boolean, descripcion: string, ruta: string|null, herramienta: string|null}>
  * }}
  */
 export function loadStageGates(file = STAGE_GATES_PATH) {
@@ -148,7 +151,12 @@ export function loadStageGates(file = STAGE_GATES_PATH) {
     if (ruta && (ruta.startsWith('/') || ruta.split('/').includes('..') || /{(?!modulo}|version})/.test(ruta))) {
       throw new Error(`entregables: "${id}" tiene una ruta inválida "${ruta}" (relativa a la raíz; solo {modulo}, {version} y *).`);
     }
-    return [id, { id, gate, pista, capa, base, descripcion: (cells[5] ?? '').trim(), ruta }];
+    // Uso de herramienta (opcional): el stack debe declarar una herramienta para ese uso en project.json.
+    const herramienta = backticked(cells[7] ?? '') || null;
+    if (herramienta && !USOS_HERRAMIENTA.includes(herramienta)) {
+      throw new Error(`entregables: "${id}" cita el uso de herramienta "${herramienta}", que no existe (${USOS_HERRAMIENTA.join(', ')}).`);
+    }
+    return [id, { id, gate, pista, capa, base, descripcion: (cells[5] ?? '').trim(), ruta, herramienta }];
   }));
 
   return { gates, stateful, estados, capas, invariantes, entregables };

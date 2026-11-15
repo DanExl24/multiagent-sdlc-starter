@@ -139,6 +139,7 @@ Contrato antes que código, alto obligatorio con aprobación humana, cero `any`,
 │   ├── validate-contracts.mjs           # Validador canónico de contratos DTO Zod
 │   ├── validate-state.mjs               # Validador de las pistas de estado contra STAGE_GATES.md
 │   ├── status.mjs                       # Semáforo consolidado de proyecto y módulos (npm run status)
+│   ├── doctor.mjs                       # Herramientas del stack instaladas y usos cubiertos (npm run doctor)
 │   ├── new-module.mjs                   # Crea un módulo: docs/modules/XX_nombre/ y su archivo de estado
 │   ├── release-changelog.mjs            # Consolida changelog.d/ en CHANGELOG.md al preparar un release
 │   ├── check-doc-sources.mjs            # Lint de la política de fuentes de verdad (AGENTS.md)
@@ -199,6 +200,7 @@ npm run status -- 04_pagos   # Plan del módulo según el perfil: qué compuerta
 npm run validate:state
 npm run release:changelog -- 0.2.0 --dry-run   # Al preparar un release: consolida changelog.d/
 npm run plan:agentes -- 04_pagos   # Modo orquestado: encargos para subagentes (.workflow/EXECUTION_MODES.md)
+npm run doctor                # Comprueba que las herramientas del stack (project.json → herramientas) están instaladas
 
 # 7. Política de Fuentes de Verdad (sin citas numeradas fuera de AGENTS.md):
 npm run check:docs

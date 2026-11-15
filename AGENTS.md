@@ -18,7 +18,7 @@
 | Reglas de Oro (texto y numeración), catálogo de roles, protocolo de aterrizaje y precedencia entre documentos | **`AGENTS.md`** (este archivo) |
 | Compuertas: IDs, tipo (Halt / Checkpoint / Bootstrap), entregables, aprobador y valores permitidos de `current_state.json` | [`.workflow/STAGE_GATES.md`](.workflow/STAGE_GATES.md), por delegación explícita de este manual |
 | Perfil del proyecto: escala (`spike`, `sprint`, `standard`, `enterprise`) y modificadores de riesgo, que fijan el tipo efectivo de cada compuerta y los entregables exigidos | Reglas en [`.workflow/PROFILES.md`](.workflow/PROFILES.md); datos en `.workflow/profiles/`; perfil activo en `.workflow/project.json`. Vista del plan: `npm run status -- [XX_nombre]` |
-| Estructura del proyecto: capas activas (backend, frontend), rutas de código y contratos, y verificaciones ejecutables por compuerta | `.workflow/project.json` (lo crea `npm run init:project` y lo valida `npm run validate:state`). Las rutas `backend/` y `frontend/` que citan los documentos son las predeterminadas |
+| Estructura del proyecto: capas activas (backend, frontend), rutas de código y contratos, verificaciones ejecutables por compuerta y herramientas del stack (`npm run doctor`) | `.workflow/project.json` (lo crea `npm run init:project` y lo valida `npm run validate:state`). Las rutas `backend/` y `frontend/` que citan los documentos son las predeterminadas |
 | Modo de ejecución (secuencial u orquestado con subagentes), paquetes de trabajo y encargos | [`.workflow/EXECUTION_MODES.md`](.workflow/EXECUTION_MODES.md); modo activo en `.workflow/project.json` → `ejecucion`. Encargos: `npm run plan:agentes` |
 | Estado vivo del ciclo de vida | `.workflow/current_state.json` (pista de proyecto y release) y `.workflow/modules/*.json` (una pista por módulo), validados contra `STAGE_GATES.md` con `npm run validate:state`. Vista consolidada: `npm run status` |
 | Detalle operativo de cada rol y subrol | `multiAgents/[rol]/ROLE.md` y `multiAgents/[rol]/subroles/` |
@@ -202,7 +202,7 @@ Asegura despliegue en 2 minutos, seeders reproducibles, observabilidad y CI/CD.
 ### 3.7. 🏗️ `07_foundation_architect` — Arquitecto de Fundación (rol transversal)
 No es una fase del SDLC: actúa una vez aprobada la idea de negocio (G1 de línea base) y antes de que el Arquitecto de Software prepare la línea base de G2. Sigue el orden **idea de negocio → stack → estructura de carpetas**, con una recomendación justificada en cada paso y la conformidad explícita del desarrollador. Se reactiva al añadir una capa, cambiar una pieza del stack o adoptar el starter en un repositorio existente.
 - **Subroles:** Stack Selector, Repo Structure Designer.
-- **Entregables:** ADR del stack y ADR de la estructura (aceptados), `docs/project/repo-structure.md`, `.workflow/project.json` (capas, rutas, bloque `fundacion` y `verificaciones` de G3A/G3B) y el esqueleto de carpetas vacío.
+- **Entregables:** ADR del stack y ADR de la estructura (aceptados), `docs/project/repo-structure.md`, `.workflow/project.json` (capas, rutas, bloque `fundacion`, `verificaciones` de G3A/G3B y `herramientas` del stack, una por uso de verificación) y el esqueleto de carpetas vacío.
 
 ---
 

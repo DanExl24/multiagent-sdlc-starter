@@ -67,8 +67,17 @@ export function fillPaths(text, { modulo, config }) {
 export const encargoId = (modulo, paquete) => `${modulo}-${paquete}`;
 
 /** Texto del encargo de un paquete para un módulo. */
+// Usos de herramienta (project.json → herramientas) que interesan a cada rol en su encargo.
+const USOS_POR_ROL = {
+  '03_backend_engineer': ['backend', 'datos'],
+  '04_frontend_engineer': ['frontend'],
+  '05_qa_security_tester': ['qa_api', 'qa_e2e', 'qa_carga', 'qa_seguridad'],
+};
+
 export function renderEncargo(pkg, { modulo, gateId, config, today }) {
   const id = encargoId(modulo, pkg.id);
+  const usos = USOS_POR_ROL[pkg.rol] ?? [];
+  const herramientas = (config.herramientas ?? []).filter((h) => usos.includes(h.uso));
   const insumos = pkg.insumos.map((p) => {
     const ruta = fillPaths(p, { modulo, config });
     return `- \`${ruta}\`${fs.existsSync(path.join(rootDir, ruta)) ? '' : ' (⚠️ no existe: avisa en tu respuesta, no lo inventes)'}`;
@@ -100,6 +109,11 @@ ${reglas.map((r) => `- ${r}`).join('\n')}
 
 ## Insumos (lee solo estos)
 ${insumos.join('\n')}
+
+## Herramientas del stack
+${herramientas.length
+    ? `Usa estas (ADR del stack); \`npm run doctor\` comprueba que están instaladas:\n${herramientas.map((h) => `- **${h.nombre}** (${h.uso}): comprueba con \`${h.comprobar}\``).join('\n')}`
+    : 'El stack no declara herramientas para tu rol. Usa las que ya trae el proyecto; si necesitas otra, dilo en tu respuesta en lugar de instalarla por tu cuenta.'}
 
 ## Contrato de tus subroles
 ${pkg.subroles.map((s) => `### ${s}\n${subroleContract(pkg.rol, s)}`).join('\n\n')}

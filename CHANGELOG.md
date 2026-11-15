@@ -3,6 +3,22 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.23.0] - 2026-11-15
+
+### Added
+- **Herramientas del stack** (`.workflow/project.json` → `herramientas`): el rol de fundación declara cada herramienta que el proyecto necesita instalada (`nombre`, `uso`, `comprobar`, `instalar`). Son comandos, no marcas fijas, así que sirven para cualquier stack.
+- **Columna "Herramienta" en el catálogo de entregables** (`STAGE_GATES.md` §7): marca qué uso exige cada entregable (`backend`, `frontend`, `datos`, `qa_api`, `qa_e2e`, `qa_carga`, `qa_seguridad`). Lo que se exige depende del perfil: en `spike`, solo la construcción y el E2E de humo.
+- **`npm run doctor`**: ejecuta la comprobación de cada herramienta y avisa de los usos que el plan exige sin herramienta declarada. No cambia el estado.
+- `npm run status -- [XX_nombre]` muestra la herramienta junto a cada entregable, y los encargos del modo orquestado listan las herramientas del rol.
+- Seis pruebas nuevas en `test:tooling`.
+
+### Changed
+- **`npm run gate` en G2** (línea base y cada módulo) exige una herramienta declarada por cada uso del plan y que todas estén instaladas, para que lo que falta aparezca antes de construir y no en G4. Los proyectos que ya pasaron G2 lo encontrarán en el G2 de su próximo módulo.
+- Stack Selector: elige una herramienta por uso (Bruno, Playwright con axe-core, k6 y OWASP ZAP por defecto), prefiere CLI y archivos versionables (Postman solo vía Newman con colecciones existentes) y decide con el desarrollador los usos opcionales del perfil. El ADR del stack gana la sección "Herramientas de verificación".
+- El ROLE de QA y sus subroles nombran la herramienta del stack para cada pilar en lugar de marcas obligatorias, y piden no sustituir en silencio una herramienta declarada por un equivalente casero.
+
+---
+
 ## [1.22.0] - 2026-11-15
 
 ### Added

@@ -17,7 +17,7 @@
 | **Responsabilidad** | Auditar carga, concurrencia y seguridad dinámica. |
 | **Se activa cuando** | En módulos de alta demanda, mutación masiva o inmutabilidad, antes de autorizar el release y cuando el perfil exige pruebas de seguridad o de tiempo real. |
 | **Entradas** | Sistema desplegado, contratos y SLAs del módulo. |
-| **Salidas** | Script de carga k6 (`carga_k6`) y reportes `load-summary.json` y `dast-audit-summary.json` adjuntos al `QA_REPORT.md`, más fichas `BUG-[MOD]-[NUM]`. Según el perfil, también `dast`, `presupuesto_rendimiento`, `logs_sin_pii`, `pruebas_fuga_tenant`, `pruebas_concurrencia_eventos` y `carga_websocket`. |
+| **Salidas** | Script de carga (`carga_k6`) con la herramienta `qa_carga` del stack (k6 por defecto) y reportes `load-summary.json` y `dast-audit-summary.json` adjuntos al `QA_REPORT.md`, más fichas `BUG-[MOD]-[NUM]`. Según el perfil, también `dast`, `presupuesto_rendimiento`, `logs_sin_pii`, `pruebas_fuga_tenant`, `pruebas_concurrencia_eventos` y `carga_websocket`. |
 | **Límites** | No repara código ni optimiza consultas, no hace pruebas funcionales de interfaz ni pruebas unitarias. |
 | **Criterio de salida** | §5 (DoD) cumplido. |
 

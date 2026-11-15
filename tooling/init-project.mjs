@@ -208,6 +208,7 @@ async function main() {
     perfil: { escala, modificadores, adr: null, confirmado },
     fundacion: { estado: 'PENDIENTE', stack: {}, adr_stack: null, adr_estructura: null },
     verificaciones: {},
+    herramientas: [],
     ejecucion: { modo: ejecucionModo, max_subagentes: 3 },
   };
   if (escala !== 'standard' || modificadores.length > 0) {

@@ -38,7 +38,7 @@ function moduleState(gateId, estado = 'EN_PROCESO') {
 }
 
 /** Repositorio temporal: línea base cerrada, solo backend activo y el módulo 01_demo en la compuerta indicada. */
-function fixture({ moduleGate = 'G3A', moduleEstado = 'EN_PROCESO', moduleHistorial = [], verificaciones = {}, escala = 'standard', projectGate = 'G5', extraProfiles = {}, frontend = false, ejecucion = undefined } = {}) {
+function fixture({ moduleGate = 'G3A', moduleEstado = 'EN_PROCESO', moduleHistorial = [], verificaciones = {}, escala = 'standard', projectGate = 'G5', extraProfiles = {}, frontend = false, ejecucion = undefined, herramientas = undefined } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sdlc-gate-'));
   roots.push(root);
   fs.cpSync(path.join(STARTER, 'tooling'), path.join(root, 'tooling'), { recursive: true, filter: (src) => !src.includes(`${path.sep}tests`) });
@@ -57,6 +57,7 @@ function fixture({ moduleGate = 'G3A', moduleEstado = 'EN_PROCESO', moduleHistor
     perfil: { escala, modificadores: [], adr: escala === 'standard' ? null : 'docs/adrs/ADR-000.md', confirmado: true },
     fundacion: { estado: 'COMPLETADA', stack: { backend: ['node'] }, adr_stack: 'docs/adrs/ADR-001.md', adr_estructura: 'docs/adrs/ADR-002.md' },
     verificaciones,
+    ...(herramientas ? { herramientas } : {}),
     ...(ejecucion ? { ejecucion } : {}),
   });
   for (const [name, data] of Object.entries(extraProfiles)) write(root, `.workflow/profiles/${name}.json`, data);
@@ -321,4 +322,71 @@ test('validate:state rechaza un modo de ejecución desconocido', () => {
   const r = spawnSync(process.execPath, ['tooling/validate-state.mjs'], { cwd: root, encoding: 'utf-8' });
   assert.notEqual(r.status, 0);
   assert.match(`${r.stdout}${r.stderr}`, /ejecucion\.modo/);
+});
+
+// ── Herramientas del stack: declaradas por la fundación, comprobadas en G2 y con npm run doctor ──
+
+const tool = (nombre, uso, comprobar = 'node --version') => ({ nombre, uso, comprobar, instalar: `instala ${nombre}` });
+const STACK_BACKEND = [tool('Node.js', 'backend'), tool('PostgreSQL', 'datos'), tool('Bruno CLI', 'qa_api'), tool('k6', 'qa_carga')];
+
+function g2Fixture(opts = {}) {
+  const root = fixture({ moduleGate: 'G2', ...opts });
+  write(root, `docs/modules/${MOD}/04_ARQUITECTURA_Y_CODIGO.md`, '# DDL\n');
+  commitAll(root, 'entregables G2');
+  return root;
+}
+const doctor = (root, ...args) => spawnSync(process.execPath, ['tooling/doctor.mjs', ...args], { cwd: root, encoding: 'utf-8' });
+
+test('G2 se niega si el stack no declara herramienta para un uso que exige el plan', () => {
+  const root = g2Fixture({ herramientas: STACK_BACKEND.filter((h) => h.uso !== 'qa_carga') });
+  const r = run(root, 'solicitar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /Sin herramienta para "qa_carga" \(la exige carga_k6\)/);
+  assert.equal(state(root).estado, 'EN_PROCESO');
+});
+
+test('G2 se niega si una herramienta declarada no está instalada y dice cómo instalarla', () => {
+  const root = g2Fixture({ herramientas: [...STACK_BACKEND.filter((h) => h.uso !== 'qa_carga'), tool('k6', 'qa_carga', 'node -e "process.exit(1)"')] });
+  const r = run(root, 'solicitar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stdout, /❌ k6 \(qa_carga\)/);
+  assert.match(r.stdout, /Instalar: instala k6/);
+  assert.match(r.stderr, /Faltan herramientas del stack en este entorno: k6/);
+});
+
+test('G2 con el stack completo e instalado pide la firma y deja la comprobación en el historial', () => {
+  const root = g2Fixture({ herramientas: STACK_BACKEND });
+  const r = run(root, 'solicitar');
+  assert.equal(r.status, 0, r.stderr);
+  const ultima = state(root).historial_transiciones.at(-1);
+  assert.equal(ultima.verificaciones.length, STACK_BACKEND.length);
+  assert.ok(ultima.verificaciones.every((v) => v.resultado === 'PASS'));
+});
+
+test('doctor: en spike el plan no exige pruebas de API ni de carga', () => {
+  const root = fixture({ escala: 'spike', herramientas: [tool('Node.js', 'backend'), tool('PostgreSQL', 'datos')] });
+  const r = doctor(root);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.doesNotMatch(r.stdout, /qa_carga|qa_api/);
+  const std = doctor(fixture({ herramientas: [tool('Node.js', 'backend')] }));
+  assert.notEqual(std.status, 0);
+  assert.match(std.stdout, /Sin herramienta para "qa_carga"/);
+});
+
+test('validate:state rechaza una herramienta con un uso desconocido', () => {
+  const root = fixture({ herramientas: [tool('Postman', 'qa_postman')] });
+  const r = spawnSync(process.execPath, ['tooling/validate-state.mjs'], { cwd: root, encoding: 'utf-8' });
+  assert.notEqual(r.status, 0);
+  assert.match(`${r.stdout}${r.stderr}`, /herramientas\[0\] \(Postman\): "uso" debe ser uno de/);
+});
+
+test('modo orquestado: el encargo de QA lista las herramientas de QA del stack, no las de otros roles', () => {
+  const root = fixture({ ejecucion: { modo: 'orquestado', max_subagentes: 3 }, herramientas: STACK_BACKEND });
+  assert.equal(planAgentes(root, MOD).status, 0);
+  const qa = fs.readFileSync(path.join(root, '.workflow', 'encargos', `${MOD}-qa_preparacion.md`), 'utf-8');
+  assert.match(qa, /\*\*k6\*\* \(qa_carga\)/);
+  assert.match(qa, /\*\*Bruno CLI\*\* \(qa_api\)/);
+  assert.doesNotMatch(qa, /PostgreSQL/);
+  const backend = fs.readFileSync(path.join(root, '.workflow', 'encargos', `${MOD}-backend.md`), 'utf-8');
+  assert.match(backend, /\*\*PostgreSQL\*\* \(datos\)/);
 });

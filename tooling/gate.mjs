@@ -21,6 +21,7 @@
  * Tras cada transición se imprime un prompt de continuación para abrir una conversación nueva (AGENTS.md §5.1).
  * Antes de `avanzar` o `solicitar`, la verificación previa comprueba los entregables con ruta fija (STAGE_GATES.md §7)
  * y ejecuta los comandos de `verificaciones` del project.json para esa compuerta (obligatorios en G3A y G3B).
+ * En G2 comprueba además las herramientas del stack (project.json → herramientas), como npm run doctor.
  * El push a remoto nunca lo hace el comando: requiere autorización explícita del Director Humano.
  *
  * Cada cambio se valida con las mismas reglas que `npm run validate:state`; si algo no cuadra,
@@ -32,6 +33,7 @@ import { execSync } from 'node:child_process';
 import { loadStageGates, rootDir } from './lib/stage-gates.mjs';
 import { activeLayers, loadProjectConfig } from './lib/project-config.mjs';
 import { missingDeliverables, runVerifications } from './lib/preflight.mjs';
+import { checkTools, gapLine, toolCoverageGaps, toolLine } from './lib/tools.mjs';
 import { ENCARGOS_DIR } from './lib/work-packages.mjs';
 import { loadProfiles, resolvePlan } from './lib/profiles.mjs';
 import {
@@ -185,6 +187,7 @@ function preflight() {
   if (faltan.length) {
     fail(`Faltan entregables de ${current.id} (STAGE_GATES.md §7, columna "Ruta comprobada"):\n   ${faltan.map((f) => `${f.id}: ${f.ruta}`).join('\n   ')}`);
   }
+  const previas = current.id === 'G2' ? herramientasDelStack() : [];
   const comandos = config.verificaciones?.[current.id] ?? [];
   const capa = table.capas.get(current.id);
   // Una compuerta que normalmente exige firma y aquí pasa como Checkpoint (perfil sin producción): las verificaciones sustituyen a la firma.
@@ -196,7 +199,7 @@ function preflight() {
     if (sinFirma) {
       fail(`${current.id} pasa sin firma humana en el perfil "${config.perfil.escala}", así que exige verificaciones ejecutables que la sustituyan en .workflow/project.json, por ejemplo:\n   "verificaciones": { "${current.id}": ["npm test", "npm run build", "npm run check:no-any"] }`);
     }
-    return [];
+    return previas;
   }
   console.log(`🔎 Verificaciones de ${current.id}:`);
   const resultados = runVerifications(comandos, { modulo, version });
@@ -205,7 +208,28 @@ function preflight() {
   if (fallo) {
     fail(`La verificación "${fallo.comando}" falló, así que ${current.id} no puede ${accion === 'avanzar' ? 'avanzar' : 'solicitarse'}. Últimas líneas:\n${fallo.salida.split('\n').map((l) => `   ${l}`).join('\n')}`);
   }
-  return resultados.map(({ comando, resultado, segundos }) => ({ comando, resultado, segundos }));
+  return [...previas, ...resultados.map(({ comando, resultado, segundos }) => ({ comando, resultado, segundos }))];
+}
+
+/**
+ * G2 (línea base y módulos): el stack declara una herramienta por cada uso que exige el plan efectivo
+ * (columna Herramienta del catálogo) y todas las declaradas están instaladas. Lo mismo que npm run doctor.
+ */
+function herramientasDelStack() {
+  const huecos = toolCoverageGaps(table, plan.entregables, config);
+  if (huecos.length) {
+    fail(`El stack no declara herramientas para todo lo que exige el plan (STAGE_GATES.md §2.5):\n   ${huecos.map(gapLine).join('\n   ')}\nEl rol de fundación (Stack Selector) las propone y el Director Humano las acepta; se declaran en .workflow/project.json → herramientas, una por uso:\n   { "nombre": "k6", "uso": "qa_carga", "comprobar": "k6 version", "instalar": "cómo instalarla" }\nSi el perfil vuelve opcional un entregable, su herramienta deja de exigirse.`);
+  }
+  const resultados = checkTools(config);
+  if (resultados.length) {
+    console.log(`🩺 Herramientas del stack (${current.id}):`);
+    for (const r of resultados) console.log(`   ${toolLine(r)}`);
+  }
+  const rotas = resultados.filter((r) => !r.ok);
+  if (rotas.length) {
+    fail(`Faltan herramientas del stack en este entorno: ${rotas.map((r) => r.nombre).join(', ')}. Instálalas (arriba está cómo) y repite; npm run doctor las comprueba sin cambiar el estado.`);
+  }
+  return resultados.map((r) => ({ comando: r.comprobar, resultado: 'PASS', segundos: r.segundos }));
 }
 
 /**

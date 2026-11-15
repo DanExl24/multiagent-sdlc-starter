@@ -73,10 +73,11 @@ Las escalas propias siguen las mismas reglas, pueden además volver opcionales e
 
 ## 5. El perfil `spike`: una tarde, sin producción
 
-Para probar una idea en pocas horas sin detenerse en cada compuerta. Su escala declara `"produccion": false`, y eso cambia tres cosas:
+Para probar una idea en pocas horas sin detenerse en cada compuerta. Su escala declara `"produccion": false`, y eso cambia cuatro cosas:
 
 1. **Firmas:** el Director Humano firma la línea base (idea, stack y estructura), y en cada módulo la especificación (G1) y el diseño (G2). G3A, G3B y G4 pasan como Checkpoint, sin detener el trabajo.
 2. **Las verificaciones sustituyen a la firma:** G3A, G3B y G4 exigen comandos en `verificaciones` de `project.json` (`STAGE_GATES.md` §2.5), por ejemplo pruebas, build y `check:no-any`. Si no existen o fallan, la compuerta no avanza. El contrato Zod previo, las pruebas y la prohibición de `any` siguen vigentes; se aligera la documentación, y el reporte de QA se reduce a su sección 0 (entregable `qa_resumen`): el resumen verificable, los requisitos incumplidos y las pruebas no ejecutadas con su evidencia. Sin ella, G4 no avanza, porque es lo único que le dice al Director Humano qué no se probó.
 3. **Nunca hay release:** `npm run gate` no abre G5 con este perfil.
+4. **Herramientas proporcionales:** el plan solo exige las de construcción y el E2E de humo. Las de API, carga o DAST se deciden entre el Director Humano y el rol de fundación antes de construir, y lo acordado queda justificado en el ADR del stack.
 
 **Promover un spike a producción:** el Director Humano cambia la escala (por ejemplo, a `sprint`) con un ADR nuevo, como cualquier cambio de perfil (§3). Después, cada módulo se reabre desde G4 (`npm run gate -- [XX_nombre] reabrir --desde G4 --motivo "promoción del spike" --cita "..."`), para que QA lo certifique con su reporte y el Director Humano firme. `npm run gate` no abre un release mientras quede un módulo cerrado sin esa firma.

@@ -17,7 +17,7 @@
 | **Responsabilidad** | Verificar la lógica de dominio, la integración y los contratos de API, con paridad 1:1 entre endpoints y colección. |
 | **Se activa cuando** | En el G4 de cada módulo y ante regresiones. |
 | **Entradas** | Contrato, código del backend y walkthrough del módulo. |
-| **Salidas** | Suite de integración (`vitest_suite`) y colección Bruno (`api_bruno`) del módulo, más el RCA de cada defecto en `QA_REPORT.md`. Con el modificador `pagos`, también `pruebas_doble_cobro`. |
+| **Salidas** | Suite de integración (`vitest_suite`) y colección de API (`api_bruno`) con la herramienta `qa_api` del stack (Bruno por defecto) del módulo, más el RCA de cada defecto en `QA_REPORT.md`. Con el modificador `pagos`, también `pruebas_doble_cobro`. |
 | **Límites** | No repara código (Reglas de Oro, `AGENTS.md` §6), no prueba la interfaz y no ejecuta pruebas de carga. |
 | **Criterio de salida** | §4 (DoD) cumplido. |
 

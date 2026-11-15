@@ -1,7 +1,8 @@
 # 🧭 GUÍA OFICIAL DEL ARSENAL DE QA: CASOS DE USO, CRITERIO CRÍTICO Y PROPORCIONALIDAD
 
 > **Audiencia:** QA Lead & Security Compliance Director, SDET, E2E & Accessibility Specialist, Performance Auditor.  
-> **Propósito:** Definir exhaustivamente qué hace cada herramienta del arsenal, cómo se ejecuta, **CUÁNDO SÍ debe utilizarse** y **CUÁNDO NO debe utilizarse**, imponiendo un criterio crítico estricto para evitar la sobreingeniería ("overkill") en cambios pequeños.
+> **Propósito:** Definir exhaustivamente qué hace cada herramienta del arsenal, cómo se ejecuta, **CUÁNDO SÍ debe utilizarse** y **CUÁNDO NO debe utilizarse**, imponiendo un criterio crítico estricto para evitar la sobreingeniería ("overkill") en cambios pequeños.  
+> **Herramientas reales del proyecto:** esta guía describe las herramientas por defecto. Las que se usan son las de `.workflow/project.json` → `herramientas`, que elige el rol de fundación con el desarrollador (`npm run doctor` comprueba que están instaladas).
 
 ---
 
