@@ -3,6 +3,25 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.21.0] - 2026-11-15
+
+### Added
+- **Prompt de continuación:** tras cada transición, `npm run gate` imprime una o dos líneas listas para pegar en una conversación nueva (rol, compuerta y primer comando; en modo orquestado, además `plan:agentes`). Tras `solicitar`, el prompt sirve para registrar la firma desde otra conversación. `npm run gate -- [pista] estado` lo vuelve a mostrar y el agente lo copia al final de su mensaje.
+- **Entregable `qa_resumen`** en el perfil `spike`: el `QA_REPORT.md` reducido a su sección 0 (resumen verificable, requisitos incumplidos y pruebas no ejecutadas con evidencia).
+- Cuatro pruebas nuevas en `test:tooling`.
+
+### Changed
+- **Un alto por compuerta, no una sesión por compuerta** (`AGENTS.md` §5.1): en un Halt el agente sigue deteniéndose hasta la firma, pero después puede continuar con la compuerta siguiente en la misma conversación. Se recomienda una nueva cuando el contexto ya es largo o la compuerta construye código.
+- `AGENTS.md` §5.1 y `LANDING_PROMPT.md`: si la herramienta ya orquesta subagentes por su cuenta, se activa el modo `orquestado` para que el encargo sustituya a su fase de plan.
+- `npm run gate -- [pista] avanzar` exige, como `solicitar`, que los entregables estén en un commit y que las verificaciones no modifiquen archivos versionados.
+
+### Fixed
+- En `spike`, G4 se cerraba con `avanzar` sin revisar el `QA_REPORT.md`: un QA podía omitir pruebas sin declararlas. Ahora `avanzar` exige la sección 0 y bloquea con algún indicador mayor que 0, igual que `solicitar`.
+- `npm run gate` aplicaba transiciones en un proyecto sin `npm run init:project` (G0), que conservaba el nombre, la versión y el CHANGELOG del starter. Ahora se niega, y `npm run status` lo avisa.
+- `npm run check:docs` daba por inexistentes los imports ESM de TypeScript (`docs/contracts/x.contract.js` cuando el archivo es `x.contract.ts`).
+
+---
+
 ## [1.20.0] - 2026-11-14
 
 ### Added

@@ -14,10 +14,11 @@
  *   npm run gate -- <modulo> reabrir --desde <Gx> --motivo "..." --cita "..."  Rehace un módulo ya COMPLETADO
  *
  * En la pista de proyecto, `aprobar` en G6 abre el siguiente release (vuelve a G5); con --cerrar marca COMPLETADO.
- * `solicitar` exige que no haya cambios sin commit y guarda el commit revisado; `aprobar` se niega si los
- * entregables cambiaron desde entonces (se vuelve a `solicitar`). Cada transición hace commit de su archivo
- * de estado y, si ese commit falla, se deshace.
- * En G4 de un módulo, `solicitar` exige además la sección 0 del QA_REPORT, con su resumen verificable en cero.
+ * `solicitar` y `avanzar` exigen que no haya cambios sin commit; `solicitar` guarda el commit revisado y `aprobar`
+ * se niega si los entregables cambiaron desde entonces (se vuelve a `solicitar`). Cada transición hace commit de
+ * su archivo de estado y, si ese commit falla, se deshace. Nada avanza sin `npm run init:project` (G0).
+ * En G4 de un módulo, `solicitar` y `avanzar` exigen además la sección 0 del QA_REPORT, con su resumen verificable en cero.
+ * Tras cada transición se imprime un prompt de continuación para abrir una conversación nueva (AGENTS.md §5.1).
  * Antes de `avanzar` o `solicitar`, la verificación previa comprueba los entregables con ruta fija (STAGE_GATES.md §7)
  * y ejecuta los comandos de `verificaciones` del project.json para esa compuerta (obligatorios en G3A y G3B).
  * El push a remoto nunca lo hace el comando: requiere autorización explícita del Director Humano.
@@ -70,6 +71,12 @@ const track = gatesForTrack(table, isProject ? 'proyecto' : 'modulo', config, pl
 const idx = track.findIndex((g) => g.gate === state.gate_activo);
 const current = track[idx];
 if (!current) fail(`${state.gate_activo} no pertenece a la pista ${pista}. Ejecuta npm run validate:state.`);
+
+// G0 Bootstrap: sin init:project, el proyecto conserva el nombre, la versión y el CHANGELOG del starter.
+const proyectoBase = isProject ? state : loadProjectState();
+if (accion !== 'estado' && /\{\{[A-Z_]+\}\}/.test(`${proyectoBase.proyecto ?? ''} ${proyectoBase.dominio ?? ''}`)) {
+  fail('El proyecto no está inicializado (G0 Bootstrap): .workflow/current_state.json conserva los marcadores del starter ({{PROJECT_NAME}}) y, con ellos, su versión y su CHANGELOG. Ejecuta primero npm run init:project.');
+}
 
 const TIPO = { halt: '🛑 Halt', checkpoint: '⚡ Checkpoint' };
 const today = new Date().toLocaleDateString('sv-SE');
@@ -219,6 +226,53 @@ function releaseGuard() {
   }
 }
 
+/** Los entregables van en un commit antes de cualquier transición que los dé por buenos. */
+function exigirArbolLimpio() {
+  const pendientes = uncommittedChanges();
+  if (pendientes.length) {
+    const para = accion === 'avanzar' ? `avanzar ${current.id}` : `pedir la firma de ${current.id}`;
+    fail(`Hay cambios sin commit. Haz commit de los entregables de ${current.id} en la rama antes de ${para} (GIT_COMMIT_CONVENTION.md §1.1):\n   ${pendientes.slice(0, 10).join('\n   ')}${pendientes.length > 10 ? `\n   … y ${pendientes.length - 10} más` : ''}`);
+  }
+}
+
+/**
+ * G4 de un módulo: la sección 0 del QA_REPORT se exige para pedir la firma y también para cerrar sin ella,
+ * siempre que el perfil pida el reporte completo (qa_report) o su versión reducida a la sección 0 (qa_resumen, spike).
+ */
+function exigirReporteQa() {
+  if (isProject || current.id !== 'G4') return;
+  if (!plan.entregables.has('qa_report') && !plan.entregables.has('qa_resumen')) return;
+  const { report, gaps, bloqueos } = qaReportGaps(pista);
+  const para = accion === 'avanzar' ? 'cerrar G4' : 'la firma de G4';
+  if (gaps.length) fail(`El reporte de QA no está listo para ${para} (QA_REPORT_TEMPLATE.md, sección 0)${report ? ` en ${report}` : ''}:\n   ${gaps.join('\n   ')}`);
+  if (bloqueos.length) {
+    fail(`G4 no ${accion === 'avanzar' ? 'avanza' : 'se solicita'} con ${bloqueos.join(', ')} (${report}). Es un veto de QA: npm run gate -- ${pista} volver G3A|G3B --motivo "...". Una prueba omitida se ejecuta o se documenta con su evidencia; un requisito incumplido solo se reevalúa si el Director Humano lo cambia de forma explícita.`);
+  }
+}
+
+/** Verificación previa y comprobación de que no dejó archivos versionados modificados. */
+function verificarSinEnsuciar() {
+  const evidencias = preflight();
+  const sucios = uncommittedChanges();
+  if (sucios.length) {
+    fail(`Las verificaciones modificaron archivos versionados (${sucios.slice(0, 5).join(', ')}). Añade esas salidas a .gitignore o haz commit, y vuelve a ${accion === 'avanzar' ? 'avanzar' : 'solicitar'}.`);
+  }
+  return evidencias;
+}
+
+/** Prompt de una o dos líneas para seguir en una conversación nueva (AGENTS.md §5.1). */
+function promptContinuacion(gateAhora) {
+  const ref = isProject ? 'la pista de proyecto' : `el módulo ${pista}`;
+  if (state.estado === 'ESPERANDO_APROBACION_HUMANA') {
+    return `Lee AGENTS.md. Soy el Director Humano y apruebo ${gateAhora.id} ${isProject ? 'de la pista de proyecto' : `del módulo ${pista}`}: "<tus palabras>". Registra la firma con npm run gate -- ${pista} aprobar --cita "<mis palabras>" y sigue con la compuerta siguiente.`;
+  }
+  if (state.estado !== 'EN_PROCESO') return null;
+  const orquestado = config.ejecucion.modo === 'orquestado' && !isProject
+    ? ` Eres el orquestador: ejecuta npm run plan:agentes -- ${pista} y lanza un subagente por encargo.`
+    : '';
+  return `Lee AGENTS.md y aterriza en ${ref}: ${gateAhora.id} (${TIPO[gateAhora.tipo]}), rol ${state.rol_en_turno}. Empieza con npm run status -- ${pista}.${orquestado}`;
+}
+
 function requireText(key, label) {
   if (typeof opts[key] !== 'string' || !opts[key].trim()) fail(`"${accion}" exige ${label} (--${key} "...").`);
   return opts[key].trim();
@@ -235,7 +289,10 @@ switch (accion) {
       BLOQUEADO: 'desbloquear, volver',
       COMPLETADO: isProject ? '—' : 'reabrir --desde Gx --motivo "..." --cita "..." (solo ante inconsistencias graves; STAGE_GATES.md §2.4)',
     };
-    console.log(`Acciones posibles: ${acciones[state.estado] ?? '—'}\n`);
+    console.log(`Acciones posibles: ${acciones[state.estado] ?? '—'}`);
+    const prompt = promptContinuacion(current);
+    if (prompt) console.log(`📋 Prompt para seguir en una conversación nueva:\n   ${prompt}`);
+    console.log('');
     process.exit(0);
   }
   case 'solicitar': {
@@ -243,22 +300,9 @@ switch (accion) {
     if (state.estado !== 'EN_PROCESO' && !resolicitud) fail(`Solo se pide firma desde EN_PROCESO (estado actual: ${state.estado}).`);
     if (current.tipo !== 'halt') fail(`${current.id} es un Checkpoint en el perfil activo: no se pide firma, se usa "avanzar" cuando todo está en verde.`);
     releaseGuard();
-    const pendientes = uncommittedChanges();
-    if (pendientes.length) {
-      fail(`Hay cambios sin commit. Haz commit de los entregables de ${current.id} en la rama antes de pedir la firma (GIT_COMMIT_CONVENTION.md §1.1):\n   ${pendientes.slice(0, 10).join('\n   ')}${pendientes.length > 10 ? `\n   … y ${pendientes.length - 10} más` : ''}`);
-    }
-    if (!isProject && current.id === 'G4') {
-      const { report, gaps, bloqueos } = qaReportGaps(pista);
-      if (gaps.length) fail(`El reporte de QA no está listo para la firma de G4 (QA_REPORT_TEMPLATE.md, sección 0)${report ? ` en ${report}` : ''}:\n   ${gaps.join('\n   ')}`);
-      if (bloqueos.length) {
-        fail(`G4 no se solicita con ${bloqueos.join(', ')} (${report}). Es un veto de QA: npm run gate -- ${pista} volver G3A|G3B --motivo "...". Una prueba omitida se ejecuta o se documenta con su evidencia; un requisito incumplido solo se reevalúa si el Director Humano lo cambia de forma explícita.`);
-      }
-    }
-    const evidencias = preflight();
-    const sucios = uncommittedChanges();
-    if (sucios.length) {
-      fail(`Las verificaciones modificaron archivos versionados (${sucios.slice(0, 5).join(', ')}). Añade esas salidas a .gitignore o haz commit, y vuelve a solicitar.`);
-    }
+    exigirArbolLimpio();
+    exigirReporteQa();
+    const evidencias = verificarSinEnsuciar();
     const commit = headCommit();
     record({
       estado: 'ESPERANDO_APROBACION_HUMANA',
@@ -301,7 +345,9 @@ switch (accion) {
     if (state.estado !== 'EN_PROCESO') fail(`Solo se avanza desde EN_PROCESO (estado actual: ${state.estado}).`);
     if (current.tipo !== 'checkpoint') fail(`${current.id} es un Halt en el perfil activo: requiere "solicitar" y la firma humana ("aprobar").`);
     releaseGuard();
-    const evidencias = preflight();
+    exigirArbolLimpio();
+    exigirReporteQa();
+    const evidencias = verificarSinEnsuciar();
     const extra = evidencias.length ? { verificaciones: evidencias } : {};
     next = track[idx + 1];
     if (next) {
@@ -401,8 +447,10 @@ if (accion === 'aprobar' && isProject && current.niveles.includes('release') && 
   console.log('🚀 Pendiente: publicar main y el tag del release (git push origin main --tags) cuando el Director Humano lo autorice explícitamente.');
 }
 if (sessionEnd) {
-  console.log('🛑 Fin de sesión: espera la firma del Director Humano. Tras la firma, registra "aprobar" y continúa en una sesión nueva (empieza con npm run status).');
+  console.log('🛑 Alto obligatorio: termina tu turno sin empezar la compuerta siguiente y espera la firma del Director Humano. Cuando firme, registra "aprobar"; la compuerta siguiente puede seguir en esta misma conversación (AGENTS.md §5.1).');
 } else if (next) {
-  console.log(`➡️  Siguiente trabajo: ${now.id} con ${state.rol_en_turno}. Recomendado: una sesión nueva para este rol (AGENTS.md §5).`);
+  console.log(`➡️  Siguiente trabajo: ${now.id} con ${state.rol_en_turno}. Puede seguir en esta conversación; conviene una nueva si el contexto ya es largo o si la compuerta construye código (AGENTS.md §5.1).`);
   if (config.ejecucion.modo === 'orquestado' && !isProject) console.log(`🧩 Modo orquestado: npm run plan:agentes -- ${pista} para ver los subagentes recomendados.`);
 }
+const prompt = promptContinuacion(now);
+if (prompt && (sessionEnd || next)) console.log(`📋 Prompt para seguir en una conversación nueva (inclúyelo en tu mensaje final):\n   ${prompt}`);

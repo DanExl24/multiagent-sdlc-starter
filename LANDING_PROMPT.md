@@ -22,7 +22,10 @@ INSTRUCCIONES DE ATERRIZAJE OBLIGATORIAS:
    obligatorio Halt/Yield en cada Stage-Gate con aprobación humana).
 6. Economía de contexto (AGENTS.md §5.1): lee solo el ROLE.md del rol en turno y el
    Contrato de los subroles que apliques; un subrol no es un subagente; cambia el estado
-   con `npm run gate` y termina la sesión al pedir una firma humana.
+   con `npm run gate`; al pedir una firma humana, detente sin empezar la compuerta
+   siguiente (tras la firma puedes seguir en esta conversación) y cierra tu mensaje con
+   el prompt de continuación que imprime `npm run gate`. Si tu herramienta lanza
+   subagentes por su cuenta, usa el modo orquestado (.workflow/EXECUTION_MODES.md).
 
 Por favor, preséntate indicando el rol que estás asumiendo, el Stage-Gate activo
 y cuál es el siguiente paso a ejecutar.

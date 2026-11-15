@@ -85,9 +85,9 @@ function qaReport({ s2 = 0 } = {}) {
   return `# QA\n\n## 0. Revisión\n\n| Indicador | Valor |\n| :--- | ---: |\n| Defectos S1 abiertos | 0 |\n| Defectos S2 abiertos | ${s2} |\n| Requisitos aprobados no cumplidos | 0 |\n| Pruebas omitidas sin evidencia | 0 |\n\n### 0.1. Requisitos aprobados no cumplidos\nNinguno\n\n### 0.2. Limitaciones de entorno\nNinguna\n`;
 }
 
-function g4Fixture({ s2 = 0 } = {}) {
-  const root = fixture({ moduleGate: 'G4' });
-  write(root, `docs/qa/${MOD}/v0.1.0/QA_REPORT.md`, qaReport({ s2 }));
+function g4Fixture({ s2 = 0, report, ...opts } = {}) {
+  const root = fixture({ moduleGate: 'G4', ...opts });
+  write(root, `docs/qa/${MOD}/v0.1.0/QA_REPORT.md`, report ?? qaReport({ s2 }));
   write(root, `changelog.d/${MOD}.md`, '### Added\n- Demo.\n');
   commitAll(root, 'entregables G4');
   return root;
@@ -110,13 +110,42 @@ test('avanzar G3A con una verificación que falla se rechaza y el estado no camb
   assert.equal(state(root).gate_activo, gate('G3A').gate);
 });
 
-test('avanzar G3A con verificaciones en verde pasa y deja la evidencia en el historial', () => {
+test('avanzar G3A con verificaciones en verde pasa, deja la evidencia en el historial e imprime el prompt de continuación', () => {
   const root = fixture({ verificaciones: { G3A: ['node -e "process.exit(0)"'] } });
   const r = run(root, 'avanzar');
   assert.equal(r.status, 0, r.stderr);
   const s = state(root);
   assert.equal(s.gate_activo, gate('G4').gate);
   assert.equal(s.historial_transiciones.at(-1).verificaciones[0].resultado, 'PASS');
+  assert.match(r.stdout, new RegExp(`📋 Prompt para seguir en una conversación nueva[^\\n]*\\n\\s+Lee AGENTS\\.md y aterriza en el módulo ${MOD}: G4 .*rol 05_qa_security_tester`));
+});
+
+test('avanzar se niega con entregables sin commit', () => {
+  const root = fixture({ verificaciones: { G3A: ['node -e "process.exit(0)"'] } });
+  write(root, `backend/src/modules/${MOD}/service.ts`, 'export const x = 1;\n');
+  const r = run(root, 'avanzar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /cambios sin commit/);
+  assert.equal(state(root).gate_activo, gate('G3A').gate);
+});
+
+test('ninguna transición se aplica si el proyecto no pasó por init:project (G0)', () => {
+  const root = fixture({ verificaciones: { G3A: ['node -e "process.exit(0)"'] } });
+  const p = path.join(root, '.workflow', 'current_state.json');
+  write(root, '.workflow/current_state.json', { ...JSON.parse(fs.readFileSync(p, 'utf-8')), proyecto: '{{PROJECT_NAME}}' });
+  commitAll(root, 'sin inicializar');
+  const r = run(root, 'avanzar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /init:project/);
+  assert.equal(run(root, 'estado').status, 0);
+});
+
+test('solicitar imprime el prompt para registrar la firma en una conversación nueva', () => {
+  const root = g4Fixture();
+  const r = run(root, 'solicitar');
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /Alto obligatorio/);
+  assert.match(r.stdout, new RegExp(`apruebo G4 del módulo ${MOD}.*npm run gate -- ${MOD} aprobar --cita`));
 });
 
 test('solicitar G4 sin los entregables con ruta fija se rechaza', () => {
@@ -174,15 +203,24 @@ const runProject = (root, ...args) => spawnSync(process.execPath, ['tooling/gate
 const projectState = (root) => JSON.parse(fs.readFileSync(path.join(root, '.workflow', 'current_state.json'), 'utf-8'));
 
 test('spike: G4 no avanza sin verificaciones que sustituyan la firma', () => {
-  const root = fixture({ escala: 'spike', moduleGate: 'G4' });
+  const root = g4Fixture({ escala: 'spike' });
   const r = run(root, 'avanzar');
   assert.notEqual(r.status, 0);
   assert.match(r.stderr, /pasa sin firma humana/);
   assert.equal(state(root).estado, 'EN_PROCESO');
 });
 
+test('spike: G4 no se cierra con avanzar si el QA_REPORT no trae la sección 0', () => {
+  const root = g4Fixture({ escala: 'spike', verificaciones: { G4: ['node -e "process.exit(0)"'] }, report: '# QA\n\n## 1. Resumen\nTodo en verde.\n' });
+  const r = run(root, 'avanzar');
+  assert.notEqual(r.status, 0);
+  assert.match(r.stderr, /no está listo para cerrar G4/);
+  assert.match(r.stderr, /Defectos S1 abiertos/);
+  assert.equal(state(root).estado, 'EN_PROCESO');
+});
+
 test('spike: G4 con verificaciones en verde cierra el módulo sin firma', () => {
-  const root = fixture({ escala: 'spike', moduleGate: 'G4', verificaciones: { G4: ['node -e "process.exit(0)"'] } });
+  const root = g4Fixture({ escala: 'spike', verificaciones: { G4: ['node -e "process.exit(0)"'] } });
   const r = run(root, 'avanzar');
   assert.equal(r.status, 0, r.stderr);
   const s = state(root);
@@ -268,6 +306,7 @@ test('gate borra los encargos del módulo al cerrar su compuerta y registra marc
   const r = run(root, 'avanzar');
   assert.equal(r.status, 0, r.stderr);
   assert.deepEqual(encargos(root), ['02_otro-backend.md']);
+  assert.match(r.stdout, new RegExp(`Eres el orquestador: ejecuta npm run plan:agentes -- ${MOD}`));
   const ultima = state(root).historial_transiciones.at(-1);
   assert.equal(ultima.modo, 'orquestado');
   assert.match(ultima.marca, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/);

@@ -277,7 +277,7 @@ Las compuertas que dependen de una capa (§2.2) y las que un perfil sin producci
 - **Agente Receptor:** `06_devops_release`
 - **Aprobador Requerido:** **Director Humano**
 - **Entregables Obligatorios:**
-  - `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md`: Auditoría forense con análisis RCA de cualquier defecto encontrado. Su **sección 0** es obligatoria aunque esté vacía: el resumen verificable (S1 y S2 abiertos, requisitos aprobados no cumplidos y pruebas omitidas sin evidencia), los requisitos incumplidos y las limitaciones de entorno con evidencia. `npm run gate -- [XX_modulo] solicitar` no pide la firma de G4 sin ella, ni si algún indicador del resumen es mayor que 0. Un resultado `NOT_RUN` de las herramientas (`audit:dast`, `test:load`) es una prueba omitida, nunca un PASS.
+  - `docs/qa/[XX_modulo]/[vX.Y.Z]/QA_REPORT.md`: Auditoría forense con análisis RCA de cualquier defecto encontrado. Su **sección 0** es obligatoria aunque esté vacía: el resumen verificable (S1 y S2 abiertos, requisitos aprobados no cumplidos y pruebas omitidas sin evidencia), los requisitos incumplidos y las limitaciones de entorno con evidencia. `npm run gate -- [XX_modulo] solicitar` no pide la firma de G4 sin ella, ni si algún indicador del resumen es mayor que 0. En `spike`, que reduce el reporte a esta sección (`qa_resumen`) y cierra G4 sin firma, `avanzar` aplica la misma comprobación. Un resultado `NOT_RUN` de las herramientas (`audit:dast`, `test:load`) es una prueba omitida, nunca un PASS.
   - Suite de pruebas automatizadas 100% en verde y 0 defectos S1/S2 abiertos.
   - **Certificación AST de Cero ANY:** Verificación de `npm run check:no-any` en `backend/` y `frontend/` con 0 incidencias. Si se detecta un solo `any`, el QA Lead aplica **Veto Inmediato (Stop-the-Line)**.
   - Fragmento del módulo en `changelog.d/[XX_modulo].md` (formato Keep a Changelog), validado por `npm run check:docs`. En una rama de módulo no se edita `CHANGELOG.md`.
@@ -364,7 +364,7 @@ Además de los campos comunes, cada archivo de módulo declara `modulo` (igual a
 ## 6. Mandato Técnico para Modelos de Lenguaje (LLMs)
 
 > ⚠️ **REGLA DIRECTA AL AGENTE:**  
-> Al culminar los entregables de una compuerta que sea **🛑 Halt en el perfil activo**, ejecuta `npm run gate -- [pista] solicitar` y **DEBES DETENER EL LLAMADO DE HERRAMIENTAS**. Tras la firma, regístrala con `npm run gate -- [pista] aprobar --cita "..."` y cierra la sesión (`AGENTS.md` §5.1). No encadenes la siguiente fase. Explica lo realizado, señala los aspectos visuales o arquitecturales a evaluar y espera la respuesta del usuario.  
+> Al culminar los entregables de una compuerta que sea **🛑 Halt en el perfil activo**, ejecuta `npm run gate -- [pista] solicitar` y **DEBES DETENER EL LLAMADO DE HERRAMIENTAS**. Tras la firma, regístrala con `npm run gate -- [pista] aprobar --cita "..."`; la compuerta siguiente puede seguir en la misma conversación (`AGENTS.md` §5.1), pero nunca antes de la firma: no encadenes la siguiente fase. Cierra tu mensaje con el prompt de continuación que imprime el comando. Explica lo realizado, señala los aspectos visuales o arquitecturales a evaluar y espera la respuesta del usuario.  
 > Con el perfil `standard` son Halt **G1**, **G2**, **G3B**, **G4**, **G5** y **G6**, y **G3A** es un checkpoint automático. Otros perfiles cambian esa lista (§2.3); consulta la tuya con `npm run status -- [XX_nombre]` antes de seguir. **G5 es Halt en cualquier perfil, y G4 también en todo perfil que llegue a producción** (en `spike`, G4 pasa con verificaciones obligatorias y nada llega a producción).
 
 ---
@@ -408,6 +408,7 @@ Cada entregable tiene un ID que citan los perfiles de `.workflow/profiles/`. La 
 | `no_any_frontend` | G3B | modulo | `frontend` | Sí | `check:no-any` en verde en el frontend | — |
 | `integracion_persistencia_frontend` | G3B | modulo | `frontend` | Sí | Si el frontend persiste datos: prueba de integración contra el almacenamiento real (sin mocks) por cada ruta de guardado o lectura | — |
 | `qa_report` | G4 | modulo | — | Sí | `QA_REPORT.md` con RCA de cada defecto | `docs/qa/{modulo}/*/QA_REPORT.md` |
+| `qa_resumen` | G4 | modulo | — | No | `QA_REPORT.md` reducido a su sección 0: resumen verificable, requisitos incumplidos y limitaciones de entorno | `docs/qa/{modulo}/*/QA_REPORT.md` |
 | `no_any_cert` | G4 | modulo | — | Sí | Certificación AST de cero `any` (pilar 4) | — |
 | `vitest_suite` | G4 | modulo | — | Sí | Suite automatizada al 100 % y 0 defectos S1/S2 abiertos (pilar 1) | — |
 | `api_bruno` | G4 | modulo | `backend` | Sí | Colección de contratos de API con Bruno (pilar 1) | — |

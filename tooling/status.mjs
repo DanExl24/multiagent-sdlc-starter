@@ -75,6 +75,9 @@ if (target) {
 }
 
 console.log(`\n📍 Proyecto: ${project.proyecto ?? '-'} · versión ${project.version_actual ?? '-'}`);
+if (/\{\{[A-Z_]+\}\}/.test(`${project.proyecto ?? ''} ${project.dominio ?? ''}`)) {
+  console.log('   ⚠️  Proyecto sin inicializar (G0 Bootstrap): ejecuta npm run init:project. Hasta entonces npm run gate no aplica transiciones.');
+}
 console.log(`   Perfil: ${perfilLabel(config.perfil.modificadores)}${config.perfil.confirmado ? '' : ' (⚠️ SIN CONFIRMAR: pregúntalo al Director Humano antes de G1)'} · capas activas: ${activeLayers(config).join(', ')} · ejecución: ${config.ejecucion.modo}${config.ejecucion.modo === 'orquestado' ? ` (máx. ${config.ejecucion.max_subagentes} subagentes; npm run plan:agentes)` : ''}`);
 console.log(`   Pista de proyecto/release: ${ICON[project.estado] ?? '⚪'} ${gateLabel(project)} · ${project.estado} · rol en turno: ${project.rol_en_turno}`);
 

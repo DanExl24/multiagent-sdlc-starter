@@ -120,7 +120,7 @@ stateDiagram-v2
 
 > 🔀 **Pistas paralelas.** El Orquestador es dueño de `.workflow/current_state.json` (línea base del proyecto y releases) y supervisa los archivos de `.workflow/modules/`, uno por módulo, cada uno con su responsable y su rama. Antes de cada release ejecuta `npm run status` para ver qué módulos superaron G4, y `npm run validate:state` para confirmar que ningún módulo se adelantó a la línea base ni a sus dependencias. Los checklists de G1 y G2 se aplican tanto a la línea base como a cada módulo.
 
-> 🔁 **Transiciones y sesiones.** El estado se cambia con `npm run gate` (nunca a mano) y cada Halt cierra la sesión (`AGENTS.md` §5.1). Tras una firma, el Orquestador la registra con `npm run gate -- [pista] aprobar --cita "..."`; el rol siguiente empieza en una sesión nueva.
+> 🔁 **Transiciones y sesiones.** El estado se cambia con `npm run gate` (nunca a mano) y cada Halt detiene el trabajo hasta la firma (`AGENTS.md` §5.1). Tras una firma, el Orquestador la registra con `npm run gate -- [pista] aprobar --cita "..."`; el rol siguiente puede seguir en la misma conversación o en una nueva con el prompt de continuación que imprime el comando.
 
 > 🧰 **Acciones del Kaizen.** Al aprobarse G6, el Orquestador comprueba dónde se ejecutará cada acción de alcance `futuro`: en el G1 del siguiente módulo o, si no hay ninguno previsto, en un módulo de mantenimiento que crea el PM (`CONTINUOUS_IMPROVEMENT_PROTOCOL.md`, paso 6). Nunca en la misma sesión de G6.
 

@@ -29,7 +29,8 @@
     ],
     "adicionales": [
       "arquitectura_c4_reducida",
-      "e2e_smoke"
+      "e2e_smoke",
+      "qa_resumen"
     ]
   }
 }

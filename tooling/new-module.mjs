@@ -130,6 +130,6 @@ for (const file of created) console.log(`   - ${file}`);
 if (state.origen) console.log(`   Módulo de mantenimiento: sus historias son las acciones de ${state.origen} (CONTINUOUS_IMPROVEMENT_PROTOCOL.md, paso 6).`);
 console.log(`\nSiguientes pasos:`);
 console.log(`   1. git switch -c ${state.rama}`);
-console.log(`   2. El Product Manager completa 01 a 03; al terminar: npm run gate -- ${id} solicitar (y commit en la rama).`);
+console.log(`   2. El Product Manager completa 01 a 03; al terminar, commit en la rama y npm run gate -- ${id} solicitar.`);
 console.log(`   3. Cada rol registra su bitácora en multiAgents/[rol]/worklog/${id}.md y los cambios en changelog.d/${id}.md (nunca en CHANGELOG.md).`);
-console.log(`   4. Plan del módulo según el perfil: npm run status -- ${id}. Cada firma humana cierra la sesión (AGENTS.md §5.1).`);
+console.log(`   4. Plan del módulo según el perfil: npm run status -- ${id}. En cada Halt el agente se detiene hasta la firma humana (AGENTS.md §5.1).`);
