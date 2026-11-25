@@ -1,5 +1,8 @@
 # 🤖 Multi-Agent SDLC Starter Kit
 
+Preparación específica para el producto existente:
+[variante VELTRIX](variants/veltrix/README.md).
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Zero ANY](https://img.shields.io/badge/TypeScript-Zero%20ANY%20Enforced-emerald.svg)](tooling/)
 [![Stage Gates](https://img.shields.io/badge/Methodology-Artifact--Driven%20Stage--Gates-003366.svg)](.workflow/)

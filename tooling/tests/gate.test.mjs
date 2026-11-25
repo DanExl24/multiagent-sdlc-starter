@@ -90,6 +90,144 @@ const run = (root, ...args) => spawnSync(process.execPath, ['tooling/gate.mjs', 
 const state = (root) => JSON.parse(fs.readFileSync(path.join(root, '.workflow', 'modules', `${MOD}.json`), 'utf-8'));
 const commitAll = (root, msg) => { git(root, 'add', '-A'); git(root, 'commit', '-q', '-m', msg); };
 
+test('G1 usa las rutas canónicas de Buzón y conserva los demás requisitos', () => {
+  const root = fixture({ moduleGate: 'G1' });
+  const oldState = state(root);
+  fs.unlinkSync(path.join(root, '.workflow', 'modules', `${MOD}.json`));
+  write(root, '.workflow/modules/buzon.json', { ...oldState, modulo: 'buzon' });
+  write(root, 'docs/modules/buzon/historias_usuario.md', '# Historias existentes\n');
+  write(root, 'docs/modules/buzon/reglas_negocio.md', '# Reglas existentes\n');
+  write(root, 'docs/modules/buzon/01_SPEC_FUNCIONAL.md', '# Nombre anterior\n');
+  const configFile = '.workflow/project.json';
+  const config = JSON.parse(fs.readFileSync(path.join(root, configFile), 'utf8'));
+  const validate = () => spawnSync(process.execPath, ['tooling/validate-state.mjs'], { cwd: root, encoding: 'utf8' });
+  assert.notEqual(validate().status, 0, 'un ID sin declarar debe rechazarse');
+  const routes = {
+    spec_funcional: ['docs/modules/buzon/reglas_negocio.md', 'docs/product/especificacion/incremento.md'],
+    historias_bdd: ['docs/modules/buzon/historias_usuario.md'],
+    codigo: { backend: ['echo'] },
+  };
+  write(root, configFile, { ...config, modulos_existentes: { buzon: { ...routes, historias_bdd: ['docs/../fuera.md'] } } });
+  assert.match(validate().stderr, /modulos_existentes\.buzon\.historias_bdd/);
+  write(root, configFile, { ...config, modulos_existentes: { buzon: { ...routes, codigo: { backend: ['../echo'] } } } });
+  assert.match(validate().stderr, /modulos_existentes\.buzon\.codigo\.backend/);
+  write(root, 'backend/src/modules/echo/index.ts', '// Alias del módulo existente\n');
+  write(root, configFile, { ...config, modulos_existentes: { buzon: routes } });
+  const validation = validate();
+  assert.equal(validation.status, 0, validation.stderr);
+  assert.doesNotMatch(validation.stderr, /backend\/src\/modules\/echo:/);
+  assert.match(validation.stderr, /backend\/src\/modules\/01_demo:/);
+  const status = spawnSync(process.execPath, ['tooling/status.mjs', 'buzon'], { cwd: root, encoding: 'utf8' });
+  assert.equal(status.status, 0, status.stderr);
+  assert.match(status.stdout, /historias_usuario\.md \(presente\)/);
+  assert.match(status.stdout, /incremento\.md \(falta\)/);
+  assert.match(status.stdout, /03_FLUJO_Y_ESTADOS\.md \(falta\)/);
+  assert.doesNotMatch(status.stdout, /01_SPEC_FUNCIONAL\.md|02_HISTORIAS_USUARIO\.md/);
+  commitAll(root, 'adopcion documental');
+  const request = () => spawnSync(process.execPath, ['tooling/gate.mjs', 'buzon', 'solicitar'], { cwd: root, encoding: 'utf8' });
+  const missing = request();
+  assert.notEqual(missing.status, 0);
+  assert.match(missing.stderr, /spec_funcional: docs\/product\/especificacion\/incremento\.md/);
+  assert.match(missing.stderr, /flujo_estados: .*03_FLUJO_Y_ESTADOS\.md/);
+  assert.doesNotMatch(missing.stderr, /historias_bdd/);
+  write(root, 'docs/product/especificacion/incremento.md', '# Especificación del incremento\n');
+  write(root, 'docs/modules/buzon/03_FLUJO_Y_ESTADOS.md', '# Flujo y estados\n');
+  commitAll(root, 'entregables del ejercicio');
+  const requested = request();
+  assert.equal(requested.status, 0, requested.stderr);
+  const after = JSON.parse(fs.readFileSync(path.join(root, '.workflow/modules/buzon.json'), 'utf8'));
+  assert.equal(after.gate_activo, oldState.gate_activo);
+  assert.equal(after.estado, 'ESPERANDO_APROBACION_HUMANA');
+  assert.equal(after.historial_transiciones.at(-1).accion, 'solicitar');
+  assert.ok(!fs.existsSync(path.join(root, 'docs/modules/buzon/02_HISTORIAS_USUARIO.md')));
+});
+
+test('G1 con atdd_spec configurado bloquea si falta, exige re-solicitar si cambia y respeta la línea base', () => {
+  const root = fixture({ moduleGate: 'G1', projectGate: 'G1' });
+  const oldState = state(root);
+  fs.unlinkSync(path.join(root, '.workflow', 'modules', `${MOD}.json`));
+  write(root, '.workflow/modules/buzon.json', { ...oldState, modulo: 'buzon' });
+  write(root, 'docs/modules/buzon/reglas_negocio.md', '# Reglas\n');
+  write(root, 'docs/modules/buzon/historias_usuario.md', '# Historias\n');
+  write(root, 'docs/modules/buzon/flujo_estados.md', '# Flujo\n');
+  write(root, 'backend/src/modules/echo/index.ts', '// Echo\n');
+
+  const configFile = '.workflow/project.json';
+  const config = JSON.parse(fs.readFileSync(path.join(root, configFile), 'utf8'));
+  write(root, configFile, {
+    ...config,
+    modulos_existentes: {
+      buzon: {
+        spec_funcional: ['docs/modules/buzon/reglas_negocio.md'],
+        historias_bdd: ['docs/modules/buzon/historias_usuario.md'],
+        flujo_estados: ['docs/modules/buzon/flujo_estados.md'],
+        atdd_spec: ['docs/modules/buzon/01_ATDD_SPEC.md'],
+        codigo: { backend: ['echo'] },
+      },
+    },
+  });
+  commitAll(root, 'buzon con atdd_spec');
+
+  const statusMissing = spawnSync(process.execPath, ['tooling/status.mjs', 'buzon'], { cwd: root, encoding: 'utf8' });
+  assert.equal(statusMissing.status, 0, statusMissing.stderr);
+  assert.match(statusMissing.stdout, /01_ATDD_SPEC\.md \(falta\)/);
+
+  const runBuzon = (...args) => spawnSync(process.execPath, ['tooling/gate.mjs', 'buzon', ...args], { cwd: root, encoding: 'utf8' });
+  const buzonState = () => JSON.parse(fs.readFileSync(path.join(root, '.workflow/modules/buzon.json'), 'utf8'));
+
+  const missing = runBuzon('solicitar');
+  assert.notEqual(missing.status, 0);
+  assert.match(missing.stderr, /atdd_spec: docs\/modules\/buzon\/01_ATDD_SPEC\.md/);
+  assert.equal(buzonState().estado, 'EN_PROCESO');
+  assert.equal(buzonState().historial_transiciones.length, 0);
+
+  write(root, 'docs/modules/buzon/01_ATDD_SPEC.md', '# ATDD inicial\n');
+  commitAll(root, 'agregar atdd_spec');
+
+  const statusPresent = spawnSync(process.execPath, ['tooling/status.mjs', 'buzon'], { cwd: root, encoding: 'utf8' });
+  assert.equal(statusPresent.status, 0, statusPresent.stderr);
+  assert.match(statusPresent.stdout, /01_ATDD_SPEC\.md \(presente\)/);
+
+  const requested = runBuzon('solicitar');
+  assert.equal(requested.status, 0, requested.stderr);
+  assert.equal(buzonState().estado, 'ESPERANDO_APROBACION_HUMANA');
+
+  write(root, 'docs/modules/buzon/01_ATDD_SPEC.md', '# ATDD editada\n');
+  commitAll(root, 'editar atdd tras solicitar');
+
+  const staleApprove = runBuzon('aprobar', '--cita', 'Apruebo G1 de buzon');
+  assert.notEqual(staleApprove.status, 0);
+  assert.match(staleApprove.stderr, /cambiaron después de solicitar la firma/);
+  assert.match(staleApprove.stderr, /01_ATDD_SPEC\.md/);
+
+  const reRequested = runBuzon('solicitar');
+  assert.equal(reRequested.status, 0, reRequested.stderr);
+
+  const noQuote = runBuzon('aprobar');
+  assert.notEqual(noQuote.status, 0);
+  assert.match(noQuote.stderr, /exige las palabras exactas.*--cita/);
+
+  const beforeProject = runBuzon('aprobar', '--cita', 'Apruebo G1 de buzon');
+  assert.notEqual(beforeProject.status, 0);
+  assert.match(beforeProject.stderr, /la línea base del proyecto aún no/);
+  assert.equal(buzonState().gate_activo, oldState.gate_activo);
+
+  write(root, 'docs/project/prd.md', '# PRD\n');
+  write(root, 'docs/project/glossary.md', '# Glosario\n');
+  commitAll(root, 'linea base G1');
+  const reqProject = spawnSync(process.execPath, ['tooling/gate.mjs', 'proyecto', 'solicitar'], { cwd: root, encoding: 'utf8' });
+  assert.equal(reqProject.status, 0, reqProject.stderr);
+  const appProject = spawnSync(process.execPath, ['tooling/gate.mjs', 'proyecto', 'aprobar', '--cita', 'Apruebo G1 proyecto'], { cwd: root, encoding: 'utf8' });
+  assert.equal(appProject.status, 0, appProject.stderr);
+
+  const reRequested2 = runBuzon('solicitar');
+  assert.equal(reRequested2.status, 0, reRequested2.stderr);
+  const approved = runBuzon('aprobar', '--cita', 'Apruebo G1 de buzon');
+  assert.equal(approved.status, 0, approved.stderr);
+  assert.equal(buzonState().gate_activo, gate('G2').gate);
+  assert.equal(buzonState().estado, 'EN_PROCESO');
+});
+
 function qaReport({ s2 = 0 } = {}) {
   return `# QA\n\n## 0. Revisión\n\n| Indicador | Valor |\n| :--- | ---: |\n| Defectos S1 abiertos | 0 |\n| Defectos S2 abiertos | ${s2} |\n| Requisitos aprobados no cumplidos | 0 |\n| Pruebas omitidas sin evidencia | 0 |\n\n### 0.1. Requisitos aprobados no cumplidos\nNinguno\n\n### 0.2. Limitaciones de entorno\nNinguna\n`;
 }

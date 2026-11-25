@@ -11,6 +11,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { rootDir, USOS_HERRAMIENTA } from './stage-gates.mjs';
 
+const EXISTING_MODULE_ID = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$/;
+const PRODUCT_DELIVERABLES = new Set(['spec_funcional', 'historias_bdd', 'flujo_estados', 'atdd_spec']);
+const PRODUCT_DOC = /^docs\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.md$/;
+const MODULE_FOLDER = /^[a-zA-Z0-9_-]+$/;
+
 export const PROJECT_CONFIG_PATH = path.join(rootDir, '.workflow', 'project.json');
 export const LAYERS = ['backend', 'frontend'];
 
@@ -25,7 +30,13 @@ export const DEFAULT_CONFIG = {
   verificaciones: {},
   herramientas: [],
   ejecucion: { modo: 'secuencial', max_subagentes: 3, confirmado: false },
+  modulos_existentes: {},
 };
+
+export function existingModule(config, id) {
+  const modules = config.modulos_existentes ?? {};
+  return Object.hasOwn(modules, id) ? modules[id] : undefined;
+}
 
 const isRelativeInside = (p) => typeof p === 'string' && p.length > 0 && !path.isAbsolute(p) && !p.split(/[\\/]/).includes('..');
 
@@ -53,6 +64,41 @@ export function loadProjectConfig() {
   }
   if (LAYERS.every((name) => capas[name]?.activa === false)) errors.push('project.json: al menos una capa debe estar activa.');
   if (!isRelativeInside(config.rutas?.contratos)) errors.push('project.json: rutas.contratos debe ser una ruta relativa dentro del repositorio.');
+
+  if (Object.hasOwn(config, 'modulos_existentes')) {
+    const modules = config.modulos_existentes;
+    if (!modules || typeof modules !== 'object' || Array.isArray(modules)) {
+      errors.push('project.json: modulos_existentes debe ser un objeto indexado por ID.');
+    } else {
+      for (const [id, deliverables] of Object.entries(modules)) {
+        const label = `project.json: modulos_existentes.${id}`;
+        if (!EXISTING_MODULE_ID.test(id) || id === 'proyecto') errors.push(`${label}: ID de módulo existente inválido.`);
+        if (!deliverables || typeof deliverables !== 'object' || Array.isArray(deliverables)) {
+          errors.push(`${label}: se esperaba un objeto de entregables.`);
+          continue;
+        }
+        for (const [name, routes] of Object.entries(deliverables)) {
+          if (name === 'codigo') {
+            if (!routes || typeof routes !== 'object' || Array.isArray(routes)) {
+              errors.push(`${label}.codigo: se esperaba un objeto de carpetas por capa.`);
+              continue;
+            }
+            for (const [layer, folders] of Object.entries(routes)) {
+              if (!LAYERS.includes(layer) || !Array.isArray(folders) || folders.length === 0
+                || !folders.every((folder) => typeof folder === 'string' && MODULE_FOLDER.test(folder))) {
+                errors.push(`${label}.codigo.${layer}: indica una capa válida y nombres de carpetas directas dentro de su ruta de módulos.`);
+              }
+            }
+            continue;
+          }
+          if (!PRODUCT_DELIVERABLES.has(name) || !Array.isArray(routes) || routes.length === 0
+            || !routes.every((route) => typeof route === 'string' && PRODUCT_DOC.test(route))) {
+            errors.push(`${label}.${name}: indica un entregable de Producto y una lista no vacía de archivos Markdown bajo docs/.`);
+          }
+        }
+      }
+    }
+  }
 
   // Perfil (opcional): escala, modificadores del proyecto y ADR que lo justifica.
   config.perfil = { ...DEFAULT_CONFIG.perfil, ...(config.perfil ?? {}) };

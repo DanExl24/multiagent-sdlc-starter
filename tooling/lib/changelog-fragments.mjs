@@ -12,7 +12,7 @@ import { rootDir } from './stage-gates.mjs';
 
 export const FRAGMENTS_DIR = path.join(rootDir, 'changelog.d');
 export const SECTIONS = ['Added', 'Changed', 'Deprecated', 'Removed', 'Fixed', 'Security'];
-const NAME_RE = /^(proyecto|\d{2}_[a-z0-9]+(?:_[a-z0-9]+)*)(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?\.md$/;
+const NAME_RE = /^((?:[a-z][a-z0-9]*|\d{2}_[a-z0-9]+)(?:_[a-z0-9]+)*)(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?\.md$/;
 const IGNORED = new Set(['README.md']);
 
 /** @returns {{sections: Map<string, string[]>, errors: string[]}} */
@@ -63,7 +63,7 @@ export function loadFragments() {
       const file = path.join(FRAGMENTS_DIR, name);
       const match = name.match(NAME_RE);
       const { sections, errors } = parseFragment(fs.readFileSync(file, 'utf-8'));
-      if (!match) errors.unshift('nombre no válido. Usa "[XX_nombre](-descripcion).md" o "proyecto(-descripcion).md".');
+      if (!match) errors.unshift('nombre no válido. Usa "[id_modulo](-descripcion).md" o "proyecto(-descripcion).md".');
       return { name, file, owner: match ? match[1] : null, sections, errors };
     });
 }

@@ -1,0 +1,77 @@
+{
+  "nombre": "VELTRIX",
+  "estado": "PREPARACION",
+  "origen": {
+    "starter": {
+      "repositorio": "https://github.com/DanExl24/multiagent-sdlc-starter",
+      "commit": "4c0458d8b70623b9d0048a2e100a722181fe4a30",
+      "version": "1.25.0"
+    },
+    "kit": {
+      "repositorio": "https://github.com/DanExl24/ai-agentic-audit-kit",
+      "commit": "0032a1965780e48b2eda873410ea5852421f4355",
+      "plugin": "product",
+      "version": "0.4.1"
+    }
+  },
+  "configuracion_propuesta": "project.example.json",
+  "componentes": {
+    "hub": "hub/src",
+    "agent": "agent/src",
+    "web": "web/src",
+    "shared": "shared"
+  },
+  "modulo": {
+    "id": "buzon",
+    "nombre": "ECHO — Buzón",
+    "artefactos_existentes": {
+      "historias": "docs/modules/buzon/historias_usuario.md",
+      "reglas": "docs/modules/buzon/reglas_negocio.md",
+      "flujo_estados": "docs/modules/buzon/flujo_estados.md",
+      "contexto": ".sdlc/context.md"
+    },
+    "ficha": "docs/modules/buzon/README.md",
+    "registro_adopcion": {
+      "estado": "INVENTARIADO",
+      "rama_veltrix": "codex/sdlc-pilot",
+      "revision_evaluada": "0993b064e112b0b22a661e5e9a63c2bcc80cdac7",
+      "evidencia": [
+        { "entrega": "Estabilización del listado e identidad", "commit": "4ca5157", "ruta": "docs/modules/buzon/evidencia-estabilizacion-2026-11-23.md" },
+        { "entrega": "Listado de solo lectura en ECHO", "commit": "9651cca", "ruta": "docs/modules/buzon/evidencia-echo-primer-corte-2026-11-23.md" },
+        { "entrega": "Simulación de copia en demo", "commit": "7ba3973", "ruta": "docs/modules/buzon/evidencia-copia-demo-2026-11-23.md" },
+        { "entrega": "Operación de copia en ECHO", "commit": "0993b06", "ruta": "docs/modules/buzon/evidencia-echo-copiar-en-pc-2026-11-24.md" }
+      ],
+      "incremento_pendiente": "EP-BUZ-001: caducidad de notas, bloqueada por decisiones abiertas.",
+      "compuertas_aprobadas_por_adopcion": []
+    }
+  },
+  "integracion_skill": {
+    "habilitada": false,
+    "rol": "01_product_manager",
+    "subrol": "03_functional_requirements_bdd",
+    "skill": "product:user-stories",
+    "ruta_en_kit": "plugins/product/skills/user-stories/SKILL.md",
+    "estandares_en_kit": [
+      "plugins/product/standards/ids-and-links.md",
+      "plugins/product/standards/output-formats.md",
+      "plugins/product/standards/context.md",
+      "plugins/product/standards/handoffs.md"
+    ],
+    "artefacto_salida": "historias",
+    "tecnica_alternativa": "multiAgents/01_product_manager/subroles/03_functional_requirements_bdd.md",
+    "comparacion": {
+      "estado": "EJECUTADA",
+      "historia": "HU-BUZ-004",
+      "revision_base_veltrix": "5948ba884eca309b61112b923507b1f3f0a2c1e4",
+      "resultado_seleccionado": "product:user-stories",
+      "commit_local_veltrix": "3b2efae05a6e7653bd0147d1f70f9812da32556f",
+      "registro": "PRODUCT_STORIES.md"
+    }
+  },
+  "pendientes_incorporacion": [
+    "Revisar el flujo y estados del Buzón vigente y la especificación ATDD exigida por el perfil antes de una solicitud formal de G1.",
+    "Adaptar las exigencias de Zod, persistencia, herramientas y QA al stack y al riesgo de VELTRIX.",
+    "Preparar una incorporación que preserve package.json, documentos y configuración existentes.",
+    "Completar y revisar perfil, fundación, herramientas y modo de ejecución antes de activar el flujo."
+  ]
+}

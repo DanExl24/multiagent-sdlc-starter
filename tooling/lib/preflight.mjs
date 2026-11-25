@@ -90,11 +90,28 @@ export function testIndexGaps(table, planEntregables, { gateId, modulo, usosVali
  * Entregables del plan efectivo para esta compuerta cuya ruta fija no existe.
  * @param {Map<string, string>} planEntregables  id → origen (de resolvePlan)
  */
-export function missingDeliverables(table, planEntregables, { gateId, pistas, modulo, version }) {
+export function missingDeliverables(table, planEntregables, { gateId, pistas, modulo, version, canonical = {} }) {
   const missing = [];
   for (const id of planEntregables.keys()) {
     const e = table.entregables.get(id);
-    if (!e?.ruta || e.gate !== gateId || !pistas.includes(e.pista)) continue;
+    if (!e || e.gate !== gateId || !pistas.includes(e.pista)) continue;
+    const routes = e.pista === 'modulo' && gateId === 'G1' ? canonical[id] : undefined;
+    if (routes) {
+      for (const ruta of routes) {
+        try {
+          const file = fs.realpathSync(path.join(rootDir, ruta));
+          const relative = path.relative(fs.realpathSync(rootDir), file);
+          if (relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative) || !fs.statSync(file).isFile()) {
+            missing.push({ id, ruta });
+          }
+        } catch (error) {
+          if (error.code !== 'ENOENT' && error.code !== 'ENOTDIR') throw error;
+          missing.push({ id, ruta });
+        }
+      }
+      continue;
+    }
+    if (!e.ruta) continue;
     const ruta = fillPlaceholders(e.ruta, { modulo, version });
     if (!pathExists(ruta)) missing.push({ id, ruta });
   }

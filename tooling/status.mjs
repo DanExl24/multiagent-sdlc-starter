@@ -11,7 +11,8 @@
  */
 import { execSync } from 'node:child_process';
 import { loadStageGates, rootDir } from './lib/stage-gates.mjs';
-import { loadProjectConfig, activeLayers } from './lib/project-config.mjs';
+import { loadProjectConfig, activeLayers, existingModule } from './lib/project-config.mjs';
+import { fillPlaceholders, missingDeliverables } from './lib/preflight.mjs';
 import { loadProfiles, resolvePlan } from './lib/profiles.mjs';
 import {
   gatesForTrack, loadModuleStates, loadProjectState, moduleModifiers, projectModifiers, validateWorkflow,
@@ -20,7 +21,11 @@ import {
 const table = loadStageGates();
 const project = loadProjectState();
 const modules = loadModuleStates();
-const { config } = loadProjectConfig();
+const { config, errors: configErrors } = loadProjectConfig();
+if (configErrors.length) {
+  console.error(configErrors.join('\n'));
+  process.exit(1);
+}
 const profiles = loadProfiles(table);
 const byGate = new Map(table.stateful.map((g) => [g.gate, g]));
 
@@ -37,6 +42,7 @@ function printPlan(title, track, mods, current) {
     process.exit(1);
   }
   const pistas = track === 'modulo' ? ['modulo'] : ['proyecto', 'release'];
+  const canonical = track === 'modulo' ? existingModule(config, title) : undefined;
   console.log(`\n🧭 Plan efectivo de ${title} · perfil: ${perfilLabel(mods)}\n`);
   for (const gate of gatesForTrack(table, track, config, plan.tipos)) {
     const marker = current === gate.gate ? '  ◀ en curso' : '';
@@ -45,12 +51,27 @@ function printPlan(title, track, mods, current) {
       const e = table.entregables.get(id);
       return e.gate === gate.id && pistas.includes(e.pista);
     });
+    const showCanonical = canonical && gate.id === 'G1';
+    const vars = { modulo: title, version: project.version_actual ?? '' };
+    const missing = showCanonical
+      ? missingDeliverables(table, plan.entregables, { ...vars, gateId: gate.id, pistas, canonical })
+      : [];
     for (const [id, origen] of items) {
+      const item = table.entregables.get(id);
       const tag = origen === 'base' ? '' : `  (${origen})`;
-      const uso = table.entregables.get(id).herramienta;
+      if (showCanonical && (item.ruta || canonical[id])) {
+        const paths = canonical[id] ?? [fillPlaceholders(item.ruta, vars)];
+        console.log(`        - ${id}${tag}`);
+        for (const ruta of paths) {
+          const state = missing.some((entry) => entry.id === id && entry.ruta === ruta) ? 'falta' : 'presente';
+          console.log(`          - ${ruta} (${state})`);
+        }
+        continue;
+      }
+      const uso = item.herramienta;
       const declaradas = uso ? config.herramientas.filter((h) => h.uso === uso).map((h) => h.nombre) : [];
       const tool = !uso ? '' : declaradas.length ? `  🧰 ${declaradas.join(', ')}` : `  ⚠️ sin herramienta "${uso}" (npm run doctor)`;
-      console.log(`        - ${table.entregables.get(id).descripcion.replace(/`/g, '')}${tag}${tool}`);
+      console.log(`        - ${item.descripcion.replace(/`/g, '')}${tag}${tool}`);
     }
     const cmds = config.verificaciones?.[gate.id] ?? [];
     if (cmds.length) console.log(`        🔎 Verificación previa: ${cmds.join(' · ')}`);

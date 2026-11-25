@@ -1,0 +1,55 @@
+{
+  "capas": {
+    "backend": {
+      "activa": true,
+      "raiz": "hub",
+      "modulos": "hub/src/modules"
+    },
+    "frontend": {
+      "activa": true,
+      "raiz": "web",
+      "modulos": "web/src/features"
+    }
+  },
+  "rutas": {
+    "contratos": "shared"
+  },
+  "modulos_existentes": {
+    "buzon": {
+      "spec_funcional": ["docs/modules/buzon/reglas_negocio.md"],
+      "historias_bdd": ["docs/modules/buzon/historias_usuario.md"],
+      "flujo_estados": ["docs/modules/buzon/flujo_estados.md"],
+      "atdd_spec": ["docs/modules/buzon/01_ATDD_SPEC.md"],
+      "codigo": {
+        "backend": ["echo"],
+        "frontend": ["notes"]
+      }
+    }
+  },
+  "perfil": {
+    "escala": "standard",
+    "modificadores": [],
+    "adr": null,
+    "confirmado": false
+  },
+  "fundacion": {
+    "estado": "PENDIENTE",
+    "stack": {
+      "backend": ["Node.js", "TypeScript", "node:http", "node:sqlite"],
+      "frontend": ["React", "TypeScript", "Vite", "Tailwind CSS"],
+      "agent": ["Node.js", "TypeScript"]
+    },
+    "adr_stack": null,
+    "adr_estructura": null
+  },
+  "verificaciones": {
+    "G3A": ["npm run typecheck", "npm test"],
+    "G3B": ["npm run typecheck:web", "npm run build:web"]
+  },
+  "herramientas": [],
+  "ejecucion": {
+    "modo": "secuencial",
+    "max_subagentes": 3,
+    "confirmado": false
+  }
+}

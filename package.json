@@ -11,6 +11,7 @@
     "validate:state": "node tooling/validate-state.mjs",
     "status": "node tooling/status.mjs",
     "doctor": "node tooling/doctor.mjs",
+    "inspect:veltrix": "node tooling/inspect-veltrix.mjs",
     "gate": "node tooling/gate.mjs",
     "new:module": "node tooling/new-module.mjs",
     "plan:agentes": "node tooling/plan-agentes.mjs",

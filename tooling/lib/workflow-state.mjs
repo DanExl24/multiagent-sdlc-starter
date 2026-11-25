@@ -8,12 +8,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { rootDir } from './stage-gates.mjs';
-import { DEFAULT_CONFIG, activeLayers, contractsDir, layerModulesDir } from './project-config.mjs';
+import { DEFAULT_CONFIG, activeLayers, contractsDir, existingModule, layerModulesDir } from './project-config.mjs';
 import { DEFAULT_SCALE, resolvePlan } from './profiles.mjs';
 
 export const PROJECT_STATE_PATH = path.join(rootDir, '.workflow', 'current_state.json');
 export const MODULES_DIR = path.join(rootDir, '.workflow', 'modules');
 export const MODULE_ID_RE = /^\d{2}_[a-z0-9]+(?:_[a-z0-9]+)*$/;
+const moduleNames = (id) => MODULE_ID_RE.test(id) ? [id, id.slice(3)] : [id];
 
 const COMMON_FIELDS = ['fase_activa', 'gate_activo', 'estado', 'rol_en_turno', 'bloqueos', 'historial_transiciones'];
 const MODULE_FIELDS = ['modulo', 'responsable', 'rama', 'depende_de', 'incluido_en_release'];
@@ -208,7 +209,7 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
     const s = mod.state;
     const before = errors.length;
 
-    if (!MODULE_ID_RE.test(mod.id)) errors.push(`${label}: el nombre debe seguir el formato "XX_nombre" (dos dígitos, minúsculas y guiones bajos).`);
+    if (!MODULE_ID_RE.test(mod.id) && !existingModule(config, mod.id)) errors.push(`${label}: usa el formato "XX_nombre" o declara el ID en project.json → modulos_existentes.`);
     if (s.modulo !== mod.id) errors.push(`${label}: "modulo" vale "${s.modulo}" pero debe coincidir con el nombre del archivo ("${mod.id}").`);
     if (!fs.existsSync(path.join(rootDir, 'docs', 'modules', mod.id))) errors.push(`${label}: no existe la carpeta docs/modules/${mod.id}/.`);
     if (s.incluido_en_release != null && s.estado !== 'COMPLETADO') {
@@ -233,6 +234,7 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
 
   const prefixes = new Map();
   for (const mod of modules) {
+    if (!MODULE_ID_RE.test(mod.id)) continue;
     const prefix = mod.id.slice(0, 2);
     if (prefixes.has(prefix)) errors.push(`modules/: los módulos "${prefixes.get(prefix)}" y "${mod.id}" comparten el número ${prefix}.`);
     else prefixes.set(prefix, mod.id);
@@ -249,7 +251,7 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
     }
     // Regla de oro del contrato previo (AGENTS.md §6): pasada la línea base, el contrato debe existir.
     if (lastBaseline && hasPassed(table, s, lastBaseline)) {
-      const names = [id, id.slice(3)].flatMap((n) => [`${n}.contract.ts`, `${n}.contract.js`]);
+      const names = moduleNames(id).flatMap((n) => [`${n}.contract.ts`, `${n}.contract.js`]);
       if (!names.some((n) => fs.existsSync(path.join(contractsDir(config), n)))) {
         errors.push(`${label}: superó ${lastBaseline.id} pero no existe su contrato (${config.rutas.contratos}/${id}.contract.ts). No hay código sin contrato previo (AGENTS.md §6).`);
       }
@@ -275,14 +277,17 @@ export function validateWorkflow(table, project, modules, config = DEFAULT_CONFI
   const cycle = findCycle(new Map([...valid].map(([id, s]) => [id, s.depende_de.filter((d) => valid.has(d))])));
   if (cycle) errors.push(`modules/: dependencia circular entre módulos: ${cycle.join(' → ')}.`);
 
-  // Carpetas de código: cada una debería llevar el ID del módulo (o su nombre sin número).
-  const known = new Set(modules.flatMap((m) => [m.id, m.id.slice(3)]));
+  // Cada capa reconoce los nombres habituales y las carpetas declaradas para sus módulos registrados.
   for (const layer of activeLayers(config)) {
     const dir = layerModulesDir(config, layer);
     if (!fs.existsSync(dir)) continue;
+    const known = new Set(modules.flatMap(({ id }) => [
+      ...moduleNames(id),
+      ...(existingModule(config, id)?.codigo?.[layer] ?? []),
+    ]));
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       if (entry.isDirectory() && !known.has(entry.name)) {
-        warnings.push(`${config.capas[layer].modulos}/${entry.name}: no corresponde a ningún módulo de .workflow/modules/ (usa el ID "XX_nombre" o el nombre sin número).`);
+        warnings.push(`${config.capas[layer].modulos}/${entry.name}: no corresponde a ningún módulo de .workflow/modules/ (usa su ID, su nombre sin número o declara su carpeta en modulos_existentes).`);
       }
     }
   }
