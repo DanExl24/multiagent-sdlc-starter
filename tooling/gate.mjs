@@ -32,13 +32,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { loadStageGates, rootDir, USOS_HERRAMIENTA } from './lib/stage-gates.mjs';
-import { activeLayers, loadProjectConfig } from './lib/project-config.mjs';
+import { activeLayers, existingModule, loadProjectConfig } from './lib/project-config.mjs';
 import { missingDeliverables, runVerifications, testIndexGaps } from './lib/preflight.mjs';
 import { checkTools, gapLine, toolCoverageGaps, toolLine } from './lib/tools.mjs';
 import { ENCARGOS_DIR } from './lib/work-packages.mjs';
 import { loadProfiles, resolvePlan } from './lib/profiles.mjs';
 import {
-  MODULES_DIR, PROJECT_STATE_PATH, gatesForTrack, loadModuleStates, loadProjectState,
+  MODULE_ID_RE, PROJECT_STATE_PATH, gatesForTrack, loadModuleStates, loadProjectState,
   moduleModifiers, projectModifiers, validateWorkflow,
 } from './lib/workflow-state.mjs';
 
@@ -62,8 +62,11 @@ if (configErrors.length) fail(`.workflow/project.json inválido:\n   - ${configE
 const profiles = loadProfiles(table);
 const modules = loadModuleStates();
 const isProject = pista === 'proyecto';
-const file = isProject ? PROJECT_STATE_PATH : path.join(MODULES_DIR, `${pista}.json`);
-if (!fs.existsSync(file)) fail(`La pista "${pista}" no existe. Usa "proyecto" o un módulo de .workflow/modules/ (${modules.map((m) => m.id).join(', ') || 'ninguno'}).`);
+if (!isProject && !MODULE_ID_RE.test(pista) && !existingModule(config, pista)) {
+  fail(`ID de módulo inválido "${pista}". Usa "XX_nombre" o un ID declarado en project.json → modulos_existentes.`);
+}
+const file = isProject ? PROJECT_STATE_PATH : modules.find((module) => module.id === pista)?.file;
+if (!file || !fs.existsSync(file)) fail(`La pista "${pista}" no existe. Usa "proyecto" o un módulo de .workflow/modules/ (${modules.map((m) => m.id).join(', ') || 'ninguno'}).`);
 
 const original = fs.readFileSync(file, 'utf-8');
 const state = JSON.parse(original);
@@ -184,7 +187,10 @@ function qaReportGaps(moduleId) {
 function preflight() {
   const version = loadProjectState().version_actual ?? '';
   const modulo = isProject ? '' : pista;
-  const faltan = missingDeliverables(table, plan.entregables, { gateId: current.id, pistas: isProject ? ['proyecto', 'release'] : ['modulo'], modulo, version });
+  const faltan = missingDeliverables(table, plan.entregables, {
+    gateId: current.id, pistas: isProject ? ['proyecto', 'release'] : ['modulo'],
+    modulo, version, canonical: existingModule(config, modulo),
+  });
   if (faltan.length) {
     fail(`Faltan entregables de ${current.id} (STAGE_GATES.md §7, columna "Ruta comprobada"):\n   ${faltan.map((f) => `${f.id}: ${f.ruta}`).join('\n   ')}`);
   }

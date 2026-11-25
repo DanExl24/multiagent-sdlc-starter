@@ -27,6 +27,11 @@
 
 ---
 ## 1. ¿Qué es este Subrol?
+
+Para módulos declarados en `project.json` → `modulos_existentes`, consulta el
+mapeo de entregables antes de elegir los archivos de salida. Trabaja sobre los
+documentos canónicos indicados y limita la revisión al alcance del incremento.
+El formato, la trazabilidad y el criterio de salida del subrol siguen aplicando.
 Es el especialista del Product Manager que actúa como el **ingeniero de precisión de los requerimientos y custodio de la lógica de dominio**. Toma los descubrimientos del Subrol 01 y el blindaje normativo del Subrol 02 y los convierte en:
 1. **Reglas de Negocio Inmutables (RN):** Las leyes matemáticas, lógicas y legales que el software nunca puede violar.
 2. **Historias de Usuario (HUs) bajo INVEST:** El detalle del qué y para qué desde la perspectiva de los actores.
